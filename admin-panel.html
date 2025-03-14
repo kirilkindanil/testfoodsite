@@ -1,1253 +1,4 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Админ-панель | Food Menu</title>
-  
-  <!-- Подключаем шрифт через Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- Оригинальные стили из admin.html -->
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Montserrat', sans-serif;
-    }
-    
-    body {
-      background-color: #f5f5f5;
-      color: #333;
-    }
-    
-    .admin-header {
-      background-color: #1a1a1a;
-      color: white;
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    
-    .admin-logo {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-    
-    .admin-logo img {
-      height: 40px;
-      width: auto;
-    }
-    
-    .admin-title {
-      font-size: 24px;
-      font-weight: 700;
-    }
-    
-    .admin-logout {
-      background-color: transparent;
-      color: #9AFF2B;
-      border: 1px solid #9AFF2B;
-      padding: 8px 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-    }
-    
-    .admin-logout:hover {
-      background-color: #9AFF2B;
-      color: black;
-    }
-    
-    .admin-container {
-      max-width: 1200px;
-      margin: 30px auto;
-      padding: 0 20px;
-    }
-    
-    .admin-tabs {
-      display: flex;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #ddd;
-      overflow-x: auto;
-      white-space: nowrap;
-      padding-bottom: 5px;
-    }
-    
-    .admin-tab {
-      padding: 12px 20px;
-      cursor: pointer;
-      background-color: #f0f0f0;
-      border: 1px solid #ddd;
-      border-bottom: none;
-      border-radius: 4px 4px 0 0;
-      margin-right: 5px;
-      transition: all 0.3s ease;
-    }
-    
-    .admin-tab.active {
-      background-color: #9AFF2B;
-      color: black;
-      font-weight: 600;
-    }
-    
-    .tab-content {
-      display: none;
-    }
-    
-    .tab-content.active {
-      display: block;
-    }
-    
-    .admin-card {
-      background-color: white;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-    }
-    
-    .admin-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .admin-card-title {
-      font-size: 18px;
-      font-weight: 700;
-    }
-    
-    .admin-btn {
-      background-color: #9AFF2B;
-      color: black;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 4px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    
-    .admin-btn:hover {
-      background-color: #8DF529;
-      transform: translateY(-2px);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-    
-    .admin-btn.secondary {
-      background-color: #f0f0f0;
-      color: #333;
-    }
-    
-    .admin-btn.danger {
-      background-color: #ff5757;
-      color: white;
-    }
-    
-    .admin-btn.danger:hover {
-      background-color: #ff4242;
-    }
-    
-    /* Таблица стилей */
-    .admin-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    
-    .admin-table th,
-    .admin-table td {
-      padding: 12px 15px;
-      text-align: left;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .admin-table th {
-      background-color: #f8f8f8;
-      font-weight: 600;
-    }
-    
-    .admin-table tr:hover {
-      background-color: #f9f9f9;
-    }
-    
-    .admin-table .actions {
-      display: flex;
-      gap: 10px;
-    }
-    
-    /* Форма стилей */
-    .admin-form {
-      margin-top: 20px;
-    }
-    
-    .form-group {
-      margin-bottom: 20px;
-    }
-    
-    .form-label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-    }
-    
-    .form-input, 
-    .form-select,
-    .form-textarea {
-      width: 100%;
-      padding: 12px;
-      border-radius: 4px;
-      border: 1px solid #ddd;
-      background-color: white;
-      color: #333;
-      font-size: 16px;
-    }
-    
-    .form-input:focus, 
-    .form-select:focus,
-    .form-textarea:focus {
-      outline: none;
-      border-color: #9AFF2B;
-      box-shadow: 0 0 5px rgba(154, 255, 43, 0.3);
-    }
-    
-    .form-textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-    
-    .form-price-input {
-      position: relative;
-    }
-    
-    .form-price-input::before {
-      content: "₽";
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #777;
-    }
-    
-    .form-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 15px;
-      margin-top: 30px;
-    }
-    
-    /* Статус заказа */
-    .status-badge {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-    
-    .status-new {
-      background-color: rgba(79, 195, 247, 0.2);
-      color: #0277bd;
-    }
-    
-    .status-processing {
-      background-color: rgba(255, 152, 0, 0.2);
-      color: #e65100;
-    }
-    
-    .status-ready {
-      background-color: rgba(154, 255, 43, 0.2);
-      color: #2e7d32;
-    }
-    
-    .status-completed {
-      background-color: rgba(139, 195, 74, 0.2);
-      color: #558b2f;
-    }
-    
-    .status-cancelled {
-      background-color: rgba(255, 87, 87, 0.2);
-      color: #d32f2f;
-    }
-    
-    /* Изображение товара предпросмотр */
-    .image-preview {
-      width: 150px;
-      height: 150px;
-      object-fit: cover;
-      border-radius: 4px;
-      margin-top: 10px;
-      border: 1px solid #ddd;
-    }
-    
-    /* Модальное окно */
-    .admin-modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .admin-modal.active {
-      display: flex;
-    }
-    
-    .modal-content {
-      background-color: white;
-      border-radius: 8px;
-      padding: 25px;
-      width: 90%;
-      max-width: 600px;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-    
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .modal-title {
-      font-size: 20px;
-      font-weight: 700;
-    }
-    
-    .modal-close {
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: #777;
-    }
-    
-    /* Сообщения о статусе */
-    .status-message {
-      padding: 12px 15px;
-      margin-bottom: 20px;
-      border-radius: 4px;
-      display: none;
-    }
-    
-    .status-message.success {
-      background-color: rgba(154, 255, 43, 0.2);
-      color: #3c7a00;
-      border: 1px solid rgba(154, 255, 43, 0.5);
-      display: block;
-    }
-    
-    .status-message.error {
-      background-color: rgba(255, 87, 87, 0.2);
-      color: #aa2222;
-      border: 1px solid rgba(255, 87, 87, 0.5);
-      display: block;
-    }
-    
-    /* Панель статистики */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-    
-    .stat-card {
-      background-color: white;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-    
-    .stat-value {
-      font-size: 36px;
-      font-weight: 700;
-      margin: 10px 0;
-      color: #9AFF2B;
-    }
-    
-    .stat-label {
-      color: #666;
-      font-size: 14px;
-    }
-    
-    /* Switch/Toggle */
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 50px;
-      height: 24px;
-    }
-    
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      transition: .4s;
-      border-radius: 24px;
-    }
-    
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 16px;
-      width: 16px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      transition: .4s;
-      border-radius: 50%;
-    }
-    
-    input:checked + .slider {
-      background-color: #9AFF2B;
-    }
-    
-    input:focus + .slider {
-      box-shadow: 0 0 1px #9AFF2B;
-    }
-    
-    input:checked + .slider:before {
-      transform: translateX(26px);
-    }
-    
-    /* Мобильная адаптивность */
-    @media (max-width: 768px) {
-      .admin-tabs {
-        overflow-x: auto;
-        white-space: nowrap;
-        padding-bottom: 5px;
-      }
-      
-      .admin-table {
-        display: block;
-        overflow-x: auto;
-      }
-      
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .admin-card-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-      
-      .form-actions {
-        flex-direction: column;
-      }
-      
-      .form-actions button {
-        width: 100%;
-      }
-    }
-  </style>
-</head>
-<body>
-  <!-- Header -->
-  <header class="admin-header">
-    <div class="admin-logo">
-      <img src="images/logo.png" alt="Logo">
-      <div class="admin-title">Админ-панель</div>
-    </div>
-    <div style="display: flex; gap: 10px;">
-      <a href="#" class="admin-logout" id="logoutBtn">Выйти</a>
-      <a href="index.html" class="admin-logout" id="viewSiteBtn">Просмотр сайта</a>
-    </div>
-  </header>
-  
-  <div class="admin-container">
-    <!-- Tabs -->
-    <div class="admin-tabs">
-      <div class="admin-tab active" data-tab="dashboard">Дашборд</div>
-      <div class="admin-tab" data-tab="restaurants">Рестораны</div>
-      <div class="admin-tab" data-tab="products">Товары</div>
-      <div class="admin-tab" data-tab="categories">Категории</div>
-      <div class="admin-tab" data-tab="orders">Заказы</div>
-      <div class="admin-tab" data-tab="settings">Настройки</div>
-    </div>
-    
-    <!-- Dashboard Tab -->
-    <div class="tab-content active" id="dashboard">
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-value" id="restaurantCount">0</div>
-          <div class="stat-label">Рестораны</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="productCount">0</div>
-          <div class="stat-label">Товары</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="totalOrders">0</div>
-          <div class="stat-label">Заказы</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="totalRevenue">0₽</div>
-          <div class="stat-label">Выручка</div>
-        </div>
-      </div>
-      
-      <div class="admin-card">
-        <div class="admin-card-header">
-          <div class="admin-card-title">Последние заказы</div>
-          <button class="admin-btn" id="viewAllOrdersBtn" data-tab="orders">Все заказы</button>
-        </div>
-        <div id="recentOrdersList">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Клиент</th>
-                <th>Ресторан</th>
-                <th>Сумма</th>
-                <th>Статус</th>
-                <th>Дата</th>
-              </tr>
-            </thead>
-            <tbody id="recentOrdersTable">
-              <!-- Заказы будут добавлены через JavaScript -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Restaurants Tab -->
-    <div class="tab-content" id="restaurants">
-      <div class="admin-card">
-        <div class="admin-card-header">
-          <div class="admin-card-title">Рестораны</div>
-          <button class="admin-btn" id="addRestaurantBtn">Добавить ресторан</button>
-        </div>
-        <div id="restaurantsStatusMessage" class="status-message"></div>
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Название</th>
-              <th>Адрес</th>
-              <th>Телефон</th>
-              <th>Статус</th>
-              <th>Действия</th>
-            </tr>
-          </thead>
-          <tbody id="restaurantsTable">
-            <!-- Рестораны будут добавлены через JavaScript -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-    
-    <!-- Products Tab -->
-    <div class="tab-content" id="products">
-      <div class="admin-card">
-        <div class="admin-card-header">
-          <div class="admin-card-title">Товары</div>
-          <button class="admin-btn" id="addProductBtn">Добавить товар</button>
-        </div>
-        <div id="productsStatusMessage" class="status-message"></div>
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Название</th>
-              <th>Категория</th>
-              <th>Цена</th>
-              <th>Рестораны</th>
-              <th>Действия</th>
-            </tr>
-          </thead>
-          <tbody id="productsTable">
-            <!-- Товары будут добавлены через JavaScript -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-    
-    <!-- Categories Tab -->
-    <div class="tab-content" id="categories">
-      <div class="admin-card">
-        <div class="admin-card-header">
-          <div class="admin-card-title">Категории</div>
-          <button class="admin-btn" id="addCategoryBtn">Добавить категорию</button>
-        </div>
-        <div id="categoriesStatusMessage" class="status-message"></div>
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Название</th>
-              <th>Slug</th>
-              <th>Статус</th>
-              <th>Действия</th>
-            </tr>
-          </thead>
-          <tbody id="categoriesTable">
-            <!-- Категории будут добавлены через JavaScript -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-    
-    <!-- Orders Tab -->
-    <div class="tab-content" id="orders">
-      <div class="admin-card">
-        <div class="admin-card-header">
-          <div class="admin-card-title">Заказы</div>
-          <div>
-            <select id="orderFilterRestaurant" class="form-select" style="width: auto; display: inline-block; margin-right: 10px;">
-              <option value="">Все рестораны</option>
-              <!-- Рестораны будут добавлены через JavaScript -->
-            </select>
-            <select id="orderFilterStatus" class="form-select" style="width: auto; display: inline-block;">
-              <option value="">Все статусы</option>
-              <option value="new">Новые</option>
-              <option value="processing">В обработке</option>
-              <option value="ready">Готовы к выдаче</option>
-              <option value="completed">Завершены</option>
-              <option value="cancelled">Отменены</option>
-            </select>
-          </div>
-        </div>
-        <div id="ordersStatusMessage" class="status-message"></div>
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Клиент</th>
-              <th>Ресторан</th>
-              <th>Сумма</th>
-              <th>Статус</th>
-              <th>Дата</th>
-              <th>Действия</th>
-            </tr>
-          </thead>
-          <tbody id="ordersTable">
-            <!-- Заказы будут добавлены через JavaScript -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-    
-    <!-- Settings Tab -->
-    <div class="tab-content" id="settings">
-      <div class="admin-card">
-        <div class="admin-card-header">
-          <div class="admin-card-title">Настройки сайта</div>
-        </div>
-        <div id="settingsStatusMessage" class="status-message"></div>
-        <form id="settingsForm" class="admin-form">
-          <div class="form-group">
-            <label class="form-label">Название сайта</label>
-            <input type="text" id="siteTitle" name="siteTitle" class="form-input" value="FOOD MENU">
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Контактный Email</label>
-            <input type="email" id="contactEmail" name="contactEmail" class="form-input" value="info@foodmenu.com">
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Контактный телефон</label>
-            <input type="tel" id="contactPhone" name="contactPhone" class="form-input" value="+7 (123) 456-78-90">
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Настройки Telegram-бота</label>
-            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-              <label class="switch" style="margin-right: 10px;">
-                <input type="checkbox" id="telegramBotEnabled" name="telegramBotEnabled">
-                <span class="slider"></span>
-              </label>
-              <span>Включить уведомления о заказах</span>
-            </div>
-            
-            <input type="text" id="telegramBotToken" name="telegramBotToken" class="form-input" placeholder="Токен Telegram-бота" style="margin-bottom: 10px;">
-            <input type="text" id="telegramChatId" name="telegramChatId" class="form-input" placeholder="ID чата для уведомлений">
-          </div>
-          
-          <div class="form-actions">
-            <button type="submit" class="admin-btn">Сохранить настройки</button>
-          </div>
-        </form>
-      </div>
-      
-      <div class="admin-card">
-        <div class="admin-card-header">
-          <div class="admin-card-title">Настройки администратора</div>
-        </div>
-        <div id="adminStatusMessage" class="status-message"></div>
-        <form id="adminForm" class="admin-form">
-          <div class="form-group">
-            <label class="form-label">Имя пользователя</label>
-            <input type="text" id="adminUsername" name="adminUsername" class="form-input">
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Новый пароль</label>
-            <input type="password" id="adminPassword" name="adminPassword" class="form-input">
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Подтверждение пароля</label>
-            <input type="password" id="adminPasswordConfirm" name="adminPasswordConfirm" class="form-input">
-          </div>
-          
-          <div class="form-actions">
-            <button type="submit" class="admin-btn">Сохранить данные администратора</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Модальное окно ресторана -->
-  <div class="admin-modal" id="restaurantModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="restaurantModalTitle">Добавить ресторан</h3>
-        <button type="button" class="modal-close" id="closeRestaurantModal">&times;</button>
-      </div>
-      <form id="restaurantForm" class="admin-form">
-        <input type="hidden" id="restaurantId" name="restaurantId">
-        
-        <div class="form-group">
-          <label class="form-label">Название ресторана</label>
-          <input type="text" id="restaurantName" name="name" class="form-input" required>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Адрес</label>
-          <input type="text" id="restaurantAddress" name="address" class="form-input" required>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Часы работы</label>
-          <input type="text" id="restaurantHours" name="hours" class="form-input" 
-                 placeholder="Пн-Пт: 10:00 - 22:00, Сб-Вс: 11:00 - 23:00" required>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Телефон</label>
-          <input type="text" id="restaurantPhone" name="phone" class="form-input" required>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input type="email" id="restaurantEmail" name="email" class="form-input" required>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Статус</label>
-          <label class="switch">
-            <input type="checkbox" id="restaurantIsActive" name="isActive" checked>
-            <span class="slider"></span>
-          </label>
-          <span style="margin-left: 10px;">Активен</span>
-        </div>
-        
-        <div class="form-actions">
-          <button type="button" class="admin-btn secondary" id="cancelRestaurantBtn">Отмена</button>
-          <button type="submit" class="admin-btn">Сохранить</button>
-        </div>
-      </form>
-    </div>
-  </div>
-  
-  <!-- Модальное окно товара -->
-  <div class="admin-modal" id="productModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="productModalTitle">Добавить товар</h3>
-        <button type="button" class="modal-close" id="closeProductModal">&times;</button>
-      </div>
-      <form id="productForm" class="admin-form">
-        <input type="hidden" id="productId" name="productId">
-        
-        <div class="form-group">
-          <label class="form-label">Название товара</label>
-          <input type="text" id="productName" name="name" class="form-input" required>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Категория</label>
-          <select id="productCategory" name="category" class="form-select" required>
-            <option value="">Выберите категорию</option>
-            <!-- Категории будут добавлены через JavaScript -->
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Цена, ₽</label>
-          <input type="number" id="productPrice" name="price" class="form-input" required min="0">
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Описание</label>
-          <textarea id="productDescription" name="description" class="form-textarea" required></textarea>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Изображение</label>
-          <select id="productImage" name="image" class="form-select">
-            <option value="burger.jpg">Бургер</option>
-            <option value="coffee.jpg">Кофе</option>
-            <option value="pasta.jpg">Паста</option>
-            <option value="dessert.jpg">Десерт</option>
-            <option value="default.jpg">Стандартное</option>
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Рестораны</label>
-          <div id="productRestaurantsCheckboxes" style="margin-top: 10px;">
-            <!-- Рестораны будут добавлены через JavaScript -->
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Статус</label>
-          <label class="switch">
-            <input type="checkbox" id="productIsActive" name="isActive" checked>
-            <span class="slider"></span>
-          </label>
-          <span style="margin-left: 10px;">Активен</span>
-        </div>
-        
-        <div class="form-actions">
-          <button type="button" class="admin-btn secondary" id="cancelProductBtn">Отмена</button>
-          <button type="submit" class="admin-btn">Сохранить</button>
-        </div>
-      </form>
-    </div>
-  </div>
-  
-  <!-- Модальное окно категории -->
-  <div class="admin-modal" id="categoryModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="categoryModalTitle">Добавить категорию</h3>
-        <button type="button" class="modal-close" id="closeCategoryModal">&times;</button>
-      </div>
-      <form id="categoryForm" class="admin-form">
-        <input type="hidden" id="categoryId" name="categoryId">
-        
-        <div class="form-group">
-          <label class="form-label">Название категории</label>
-          <input type="text" id="categoryName" name="name" class="form-input" required>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Slug (для URL)</label>
-          <input type="text" id="categorySlug" name="slug" class="form-input" required>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Статус</label>
-          <label class="switch">
-            <input type="checkbox" id="categoryIsActive" name="isActive" checked>
-            <span class="slider"></span>
-          </label>
-          <span style="margin-left: 10px;">Активна</span>
-        </div>
-        
-        <div class="form-actions">
-          <button type="button" class="admin-btn secondary" id="cancelCategoryBtn">Отмена</button>
-          <button type="submit" class="admin-btn">Сохранить</button>
-        </div>
-      </form>
-    </div>
-  </div>
-  
-  <!-- Модальное окно заказа -->
-  <div class="admin-modal" id="orderModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="orderModalTitle">Просмотр заказа</h3>
-        <button type="button" class="modal-close" id="closeOrderModal">&times;</button>
-      </div>
-      
-      <div id="orderDetails">
-        <div class="form-group">
-          <label class="form-label">Номер заказа</label>
-          <div id="orderNumber" style="font-size: 18px; font-weight: bold;"></div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Статус</label>
-          <select id="orderStatus" class="form-select">
-            <option value="new">Новый</option>
-            <option value="processing">В обработке</option>
-            <option value="ready">Готов к выдаче</option>
-            <option value="completed">Завершен</option>
-            <option value="cancelled">Отменен</option>
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Клиент</label>
-          <div id="orderCustomer"></div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Телефон</label>
-          <div id="orderPhone"></div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Ресторан</label>
-          <div id="orderRestaurant"></div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Время самовывоза</label>
-          <div id="orderPickupTime"></div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Дата/время заказа</label>
-          <div id="orderDateTime"></div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Состав заказа</label>
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Товар</th>
-                <th>Цена</th>
-                <th>Кол-во</th>
-                <th>Сумма</th>
-              </tr>
-            </thead>
-            <tbody id="orderItems"></tbody>
-          </table>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Итого</label>
-          <div id="orderTotal" style="font-size: 18px; font-weight: bold;"></div>
-        </div>
-        
-        <div class="form-actions">
-          <button type="button" class="admin-btn secondary" id="closeOrderBtn">Закрыть</button>
-          <button type="button" class="admin-btn" id="saveOrderStatusBtn">Сохранить статус</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Подключение скриптов -->
-  <script src="db.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('Админ-панель загружена');
-      
-      // Проверка авторизации
-      if (!sessionStorage.getItem('adminSession')) {
-        console.log('Не авторизован, перенаправляем на страницу входа');
-        window.location.href = 'login.html';
-        return;
-      }
-      
-      // Переменные для текущих данных
-      let currentRestaurantId = null;
-      let currentProductId = null;
-      let currentCategoryId = null;
-      let currentOrderId = null;
-      
-      // Выход из админ-панели
-      document.getElementById('logoutBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        console.log('Выход из админ-панели');
-        
-        // Пытаемся использовать функцию logout из db.js если она доступна
-        try {
-          if (window.db && window.db.auth && typeof window.db.auth.logout === 'function') {
-            window.db.auth.logout();
-          }
-        } catch (error) {
-          console.error('Ошибка при выходе:', error);
-        }
-        
-        // Удаляем сессию в любом случае
-        sessionStorage.removeItem('adminSession');
-        
-        // Перенаправляем на страницу входа
-        window.location.href = 'login.html';
-      });
-      
-      // Инициализация вкладок
-      function initTabs() {
-        const tabs = document.querySelectorAll('.admin-tab');
-        const tabContents = document.querySelectorAll('.tab-content');
-        
-        tabs.forEach(tab => {
-          tab.addEventListener('click', function() {
-            const tabId = this.getAttribute('data-tab');
-            
-            // Убираем активный класс со всех вкладок и контента
-            tabs.forEach(t => t.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-            
-            // Добавляем активный класс к выбранной вкладке и контенту
-            this.classList.add('active');
-            document.getElementById(tabId).classList.add('active');
-            
-            // Загружаем данные для выбранной вкладки
-            loadTabData(tabId);
-          });
-        });
-        
-        // Кнопка "Все заказы"
-        document.getElementById('viewAllOrdersBtn').addEventListener('click', function() {
-          const tabId = this.getAttribute('data-tab');
-          
-          // Убираем активный класс со всех вкладок и контента
-          tabs.forEach(t => t.classList.remove('active'));
-          tabContents.forEach(content => content.classList.remove('active'));
-          
-          // Добавляем активный класс к выбранной вкладке и контенту
-          document.querySelector(`.admin-tab[data-tab="${tabId}"]`).classList.add('active');
-          document.getElementById(tabId).classList.add('active');
-          
-          // Загружаем данные для выбранной вкладки
-          loadTabData(tabId);
-        });
-      }
-      
-      // Загрузка данных для выбранной вкладки
-      function loadTabData(tabId) {
-        console.log('Загрузка данных для вкладки:', tabId);
-        switch(tabId) {
-          case 'dashboard':
-            loadDashboardData();
-            break;
-          case 'restaurants':
-            loadRestaurants();
-            break;
-          case 'products':
-            loadProducts();
-            break;
-          case 'categories':
-            loadCategories();
-            break;
-          case 'orders':
-            loadOrders();
-            break;
-          case 'settings':
-            loadSettings();
-            break;
-        }
-      }
-      
-      // ФУНКЦИИ ДЛЯ РАБОТЫ С РЕСТОРАНАМИ
-      
-      // Инициализация формы ресторана
-      function initRestaurantForm() {
-        console.log('Инициализация формы ресторана');
-        const addRestaurantBtn = document.getElementById('addRestaurantBtn');
-        const restaurantModal = document.getElementById('restaurantModal');
-        const closeRestaurantModal = document.getElementById('closeRestaurantModal');
-        const cancelRestaurantBtn = document.getElementById('cancelRestaurantBtn');
-        const restaurantForm = document.getElementById('restaurantForm');
-        
-        // Открытие модального окна для добавления ресторана
-        addRestaurantBtn.addEventListener('click', function() {
-          console.log('Открытие модального окна ресторана');
-          currentRestaurantId = null;
-          document.getElementById('restaurantModalTitle').textContent = 'Добавить ресторан';
-          restaurantForm.reset();
-          restaurantModal.classList.add('active');
-        });
-        
-        // Закрытие модального окна
-        closeRestaurantModal.addEventListener('click', function() {
-          restaurantModal.classList.remove('active');
-        });
-        
-        cancelRestaurantBtn.addEventListener('click', function() {
-          restaurantModal.classList.remove('active');
-        });
-        
-        // Обработка формы добавления/редактирования ресторана
-        restaurantForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          console.log('Отправка формы ресторана');
-          
-          const restaurantData = {
-            name: document.getElementById('restaurantName').value,
-            address: document.getElementById('restaurantAddress').value,
-            hours: document.getElementById('restaurantHours').value,
-            phone: document.getElementById('restaurantPhone').value,
-            email: document.getElementById('restaurantEmail').value,
-            isActive: document.getElementById('restaurantIsActive').checked
-          };
-          
-          try {
-            if (currentRestaurantId) {
-              // Редактирование ресторана
-              db.restaurants.update(currentRestaurantId, restaurantData);
-              showStatusMessage('restaurantsStatusMessage', `Ресторан "${restaurantData.name}" успешно обновлен`, 'success');
-            } else {
-              // Создаем ID для нового ресторана (если нет в БД)
-              const slug = restaurantData.name.toLowerCase()
-                .replace(/[^\w\s-]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/-+/g, '-');
-              restaurantData.id = slug;
-              
-              // Добавление ресторана
-              db.restaurants.add(restaurantData);
-              showStatusMessage('restaurantsStatusMessage', `Ресторан "${restaurantData.name}" успешно добавлен`, 'success');
-            }
-            
-            // Закрытие модального окна и обновление списка ресторанов
-            restaurantModal.classList.remove('active');
-            loadRestaurants();
-            
-            // Обновляем статистику на дашборде
-            loadDashboardData();
-          } catch (error) {
-            console.error('Ошибка при сохранении ресторана:', error);
-            showStatusMessage('restaurantsStatusMessage', `Ошибка: ${error.message}`, 'error');
-          }
-        });
-      }
-      
-      // Редактирование ресторана
-      function editRestaurant(restaurantId) {
-        console.log('Редактирование ресторана:', restaurantId);
-        const restaurant = db.restaurants.getById(restaurantId);
-        if (!restaurant) return;
-        
-        currentRestaurantId = restaurantId;
-        document.getElementById('restaurantModalTitle').textContent = 'Редактировать ресторан';
-        
-        document.getElementById('restaurantId').value = restaurant.id;
-        document.getElementById('restaurantName').value = restaurant.name;
-        document.getElementById('restaurantAddress').value = restaurant.address;
-        document.getElementById('restaurantHours').value = restaurant.hours;
-        document.getElementById('restaurantPhone').value = restaurant.phone;
-        document.getElementById('restaurantEmail').value = restaurant.email;
-        document.getElementById('restaurantIsActive').checked = restaurant.isActive !== false;
-        
-        document.getElementById('restaurantModal').classList.add('active');
-      }
-      
-      // Удаление ресторана
-      function deleteRestaurant(restaurantId) {
-        console.log('Удаление ресторана:', restaurantId);
-        const restaurant = db.restaurants.getById(restaurantId);
-        if (!restaurant) return;
-        
-        // Проверяем, связаны ли с рестораном заказы
-        const hasOrders = db.orders.getAll().some(order => order.restaurantId === restaurantId);
-        
-        if (hasOrders) {
-          showStatusMessage('restaurantsStatusMessage', `Невозможно удалить ресторан "${restaurant.name}": с ним связаны заказы`, 'error');
-          return;
-        }
-        
-        // Подтверждение удаления
-        if (confirm(`Вы действительно хотите удалить ресторан "${restaurant.name}"?`)) {
-          db.restaurants.delete(restaurantId);
-          showStatusMessage('restaurantsStatusMessage', `Ресторан "${restaurant.name}" успешно удален`, 'success');
-          
-          // Обновление списка ресторанов и статистики
-          loadRestaurants();
-          loadDashboardData();
-        }
-      }
-      
-      // Изменение статуса ресторана
-      function toggleRestaurantStatus(restaurantId, isActive) {
-        console.log('Изменение статуса ресторана:', restaurantId, isActive);
-        try {
-          const restaurant = db.restaurants.getById(restaurantId);
-          if (!restaurant) return;
-          
-          db.restaurants.update(restaurantId, { isActive });
-          showStatusMessage('restaurantsStatusMessage', `Статус ресторана "${restaurant.name}" изменен на "${isActive ? 'активен' : 'неактивен'}"`, 'success');
-        } catch (error) {
-          console.error('Ошибка при изменении статуса ресторана:', error);
-          showStatusMessage('restaurantsStatusMessage', `Ошибка: ${error.message}`, 'error');
-        }
-      }
-      
-      // Загрузка ресторанов
-      function loadRestaurants() {
-        console.log('Загрузка ресторанов');
-        try {
-          if (window.db && window.db.restaurants && typeof window.db.restaurants.getAll === 'function') {
-            const restaurants = db.restaurants.getAll();
-            const restaurantsTable = document.getElementById('restaurantsTable');
-            restaurantsTable.innerHTML = '';
-            
-            if (restaurants.length === 0) {
-              restaurantsTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет ресторанов</td></tr>';
-              return;
-            }
-            
-            restaurants.forEach(restaurant => {
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                <td>${restaurant.id}</td>
-                <td>${restaurant.name}</td>
-                <td>${restaurant.address}</td>
-                <td>${restaurant.phone}</td>
-                <td>
-                  <label class="switch">
-                    <input type="checkbox" data-restaurant-id="${restaurant.id}" data-action="toggle-restaurant" ${restaurant.isActive ? 'checked' : ''}>
-                    <span class="slider"></span>
-                  </label>
-                </td>
-                <td class="actions">
-                  <button class="admin-btn" data-restaurant-id="${restaurant.id}" data-action="edit-restaurant">Редактировать</button>
-                  <button class="admin-btn danger" data-restaurant-id="${restaurant.id}" data-action="delete-restaurant">Удалить</button>
-                </td>
-              `;
-              
-              restaurantsTable.appendChild(row);
-            });
-            
-            // Добавление обработчиков событий
-            document.querySelectorAll('[data-action="edit-restaurant"]').forEach(btn => {
+document.querySelectorAll('[data-action="edit-restaurant"]').forEach(btn => {
               btn.addEventListener('click', function() {
                 const restaurantId = this.getAttribute('data-restaurant-id');
                 editRestaurant(restaurantId);
@@ -1327,12 +78,48 @@
         const cancelProductBtn = document.getElementById('cancelProductBtn');
         const productForm = document.getElementById('productForm');
         
+        // Обработчик загрузки изображения для предпросмотра
+        const imageInput = document.getElementById('productImageFile');
+        const imagePreview = document.getElementById('productImagePreview');
+        const imageField = document.getElementById('productImage');
+
+        imageInput.addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (!file) return;
+          
+          // Проверка размера файла (макс. 2MB)
+          if (file.size > 2 * 1024 * 1024) {
+            showStatusMessage('productsStatusMessage', 'Размер файла не должен превышать 2MB', 'error');
+            imageInput.value = '';
+            return;
+          }
+          
+          // Проверка типа файла
+          if (!file.type.match('image.*')) {
+            showStatusMessage('productsStatusMessage', 'Пожалуйста, выберите изображение', 'error');
+            imageInput.value = '';
+            return;
+          }
+          
+          // Читаем файл для предпросмотра
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            imagePreview.src = e.target.result;
+            
+            // Сохраняем изображение в base64 для последующего сохранения
+            imageField.value = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
+        
         // Открытие модального окна для добавления товара
         addProductBtn.addEventListener('click', function() {
           console.log('Нажатие кнопки "Добавить товар"');
           currentProductId = null;
           document.getElementById('productModalTitle').textContent = 'Добавить товар';
           productForm.reset();
+          imagePreview.src = 'images/default.jpg';
+          imageField.value = 'default.jpg';
           
           // Заполняем выпадающий список категорий
           fillCategoriesDropdown();
@@ -1454,12 +241,23 @@
         document.getElementById('productPrice').value = product.price;
         document.getElementById('productDescription').value = product.description;
         
-        // Заполняем поле изображения, если есть
-        const imageSelect = document.getElementById('productImage');
-        if (product.image && imageSelect.querySelector(`option[value="${product.image}"]`)) {
-          imageSelect.value = product.image;
+        // Заполняем изображение
+        const imagePreview = document.getElementById('productImagePreview');
+        const imageField = document.getElementById('productImage');
+        
+        if (product.image) {
+          if (product.image.startsWith('data:image')) {
+            // Если base64-изображение
+            imagePreview.src = product.image;
+            imageField.value = product.image;
+          } else {
+            // Если стандартное изображение
+            imagePreview.src = `images/${product.image}`;
+            imageField.value = product.image;
+          }
         } else {
-          imageSelect.value = 'default.jpg';
+          imagePreview.src = 'images/default.jpg';
+          imageField.value = 'default.jpg';
         }
         
         document.getElementById('productIsActive').checked = product.isActive !== false;
@@ -2126,7 +924,285 @@
     });
   </script>
 </body>
-</html><!DOCTYPE html>
+</html>
+        </div>
+  
+  <!-- Подключение скриптов -->
+  <script src="db.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Админ-панель загружена');
+      
+      // Проверка авторизации
+      if (!sessionStorage.getItem('adminSession')) {
+        console.log('Не авторизован, перенаправляем на страницу входа');
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // Переменные для текущих данных
+      let currentRestaurantId = null;
+      let currentProductId = null;
+      let currentCategoryId = null;
+      let currentOrderId = null;
+      
+      // Выход из админ-панели
+      document.getElementById('logoutBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Выход из админ-панели');
+        
+        // Пытаемся использовать функцию logout из db.js если она доступна
+        try {
+          if (window.db && window.db.auth && typeof window.db.auth.logout === 'function') {
+            window.db.auth.logout();
+          }
+        } catch (error) {
+          console.error('Ошибка при выходе:', error);
+        }
+        
+        // Удаляем сессию в любом случае
+        sessionStorage.removeItem('adminSession');
+        
+        // Перенаправляем на страницу входа
+        window.location.href = 'login.html';
+      });
+      
+      // Инициализация вкладок
+      function initTabs() {
+        const tabs = document.querySelectorAll('.admin-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+          tab.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            
+            // Убираем активный класс со всех вкладок и контента
+            tabs.forEach(t => t.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Добавляем активный класс к выбранной вкладке и контенту
+            this.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+            
+            // Загружаем данные для выбранной вкладки
+            loadTabData(tabId);
+          });
+        });
+        
+        // Кнопка "Все заказы"
+        document.getElementById('viewAllOrdersBtn').addEventListener('click', function() {
+          const tabId = this.getAttribute('data-tab');
+          
+          // Убираем активный класс со всех вкладок и контента
+          tabs.forEach(t => t.classList.remove('active'));
+          tabContents.forEach(content => content.classList.remove('active'));
+          
+          // Добавляем активный класс к выбранной вкладке и контенту
+          document.querySelector(`.admin-tab[data-tab="${tabId}"]`).classList.add('active');
+          document.getElementById(tabId).classList.add('active');
+          
+          // Загружаем данные для выбранной вкладки
+          loadTabData(tabId);
+        });
+      }
+      
+      // Загрузка данных для выбранной вкладки
+      function loadTabData(tabId) {
+        console.log('Загрузка данных для вкладки:', tabId);
+        switch(tabId) {
+          case 'dashboard':
+            loadDashboardData();
+            break;
+          case 'restaurants':
+            loadRestaurants();
+            break;
+          case 'products':
+            loadProducts();
+            break;
+          case 'categories':
+            loadCategories();
+            break;
+          case 'orders':
+            loadOrders();
+            break;
+          case 'settings':
+            loadSettings();
+            break;
+        }
+      }
+      
+      // ФУНКЦИИ ДЛЯ РАБОТЫ С РЕСТОРАНАМИ
+      
+      // Инициализация формы ресторана
+      function initRestaurantForm() {
+        console.log('Инициализация формы ресторана');
+        const addRestaurantBtn = document.getElementById('addRestaurantBtn');
+        const restaurantModal = document.getElementById('restaurantModal');
+        const closeRestaurantModal = document.getElementById('closeRestaurantModal');
+        const cancelRestaurantBtn = document.getElementById('cancelRestaurantBtn');
+        const restaurantForm = document.getElementById('restaurantForm');
+        
+        // Открытие модального окна для добавления ресторана
+        addRestaurantBtn.addEventListener('click', function() {
+          console.log('Открытие модального окна ресторана');
+          currentRestaurantId = null;
+          document.getElementById('restaurantModalTitle').textContent = 'Добавить ресторан';
+          restaurantForm.reset();
+          restaurantModal.classList.add('active');
+        });
+        
+        // Закрытие модального окна
+        closeRestaurantModal.addEventListener('click', function() {
+          restaurantModal.classList.remove('active');
+        });
+        
+        cancelRestaurantBtn.addEventListener('click', function() {
+          restaurantModal.classList.remove('active');
+        });
+        
+        // Обработка формы добавления/редактирования ресторана
+        restaurantForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          console.log('Отправка формы ресторана');
+          
+          const restaurantData = {
+            name: document.getElementById('restaurantName').value,
+            address: document.getElementById('restaurantAddress').value,
+            hours: document.getElementById('restaurantHours').value,
+            phone: document.getElementById('restaurantPhone').value,
+            email: document.getElementById('restaurantEmail').value,
+            isActive: document.getElementById('restaurantIsActive').checked
+          };
+          
+          try {
+            if (currentRestaurantId) {
+              // Редактирование ресторана
+              db.restaurants.update(currentRestaurantId, restaurantData);
+              showStatusMessage('restaurantsStatusMessage', `Ресторан "${restaurantData.name}" успешно обновлен`, 'success');
+            } else {
+              // Создаем ID для нового ресторана (если нет в БД)
+              const slug = restaurantData.name.toLowerCase()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+              restaurantData.id = slug;
+              
+              // Добавление ресторана
+              db.restaurants.add(restaurantData);
+              showStatusMessage('restaurantsStatusMessage', `Ресторан "${restaurantData.name}" успешно добавлен`, 'success');
+            }
+            
+            // Закрытие модального окна и обновление списка ресторанов
+            restaurantModal.classList.remove('active');
+            loadRestaurants();
+            
+            // Обновляем статистику на дашборде
+            loadDashboardData();
+          } catch (error) {
+            console.error('Ошибка при сохранении ресторана:', error);
+            showStatusMessage('restaurantsStatusMessage', `Ошибка: ${error.message}`, 'error');
+          }
+        });
+      }
+      
+      // Редактирование ресторана
+      function editRestaurant(restaurantId) {
+        console.log('Редактирование ресторана:', restaurantId);
+        const restaurant = db.restaurants.getById(restaurantId);
+        if (!restaurant) return;
+        
+        currentRestaurantId = restaurantId;
+        document.getElementById('restaurantModalTitle').textContent = 'Редактировать ресторан';
+        
+        document.getElementById('restaurantId').value = restaurant.id;
+        document.getElementById('restaurantName').value = restaurant.name;
+        document.getElementById('restaurantAddress').value = restaurant.address;
+        document.getElementById('restaurantHours').value = restaurant.hours;
+        document.getElementById('restaurantPhone').value = restaurant.phone;
+        document.getElementById('restaurantEmail').value = restaurant.email;
+        document.getElementById('restaurantIsActive').checked = restaurant.isActive !== false;
+        
+        document.getElementById('restaurantModal').classList.add('active');
+      }
+      
+      // Удаление ресторана
+      function deleteRestaurant(restaurantId) {
+        console.log('Удаление ресторана:', restaurantId);
+        const restaurant = db.restaurants.getById(restaurantId);
+        if (!restaurant) return;
+        
+        // Проверяем, связаны ли с рестораном заказы
+        const hasOrders = db.orders.getAll().some(order => order.restaurantId === restaurantId);
+        
+        if (hasOrders) {
+          showStatusMessage('restaurantsStatusMessage', `Невозможно удалить ресторан "${restaurant.name}": с ним связаны заказы`, 'error');
+          return;
+        }
+        
+        // Подтверждение удаления
+        if (confirm(`Вы действительно хотите удалить ресторан "${restaurant.name}"?`)) {
+          db.restaurants.delete(restaurantId);
+          showStatusMessage('restaurantsStatusMessage', `Ресторан "${restaurant.name}" успешно удален`, 'success');
+          
+          // Обновление списка ресторанов и статистики
+          loadRestaurants();
+          loadDashboardData();
+        }
+      }
+      
+      // Изменение статуса ресторана
+      function toggleRestaurantStatus(restaurantId, isActive) {
+        console.log('Изменение статуса ресторана:', restaurantId, isActive);
+        try {
+          const restaurant = db.restaurants.getById(restaurantId);
+          if (!restaurant) return;
+          
+          db.restaurants.update(restaurantId, { isActive });
+          showStatusMessage('restaurantsStatusMessage', `Статус ресторана "${restaurant.name}" изменен на "${isActive ? 'активен' : 'неактивен'}"`, 'success');
+        } catch (error) {
+          console.error('Ошибка при изменении статуса ресторана:', error);
+          showStatusMessage('restaurantsStatusMessage', `Ошибка: ${error.message}`, 'error');
+        }
+      }
+      
+      // Загрузка ресторанов
+      function loadRestaurants() {
+        console.log('Загрузка ресторанов');
+        try {
+          if (window.db && window.db.restaurants && typeof window.db.restaurants.getAll === 'function') {
+            const restaurants = db.restaurants.getAll();
+            const restaurantsTable = document.getElementById('restaurantsTable');
+            restaurantsTable.innerHTML = '';
+            
+            if (restaurants.length === 0) {
+              restaurantsTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет ресторанов</td></tr>';
+              return;
+            }
+            
+            restaurants.forEach(restaurant => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${restaurant.id}</td>
+                <td>${restaurant.name}</td>
+                <td>${restaurant.address}</td>
+                <td>${restaurant.phone}</td>
+                <td>
+                  <label class="switch">
+                    <input type="checkbox" data-restaurant-id="${restaurant.id}" data-action="toggle-restaurant" ${restaurant.isActive ? 'checked' : ''}>
+                    <span class="slider"></span>
+                  </label>
+                </td>
+                <td class="actions">
+                  <button class="admin-btn" data-restaurant-id="${restaurant.id}" data-action="edit-restaurant">Редактировать</button>
+                  <button class="admin-btn danger" data-restaurant-id="${restaurant.id}" data-action="delete-restaurant">Удалить</button>
+                </td>
+              `;
+              
+              restaurantsTable.appendChild(row);
+            });
+            
+            // Добавление обработчиков событий
+            document.querySelectorAll<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -2136,7 +1212,6 @@
   <!-- Подключаем шрифт через Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <!-- Оригинальные стили из admin.html -->
   <style>
     * {
       margin: 0;
@@ -2410,13 +1485,33 @@
     }
     
     /* Изображение товара предпросмотр */
-    .image-preview {
-      width: 150px;
+    .image-upload-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .image-preview-container {
+      width: 200px;
       height: 150px;
-      object-fit: cover;
-      border-radius: 4px;
-      margin-top: 10px;
       border: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background-color: #f8f8f8;
+    }
+
+    .image-preview {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .form-hint {
+      font-size: 12px;
+      color: #777;
+      margin-top: 5px;
     }
     
     /* Модальное окно */
@@ -2660,33 +1755,6 @@
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Клиент</th>
-                <th>Ресторан</th>
-                <th>Сумма</th>
-                <th>Статус</th>
-                <th>Дата</th>
-              </tr>
-            </thead>
-            <tbody id="recentOrdersTable">
-              <!-- Заказы будут добавлены через JavaScript -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Restaurants Tab -->
-    <div class="tab-content" id="restaurants">
-      <div class="admin-card">
-        <div class="admin-card-header">
-          <div class="admin-card-title">Рестораны</div>
-          <button class="admin-btn" id="addRestaurantBtn">Добавить ресторан</button>
-        </div>
-        <div id="restaurantsStatusMessage" class="status-message"></div>
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>ID</th>
               <th>Название</th>
               <th>Адрес</th>
               <th>Телефон</th>
@@ -2951,14 +2019,15 @@
         </div>
         
         <div class="form-group">
-          <label class="form-label">Изображение</label>
-          <select id="productImage" name="image" class="form-select">
-            <option value="burger.jpg">Бургер</option>
-            <option value="coffee.jpg">Кофе</option>
-            <option value="pasta.jpg">Паста</option>
-            <option value="dessert.jpg">Десерт</option>
-            <option value="default.jpg">Стандартное</option>
-          </select>
+          <label class="form-label">Изображение товара</label>
+          <div class="image-upload-container">
+            <input type="file" id="productImageFile" name="imageFile" accept="image/*" class="form-input">
+            <div class="image-preview-container">
+              <img id="productImagePreview" class="image-preview" src="images/default.jpg" alt="Предпросмотр">
+            </div>
+          </div>
+          <input type="hidden" id="productImage" name="image" value="default.jpg">
+          <p class="form-hint">Выберите изображение в формате JPG, PNG или GIF. Рекомендуемый размер: 400x300 пикселей.</p>
         </div>
         
         <div class="form-group">
@@ -2978,6 +2047,151 @@
         </div>
         
         <div class="form-actions">
-          <button type="button" class="admin-btn
-
-                    
+          <button type="button" class="admin-btn secondary" id="cancelProductBtn">Отмена</button>
+          <button type="submit" class="admin-btn">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Модальное окно категории -->
+  <div class="admin-modal" id="categoryModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="categoryModalTitle">Добавить категорию</h3>
+        <button type="button" class="modal-close" id="closeCategoryModal">&times;</button>
+      </div>
+      <form id="categoryForm" class="admin-form">
+        <input type="hidden" id="categoryId" name="categoryId">
+        
+        <div class="form-group">
+          <label class="form-label">Название категории</label>
+          <input type="text" id="categoryName" name="name" class="form-input" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Slug (для URL)</label>
+          <input type="text" id="categorySlug" name="slug" class="form-input" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Статус</label>
+          <label class="switch">
+            <input type="checkbox" id="categoryIsActive" name="isActive" checked>
+            <span class="slider"></span>
+          </label>
+          <span style="margin-left: 10px;">Активна</span>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="admin-btn secondary" id="cancelCategoryBtn">Отмена</button>
+          <button type="submit" class="admin-btn">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Модальное окно заказа -->
+  <div class="admin-modal" id="orderModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="orderModalTitle">Просмотр заказа</h3>
+        <button type="button" class="modal-close" id="closeOrderModal">&times;</button>
+      </div>
+      
+      <div id="orderDetails">
+        <div class="form-group">
+          <label class="form-label">Номер заказа</label>
+          <div id="orderNumber" style="font-size: 18px; font-weight: bold;"></div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Статус</label>
+          <select id="orderStatus" class="form-select">
+            <option value="new">Новый</option>
+            <option value="processing">В обработке</option>
+            <option value="ready">Готов к выдаче</option>
+            <option value="completed">Завершен</option>
+            <option value="cancelled">Отменен</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Клиент</label>
+          <div id="orderCustomer"></div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Телефон</label>
+          <div id="orderPhone"></div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Ресторан</label>
+          <div id="orderRestaurant"></div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Время самовывоза</label>
+          <div id="orderPickupTime"></div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Дата/время заказа</label>
+          <div id="orderDateTime"></div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Состав заказа</label>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Товар</th>
+                <th>Цена</th>
+                <th>Кол-во</th>
+                <th>Сумма</th>
+              </tr>
+            </thead>
+            <tbody id="orderItems"></tbody>
+          </table>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Итого</label>
+          <div id="orderTotal" style="font-size: 18px; font-weight: bold;"></div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="admin-btn secondary" id="closeOrderBtn">Закрыть</button>
+          <button type="button" class="admin-btn" id="saveOrderStatusBtn">Сохранить статус</button>
+        </div>
+      </div>
+    </div>
+  </div></th>
+                <th>Клиент</th>
+                <th>Ресторан</th>
+                <th>Сумма</th>
+                <th>Статус</th>
+                <th>Дата</th>
+              </tr>
+            </thead>
+            <tbody id="recentOrdersTable">
+              <!-- Заказы будут добавлены через JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Restaurants Tab -->
+    <div class="tab-content" id="restaurants">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="admin-card-title">Рестораны</div>
+          <button class="admin-btn" id="addRestaurantBtn">Добавить ресторан</button>
+        </div>
+        <div id="restaurantsStatusMessage" class="status-message"></div>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID

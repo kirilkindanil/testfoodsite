@@ -364,10 +364,92 @@ const db = {
       orders.push(newOrder);
       localStorage.setItem('orders', JSON.stringify(orders));
       
-      // Отправка уведомления в Telegram (симуляция)
-      this.sendTelegramNotification(newOrder);
-      
-      return newOrder;
+      // Отправка уведомления в Telegram
+      sendTelegramNotification: function(order) {
+  const settings = JSON.parse(localStorage.getItem('settings') || '{}');
+  
+  if (settings.telegramBotEnabled && settings.telegramBotToken && settings.telegramChatId) {
+    console.log('Отправка уведомления в Telegram о новом заказе:', order);
+    
+    // Формируем сообщение для отправки в Telegram
+    const restaurant = this.getRestaurantName(order.restaurantId);
+    const orderItems = order.items.map(item => 
+      `${item.name} x${item.quantity} - ${item.price * item.quantity}₽`
+    ).join('\n');
+    
+    const message = `
+🔔 *NEW ORDER #${order.id}*
+
+👤 *Customer*: ${order.customerName}
+📱 *Phone*: ${order.customerPhone}
+🏪 *Restaurant*: ${restaurant}
+⏱ *Pickup time*: ${order.pickupTime} minutes
+💰 *Total amount*: ${order.totalAmount}₽
+
+📋 *Order items*:
+${orderItems}
+
+📅 *Order time*: ${new Date(order.createdAt).toLocaleString()}
+    `;
+    
+    // Отправляем запрос к Telegram API
+    const telegramApiUrl = `https://api.telegram.org/bot${settings.telegramBotToken}/sendMessage`;
+    
+    // Создаем данные для запроса
+    const data = {
+      chat_id: settings.telegramChatId,
+      text: message,
+      parse_mode: 'Markdown'
+    };
+    
+    // Отправляем запрос
+    fetch(telegramApiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+      console.log('Telegram API response:', result);
+      if (result.ok) {
+        console.log('Уведомление успешно отправлено в Telegram');
+        localStorage.setItem('lastTelegramNotification', JSON.stringify({
+          type: 'new_order',
+          orderId: order.id,
+          sentAt: new Date().toISOString(),
+          success: true
+        }));
+      } else {
+        console.error('Ошибка отправки уведомления в Telegram:', result.description);
+        localStorage.setItem('lastTelegramNotification', JSON.stringify({
+          type: 'new_order',
+          orderId: order.id,
+          sentAt: new Date().toISOString(),
+          success: false,
+          error: result.description
+        }));
+      }
+    })
+    .catch(error => {
+      console.error('Ошибка при отправке запроса в Telegram API:', error);
+      localStorage.setItem('lastTelegramNotification', JSON.stringify({
+        type: 'new_order',
+        orderId: order.id,
+        sentAt: new Date().toISOString(),
+        success: false,
+        error: error.message
+      }));
+    });
+  }
+},
+
+// Вспомогательная функция для получения имени ресторана по ID
+getRestaurantName: function(restaurantId) {
+  const restaurant = db.restaurants.getById(restaurantId);
+  return restaurant ? restaurant.name : 'Unknown restaurant';
+}
     },
     
     update: function(id, updatedOrder) {

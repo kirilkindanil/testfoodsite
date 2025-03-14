@@ -569,22 +569,6 @@
       gap: 15px;
     }
     
-    /* Кнопка смены ресторана */
-    .change-restaurant-btn {
-      position: fixed;
-      bottom: 30px;
-      right: 40px;
-      background-color: #9AFF2B;
-      color: black;
-      padding: 12px 20px;
-      border-radius: 4px;
-      font-weight: 700;
-      cursor: pointer;
-      z-index: 99;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      border: none;
-    }
-    
     /* Уведомления */
     .notification {
       position: fixed;
@@ -610,6 +594,10 @@
     .notification.error {
       background-color: #ff5757;
       color: white;
+    }
+    
+    #mainContent {
+      display: none;
     }
     
     /* Адаптивность для мобильных устройств */
@@ -641,79 +629,71 @@
         height: 45px;
         font-size: 22px;
       }
-      
-      .change-restaurant-btn {
-        bottom: 20px;
-        right: 20px;
-        padding: 10px 15px;
-        font-size: 14px;
-      }
     }
   </style>
 </head>
 <body>
   <div class="overlay">
-    <header>
-      <div class="logo">
-        <img src="images/logo.png" alt="Logo">
-      </div>
-      <h1 class="main-title">FOOD MENU</h1>
-    </header>
-    
-    <!-- Иконка корзины -->
-    <div class="cart-icon" id="cartIcon">
-      🛒
-      <div class="cart-count" id="cartCount">0</div>
-    </div>
-    
-    <!-- Кнопка смены ресторана -->
-    <button class="change-restaurant-btn" id="changeRestaurantBtn">🏠 Сменить ресторан</button>
-    
-    <div class="container">
-      <div class="categories" id="categoriesContainer">
-        <!-- Категории будут добавлены динамически через JavaScript -->
-      </div>
-      
-      <div class="menu-grid" id="menuGrid">
-        <!-- Товары будут добавлены динамически через JavaScript -->
-      </div>
-    </div>
-    
-    <section class="location-section">
-      <div class="container">
-        <h2 class="section-title" id="restaurantTitle">Наш ресторан</h2>
-        
-        <div class="info-grid">
-          <div class="info-card">
-            <div class="info-icon">📍</div>
-            <h3 class="info-title">Адрес</h3>
-            <p class="info-text" id="restaurantAddress">Выберите ресторан</p>
-          </div>
-          
-          <div class="info-card">
-            <div class="info-icon">🕒</div>
-            <h3 class="info-title">Время работы</h3>
-            <p class="info-text" id="restaurantHours">Выберите ресторан</p>
-          </div>
-          
-          <div class="info-card">
-            <div class="info-icon">📞</div>
-            <h3 class="info-title">Контакты</h3>
-            <p class="info-text" id="restaurantContacts">Выберите ресторан</p>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    <footer>
-      <div class="container">
-        <div class="footer-logo">
+    <div id="mainContent" style="display: none;">
+      <header>
+        <div class="logo">
           <img src="images/logo.png" alt="Logo">
         </div>
-        
-        <div class="copyright" id="copyrightYear">© 2025 FOOD MENU. Все права защищены.</div>
+        <h1 class="main-title">FOOD MENU</h1>
+      </header>
+      
+      <!-- Иконка корзины -->
+      <div class="cart-icon" id="cartIcon">
+        🛒
+        <div class="cart-count" id="cartCount">0</div>
       </div>
-    </footer>
+      
+      <div class="container">
+        <div class="categories" id="categoriesContainer">
+          <!-- Категории будут добавлены динамически через JavaScript -->
+        </div>
+        
+        <div class="menu-grid" id="menuGrid">
+          <!-- Товары будут добавлены динамически через JavaScript -->
+        </div>
+      </div>
+      
+      <section class="location-section">
+        <div class="container">
+          <h2 class="section-title" id="restaurantTitle">Наш ресторан</h2>
+          
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-icon">📍</div>
+              <h3 class="info-title">Адрес</h3>
+              <p class="info-text" id="restaurantAddress">Выберите ресторан</p>
+            </div>
+            
+            <div class="info-card">
+              <div class="info-icon">🕒</div>
+              <h3 class="info-title">Время работы</h3>
+              <p class="info-text" id="restaurantHours">Выберите ресторан</p>
+            </div>
+            
+            <div class="info-card">
+              <div class="info-icon">📞</div>
+              <h3 class="info-title">Контакты</h3>
+              <p class="info-text" id="restaurantContacts">Выберите ресторан</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <footer>
+        <div class="container">
+          <div class="footer-logo">
+            <img src="images/logo.png" alt="Logo">
+          </div>
+          
+          <div class="copyright" id="copyrightYear">© 2025 FOOD MENU. Все права защищены.</div>
+        </div>
+      </footer>
+    </div>
     
     <!-- Модальное окно корзины -->
     <div class="modal" id="cartModal">
@@ -833,21 +813,17 @@
         if (urlParams.has('admin')) {
           // Если пользователь уже авторизован, перенаправляем на админ-панель
           if (db.auth.isAuthenticated()) {
-            window.location.href = 'admin.html';
+            window.location.href = 'admin-panel.html';
             return;
           }
           
-          // Иначе показываем форму входа
-          const adminLogin = prompt('Введите имя пользователя:');
-          const adminPassword = prompt('Введите пароль:');
-          
-          if (db.auth.login(adminLogin, adminPassword)) {
-            window.location.href = 'admin.html';
-          } else {
-            alert('Неверные учетные данные. Попробуйте еще раз.');
-          }
+          // Иначе перенаправляем на страницу логина
+          window.location.href = 'login.html';
         }
       }
+      
+      // Вызываем проверку авторизации
+      checkAdmin();
       
       // Инициализация модального окна выбора ресторана
       function initRestaurantSelection() {
@@ -858,21 +834,8 @@
         const restaurantAddress = document.getElementById('restaurant-address');
         const restaurantHours = document.getElementById('restaurant-hours');
         
-        // Если ресторан уже выбран, загружаем его данные
-        if (selectedRestaurantId) {
-          selectedRestaurant = db.restaurants.getById(selectedRestaurantId);
-          if (selectedRestaurant) {
-            loadRestaurantInfo(selectedRestaurant);
-            loadMenuForRestaurant(selectedRestaurantId);
-          } else {
-            // Если выбранный ресторан не найден, сбрасываем выбор
-            localStorage.removeItem('selectedRestaurant');
-            showRestaurantSelectionModal();
-          }
-        } else {
-          // Показываем модальное окно выбора ресторана
-          showRestaurantSelectionModal();
-        }
+        // Всегда показываем модальное окно при загрузке страницы
+        showRestaurantSelectionModal();
         
         // Заполняем список ресторанов
         const restaurants = db.restaurants.getActive();
@@ -882,6 +845,25 @@
           option.textContent = restaurant.name;
           restaurantSelector.appendChild(option);
         });
+        
+        // Если ресторан уже выбран, устанавливаем его в селекторе
+        if (selectedRestaurantId) {
+          selectedRestaurant = db.restaurants.getById(selectedRestaurantId);
+          if (selectedRestaurant) {
+            restaurantSelector.value = selectedRestaurantId;
+            
+            // Показываем детали ресторана
+            restaurantDetails.style.display = 'grid';
+            restaurantAddress.textContent = selectedRestaurant.address;
+            restaurantHours.textContent = selectedRestaurant.hours;
+            
+            // Активируем кнопку выбора
+            selectRestaurantBtn.disabled = false;
+          } else {
+            // Если выбранный ресторан не найден, сбрасываем выбор
+            localStorage.removeItem('selectedRestaurant');
+          }
+        }
         
         // Обработчик изменения выбранного ресторана
         restaurantSelector.addEventListener('change', function() {
@@ -918,8 +900,15 @@
             loadRestaurantInfo(selectedRestaurant);
             loadMenuForRestaurant(selectedId);
             
-            // Закрываем модальное окно
-            restaurantModal.classList.remove('active');
+            // Закрываем модальное окно с плавной анимацией
+            restaurantModal.style.opacity = '0';
+            setTimeout(() => {
+              restaurantModal.classList.remove('active');
+              restaurantModal.style.opacity = '1';
+              
+              // Показываем основной контент
+              document.getElementById('mainContent').style.display = 'block';
+            }, 300);
           }
         });
       }
@@ -928,6 +917,15 @@
       function showRestaurantSelectionModal() {
         const restaurantModal = document.getElementById('restaurantSelectModal');
         restaurantModal.classList.add('active');
+        document.getElementById('mainContent').style.display = 'none';
+        
+        // Блокируем закрытие по клику вне модального окна
+        restaurantModal.addEventListener('click', function(e) {
+          if (e.target === restaurantModal) {
+            e.stopPropagation();
+            return false;
+          }
+        });
       }
       
       // Загрузка информации о ресторане
@@ -971,9 +969,14 @@
         menuItem.dataset.category = product.category;
         menuItem.dataset.id = product.id;
         
+        // Проверяем, является ли изображение base64-строкой
+        const imageSrc = product.image && product.image.startsWith('data:image') 
+          ? product.image 
+          : `images/${product.image || 'default.jpg'}`;
+        
         menuItem.innerHTML = `
           <div class="menu-content">
-            <img src="images/${product.image}" alt="${product.name}" class="item-image">
+            <img src="${imageSrc}" alt="${product.name}" class="item-image">
             <div class="item-title-container">
               <div class="item-title">${product.name}</div>
             </div>
@@ -1017,6 +1020,26 @@
         categoriesContainer.innerHTML = ''; // Очищаем текущие категории
         
         const categories = db.categories.getActive();
+        
+        // Добавляем кнопку "Все"
+        const allCategoryBtn = document.createElement('button');
+        allCategoryBtn.className = `category-btn ${selectedCategory === 'all' ? 'active' : ''}`;
+        allCategoryBtn.dataset.category = 'all';
+        allCategoryBtn.textContent = 'Все';
+        
+        // Добавляем обработчик клика
+        allCategoryBtn.addEventListener('click', function() {
+          // Меняем активную категорию
+          document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+          
+          selectedCategory = this.dataset.category;
+          
+          // Перезагружаем меню с новой категорией
+          loadMenuForRestaurant(selectedRestaurantId);
+        });
+        
+        categoriesContainer.appendChild(allCategoryBtn);
         
         categories.forEach(category => {
           const categoryBtn = document.createElement('button');
@@ -1211,3 +1234,24 @@
           <div>${totalAmount}₽</div>
         `;
       }
+      
+      // Отображение уведомления
+      function showNotification(message, type = '') {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.classList.add('show');
+        
+        // Автоматически скрываем уведомление через 3 секунды
+        setTimeout(() => {
+          notification.classList.remove('show');
+        }, 3000);
+      }
+      
+      // Инициализация страницы
+      initRestaurantSelection();
+      initCart();
+    });
+  </script>
+</body>
+</html>

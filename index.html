@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FOOD MENU</title>
   
-  <!-- Подключаем шрифт через Google Fonts -->
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;800&display=swap" rel="stylesheet">
   
   <style>
-    /* Базовые стили */
+    /* Base styles */
     * {
       margin: 0;
       padding: 0;
@@ -56,7 +56,7 @@
       letter-spacing: 3px;
       text-transform: uppercase;
       margin-bottom: 40px;
-      color: #9AFF2B; /* Яркий зеленый цвет */
+      color: #9AFF2B;
       text-shadow: 0 0 15px rgba(154, 255, 43, 0.5);
       position: relative;
       z-index: 2;
@@ -68,7 +68,7 @@
       padding: 40px 20px;
     }
     
-    /* Фильтры категорий */
+    /* Categories filter */
     .categories {
       display: flex;
       justify-content: center;
@@ -97,7 +97,7 @@
       color: black;
     }
     
-    /* Элементы меню */
+    /* Menu grid */
     .menu-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
@@ -185,7 +185,7 @@
       background-color: #8DF529;
     }
     
-    /* Корзина */
+    /* Cart icon */
     .cart-icon {
       position: fixed;
       top: 30px;
@@ -227,7 +227,7 @@
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
     
-    /* Инфо о ресторане */
+    /* Restaurant info */
     .location-section {
       background-color: rgba(26, 26, 26, 0.7);
       padding: 60px 0;
@@ -273,7 +273,7 @@
       line-height: 1.4;
     }
     
-    /* Футер */
+    /* Footer */
     footer {
       background-color: rgba(26, 26, 26, 0.7);
       padding: 40px 0;
@@ -298,7 +298,7 @@
       font-size: 14px;
     }
     
-    /* Модальные окна */
+    /* Modal windows */
     .modal {
       display: none;
       position: fixed;
@@ -330,6 +330,7 @@
       transform: translateY(30px);
       opacity: 0;
       transition: transform 0.5s ease, opacity 0.5s ease;
+      position: relative;
     }
     
     .modal.active .modal-content {
@@ -367,7 +368,7 @@
       color: white;
     }
     
-    /* Содержимое корзины */
+    /* Cart content */
     .cart-items {
       margin-bottom: 20px;
       max-height: 300px;
@@ -477,7 +478,7 @@
       background-color: rgba(255, 87, 87, 0.1);
     }
     
-    /* Форма оформления заказа */
+    /* Checkout form */
     .checkout-form {
       margin-top: 20px;
     }
@@ -551,7 +552,7 @@
       cursor: pointer;
     }
     
-    /* Модальное окно выбора ресторана */
+    /* Restaurant select modal */
     .restaurant-select-container {
       padding: 20px 0;
     }
@@ -569,7 +570,7 @@
       gap: 15px;
     }
     
-    /* Уведомления */
+    /* Notifications */
     .notification {
       position: fixed;
       top: 20px;
@@ -600,14 +601,108 @@
       display: none;
     }
     
-    /* Адаптивность для мобильных устройств */
+    /* Loading animation */
+    .loader-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(18, 18, 18, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    
+    .loader {
+      width: 60px;
+      height: 60px;
+      border: 5px solid #1a1a1a;
+      border-top: 5px solid #9AFF2B;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    .fade-out {
+      opacity: 0;
+      visibility: hidden;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Loading animation for content */
+    .content-loader {
+      display: flex;
+      justify-content: center;
+      padding: 40px 0;
+    }
+    
+    .loading-dot {
+      width: 15px;
+      height: 15px;
+      background-color: #9AFF2B;
+      border-radius: 50%;
+      margin: 0 5px;
+      animation: bounce 1.5s infinite ease-in-out;
+    }
+    
+    .loading-dot:nth-child(1) { animation-delay: 0s; }
+    .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+    
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-20px); }
+    }
+    
+    /* Cart swipe indicator */
+    .swipe-indicator {
+      text-align: center;
+      padding: 10px 0;
+      color: #aaa;
+      font-size: 12px;
+      display: none;
+    }
+    
+    /* Mobile responsiveness */
     @media (max-width: 768px) {
       .main-title {
         font-size: 32px;
       }
       
       .menu-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+      }
+      
+      .item-image {
+        max-height: 120px;
+      }
+      
+      .item-title {
+        font-size: 16px;
+        padding: 6px 15px;
+      }
+      
+      .price {
+        font-size: 20px;
+        margin: 8px 0;
+      }
+      
+      .description {
+        font-size: 12px;
+        max-height: 60px;
+        overflow: hidden;
+      }
+      
+      .order-btn {
+        padding: 8px 15px;
+        font-size: 14px;
       }
       
       .info-grid {
@@ -629,12 +724,54 @@
         height: 45px;
         font-size: 22px;
       }
+      
+      /* Improved mobile cart display */
+      .modal-content {
+        width: 95%;
+        height: auto;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      
+      .modal-close-btn {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        font-size: 24px;
+        background: #333;
+        color: white;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        z-index: 100;
+      }
+      
+      .cart-actions {
+        flex-direction: column;
+      }
+      
+      .clear-cart {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      
+      .swipe-indicator {
+        display: block;
+      }
     }
   </style>
 </head>
 <body>
   <div class="overlay">
-    <div id="mainContent" style="display: none;">
+    <!-- Loading screen -->
+    <div class="loader-container" id="initialLoader">
+      <div class="loader"></div>
+    </div>
+    
+    <div id="mainContent">
       <header>
         <div class="logo">
           <img src="images/logo.png" alt="Logo">
@@ -642,43 +779,57 @@
         <h1 class="main-title">FOOD MENU</h1>
       </header>
       
-      <!-- Иконка корзины -->
+      <!-- Cart icon -->
       <div class="cart-icon" id="cartIcon">
         🛒
         <div class="cart-count" id="cartCount">0</div>
       </div>
       
       <div class="container">
+        <!-- Categories container -->
         <div class="categories" id="categoriesContainer">
-          <!-- Категории будут добавлены динамически через JavaScript -->
+          <!-- Loading indicator for categories -->
+          <div class="content-loader" id="categoriesLoader">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+          </div>
+          <!-- Categories will be added dynamically via JavaScript -->
         </div>
         
+        <!-- Menu grid -->
         <div class="menu-grid" id="menuGrid">
-          <!-- Товары будут добавлены динамически через JavaScript -->
+          <!-- Loading indicator for menu -->
+          <div class="content-loader" id="menuLoader" style="grid-column: 1/-1;">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+          </div>
+          <!-- Menu items will be added dynamically via JavaScript -->
         </div>
       </div>
       
       <section class="location-section">
         <div class="container">
-          <h2 class="section-title" id="restaurantTitle">Наш ресторан</h2>
+          <h2 class="section-title" id="restaurantTitle">Our Restaurant</h2>
           
           <div class="info-grid">
             <div class="info-card">
               <div class="info-icon">📍</div>
-              <h3 class="info-title">Адрес</h3>
-              <p class="info-text" id="restaurantAddress">Выберите ресторан</p>
+              <h3 class="info-title">Address</h3>
+              <p class="info-text" id="restaurantAddress">Select restaurant</p>
             </div>
             
             <div class="info-card">
               <div class="info-icon">🕒</div>
-              <h3 class="info-title">Время работы</h3>
-              <p class="info-text" id="restaurantHours">Выберите ресторан</p>
+              <h3 class="info-title">Working Hours</h3>
+              <p class="info-text" id="restaurantHours">Select restaurant</p>
             </div>
             
             <div class="info-card">
               <div class="info-icon">📞</div>
-              <h3 class="info-title">Контакты</h3>
-              <p class="info-text" id="restaurantContacts">Выберите ресторан</p>
+              <h3 class="info-title">Contacts</h3>
+              <p class="info-text" id="restaurantContacts">Select restaurant</p>
             </div>
           </div>
         </div>
@@ -690,142 +841,154 @@
             <img src="images/logo.png" alt="Logo">
           </div>
           
-          <div class="copyright" id="copyrightYear">© 2025 FOOD MENU. Все права защищены.</div>
+          <div class="copyright" id="copyrightYear">© 2025 FOOD MENU. All rights reserved.</div>
         </div>
       </footer>
     </div>
     
-    <!-- Модальное окно корзины -->
+    <!-- Cart modal -->
     <div class="modal" id="cartModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2 class="modal-title">Ваш заказ</h2>
+          <h2 class="modal-title">Your Order</h2>
           <button type="button" class="modal-close-btn" id="closeCartBtn">&times;</button>
         </div>
         
+        <div class="swipe-indicator">Swipe down to close</div>
+        
         <div class="cart-items" id="cartItems">
-          <!-- Товары в корзине будут добавлены динамически -->
-          <div class="cart-empty">Ваша корзина пуста</div>
+          <!-- Cart items will be added dynamically -->
+          <div class="cart-empty">Your cart is empty</div>
         </div>
         
         <div class="cart-total" id="cartTotal">
-          <div>Итого:</div>
+          <div>Total:</div>
           <div>0₽</div>
         </div>
         
         <div class="cart-actions">
-          <button class="clear-cart" id="clearCartBtn">Очистить корзину</button>
+          <button class="clear-cart" id="clearCartBtn">Clear cart</button>
         </div>
         
         <form id="checkoutForm" class="checkout-form">
           <div class="form-group">
-            <label class="form-label">Ваше имя</label>
+            <label class="form-label">Your name</label>
             <input type="text" name="name" class="form-input" required>
           </div>
           
           <div class="form-group">
-            <label class="form-label">Телефон</label>
+            <label class="form-label">Phone</label>
             <input type="tel" name="phone" class="form-input" required>
           </div>
           
           <div class="form-group">
-            <label class="form-label">Время самовывоза</label>
+            <label class="form-label">Pickup time</label>
             <div class="pickup-options">
               <div class="pickup-option">
                 <input type="radio" name="pickup" id="pickup10" value="10" class="pickup-radio" checked>
-                <label for="pickup10" class="pickup-label">10 минут</label>
+                <label for="pickup10" class="pickup-label">10 minutes</label>
               </div>
               <div class="pickup-option">
                 <input type="radio" name="pickup" id="pickup15" value="15" class="pickup-radio">
-                <label for="pickup15" class="pickup-label">15 минут</label>
+                <label for="pickup15" class="pickup-label">15 minutes</label>
               </div>
               <div class="pickup-option">
                 <input type="radio" name="pickup" id="pickup30" value="30" class="pickup-radio">
-                <label for="pickup30" class="pickup-label">30 минут</label>
+                <label for="pickup30" class="pickup-label">30 minutes</label>
               </div>
             </div>
           </div>
           
           <div class="modal-buttons">
-            <button type="submit" class="modal-submit" id="orderSubmitBtn">Оформить заказ</button>
+            <button type="submit" class="modal-submit" id="orderSubmitBtn">Complete order</button>
           </div>
         </form>
       </div>
     </div>
     
-    <!-- Модальное окно выбора ресторана -->
+    <!-- Restaurant select modal -->
     <div class="modal" id="restaurantSelectModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2 class="modal-title">Выберите ресторан</h2>
+          <h2 class="modal-title">Select Restaurant</h2>
         </div>
         
         <div class="restaurant-select-container">
-          <p>Пожалуйста, выберите ресторан, из которого хотите заказать:</p>
+          <p>Please select a restaurant you want to order from:</p>
           
           <div class="form-group">
             <select class="form-input" id="restaurantSelector">
-              <option value="" disabled selected>Выберите ресторан</option>
-              <!-- Рестораны будут добавлены через JavaScript -->
+              <option value="" disabled selected>Select restaurant</option>
+              <!-- Restaurants will be added dynamically -->
             </select>
           </div>
           
           <div class="restaurant-details" id="restaurantDetails" style="display: none;">
             <div class="info-card">
               <div class="info-icon">📍</div>
-              <h3 class="info-title">Адрес</h3>
+              <h3 class="info-title">Address</h3>
               <p class="info-text" id="restaurant-address"></p>
             </div>
             <div class="info-card">
               <div class="info-icon">🕒</div>
-              <h3 class="info-title">Время работы</h3>
+              <h3 class="info-title">Working Hours</h3>
               <p class="info-text" id="restaurant-hours"></p>
             </div>
           </div>
           
           <div class="modal-buttons">
-            <button type="button" class="modal-submit" id="selectRestaurantBtn" disabled>Выбрать</button>
+            <button type="button" class="modal-submit" id="selectRestaurantBtn" disabled>Select</button>
           </div>
         </div>
       </div>
     </div>
     
-    <!-- Уведомление -->
+    <!-- Notification -->
     <div class="notification" id="notification"></div>
   </div>
   
-  <!-- Подключение скриптов -->
+  <!-- Scripts -->
   <script src="db.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Переменные для выбранного ресторана
+      // Variables for selected restaurant
       let selectedRestaurantId = localStorage.getItem('selectedRestaurant');
       let selectedRestaurant = null;
       let selectedCategory = 'all';
+      let availableCategories = []; // To track available categories for selected restaurant
       
-      // Устанавливаем текущий год в футере
-      document.getElementById('copyrightYear').textContent = `© ${new Date().getFullYear()} FOOD MENU. Все права защищены.`;
+      // Set current year in footer
+      document.getElementById('copyrightYear').textContent = `© ${new Date().getFullYear()} FOOD MENU. All rights reserved.`;
       
-      // Проверка авторизации для админ-панели
+      // Show loading animation
+      setTimeout(function() {
+        const initialLoader = document.getElementById('initialLoader');
+        initialLoader.classList.add('fade-out');
+        setTimeout(() => {
+          initialLoader.style.display = 'none';
+        }, 500);
+      }, 1500); // Show loading for 1.5 seconds
+      
+      // Check admin authorization
       function checkAdmin() {
-        // Проверяем, есть ли в URL параметр admin
+        // Check if URL has admin parameter
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('admin')) {
-          // Если пользователь уже авторизован, перенаправляем на админ-панель
+          // If user is already authenticated, redirect to admin panel
           if (db.auth.isAuthenticated()) {
             window.location.href = 'admin-panel.html';
             return;
           }
           
-          // Иначе перенаправляем на страницу логина
+          // Otherwise redirect to login page
           window.location.href = 'login.html';
         }
       }
       
-      // Вызываем проверку авторизации
+      // Call admin authorization check
       checkAdmin();
       
-      // Инициализация модального окна выбора ресторана
+      // Initialize restaurant selection modal
       function initRestaurantSelection() {
         const restaurantModal = document.getElementById('restaurantSelectModal');
         const restaurantSelector = document.getElementById('restaurantSelector');
@@ -834,10 +997,10 @@
         const restaurantAddress = document.getElementById('restaurant-address');
         const restaurantHours = document.getElementById('restaurant-hours');
         
-        // Всегда показываем модальное окно при загрузке страницы
+        // Always show restaurant selection modal on page load
         showRestaurantSelectionModal();
         
-        // Заполняем список ресторанов
+        // Populate restaurant list
         const restaurants = db.restaurants.getActive();
         restaurants.forEach(restaurant => {
           const option = document.createElement('option');
@@ -846,39 +1009,39 @@
           restaurantSelector.appendChild(option);
         });
         
-        // Если ресторан уже выбран, устанавливаем его в селекторе
+        // If restaurant already selected, set it in selector
         if (selectedRestaurantId) {
           selectedRestaurant = db.restaurants.getById(selectedRestaurantId);
           if (selectedRestaurant) {
             restaurantSelector.value = selectedRestaurantId;
             
-            // Показываем детали ресторана
+            // Show restaurant details
             restaurantDetails.style.display = 'grid';
             restaurantAddress.textContent = selectedRestaurant.address;
             restaurantHours.textContent = selectedRestaurant.hours;
             
-            // Активируем кнопку выбора
+            // Enable select button
             selectRestaurantBtn.disabled = false;
           } else {
-            // Если выбранный ресторан не найден, сбрасываем выбор
+            // If selected restaurant not found, reset selection
             localStorage.removeItem('selectedRestaurant');
           }
         }
         
-        // Обработчик изменения выбранного ресторана
+        // Restaurant selector change handler
         restaurantSelector.addEventListener('change', function() {
           const selectedId = this.value;
           
           if (selectedId) {
-            // Показываем детали ресторана
+            // Show restaurant details
             restaurantDetails.style.display = 'grid';
             
-            // Заполняем информацию о ресторане
+            // Fill restaurant information
             const restaurant = db.restaurants.getById(selectedId);
             restaurantAddress.textContent = restaurant.address;
             restaurantHours.textContent = restaurant.hours;
             
-            // Активируем кнопку выбора
+            // Enable select button
             selectRestaurantBtn.disabled = false;
           } else {
             restaurantDetails.style.display = 'none';
@@ -886,40 +1049,42 @@
           }
         });
         
-        // Обработчик нажатия на кнопку выбора ресторана
+        // Restaurant selection button handler
         selectRestaurantBtn.addEventListener('click', function() {
           const selectedId = restaurantSelector.value;
           
           if (selectedId) {
-            // Сохраняем выбранный ресторан
+            // Save selected restaurant
             localStorage.setItem('selectedRestaurant', selectedId);
             selectedRestaurantId = selectedId;
             selectedRestaurant = db.restaurants.getById(selectedId);
             
-            // Загружаем меню ресторана
+            // Load restaurant menu and info
             loadRestaurantInfo(selectedRestaurant);
-            loadMenuForRestaurant(selectedId);
             
-            // Закрываем модальное окно с плавной анимацией
+            // First find available categories then load menu
+            findAvailableCategories(selectedId);
+            
+            // Close modal with smooth animation
             restaurantModal.style.opacity = '0';
             setTimeout(() => {
               restaurantModal.classList.remove('active');
               restaurantModal.style.opacity = '1';
               
-              // Показываем основной контент
+              // Show main content
               document.getElementById('mainContent').style.display = 'block';
             }, 300);
           }
         });
       }
       
-      // Функция показа модального окна выбора ресторана
+      // Function to show restaurant selection modal
       function showRestaurantSelectionModal() {
         const restaurantModal = document.getElementById('restaurantSelectModal');
         restaurantModal.classList.add('active');
         document.getElementById('mainContent').style.display = 'none';
         
-        // Блокируем закрытие по клику вне модального окна
+        // Prevent closing when clicking outside modal
         restaurantModal.addEventListener('click', function(e) {
           if (e.target === restaurantModal) {
             e.stopPropagation();
@@ -928,48 +1093,102 @@
         });
       }
       
-      // Загрузка информации о ресторане
+      // Find categories that have products for the selected restaurant
+      function findAvailableCategories(restaurantId) {
+        // Show the loader
+        document.getElementById('categoriesLoader').style.display = 'flex';
+        
+        // Clear available categories
+        availableCategories = ['all']; // Always include 'all' category
+        
+        // Get products for this restaurant
+        const products = db.products.getByRestaurant(restaurantId);
+        
+        // Extract unique categories from products
+        products.forEach(product => {
+          if (!availableCategories.includes(product.category)) {
+            availableCategories.push(product.category);
+          }
+        });
+        
+        // Load categories after a slight delay to show animation
+        setTimeout(() => {
+          loadCategories();
+          loadMenuForRestaurant(restaurantId);
+        }, 500);
+      }
+      
+      // Load restaurant information
       function loadRestaurantInfo(restaurant) {
         if (!restaurant) return;
         
         document.getElementById('restaurantTitle').textContent = restaurant.name;
         document.getElementById('restaurantAddress').textContent = restaurant.address;
         document.getElementById('restaurantHours').textContent = restaurant.hours;
-        document.getElementById('restaurantContacts').textContent = `Телефон: ${restaurant.phone}\nEmail: ${restaurant.email}`;
+        document.getElementById('restaurantContacts').textContent = `Phone: ${restaurant.phone}\nEmail: ${restaurant.email}`;
       }
       
-      // Загрузка меню для выбранного ресторана
+      // Load menu for selected restaurant
       function loadMenuForRestaurant(restaurantId) {
-        // Загружаем категории
-        loadCategories();
+        // Show loading indicator
+        document.getElementById('menuLoader').style.display = 'flex';
         
-        // Загружаем товары для выбранного ресторана
         const menuGrid = document.getElementById('menuGrid');
-        menuGrid.innerHTML = ''; // Очищаем текущее меню
+        menuGrid.innerHTML = '';
+        menuGrid.appendChild(document.getElementById('menuLoader'));
         
+        // Get products for selected restaurant
         const products = db.products.getByRestaurant(restaurantId);
         
-        if (products.length === 0) {
-          menuGrid.innerHTML = '<p style="text-align: center; color: #aaa; grid-column: 1/-1;">В меню этого ресторана пока нет товаров.</p>';
-          return;
-        }
-        
-        products.forEach(product => {
-          if (selectedCategory === 'all' || product.category === selectedCategory) {
-            const menuItem = createProductElement(product);
-            menuGrid.appendChild(menuItem);
+        // Delay to show animation
+        setTimeout(() => {
+          if (products.length === 0) {
+            menuGrid.innerHTML = '<p style="text-align: center; color: #aaa; grid-column: 1/-1;">There are no products in this restaurant menu yet.</p>';
+            return;
           }
-        });
+          
+          // Filter products by selected category if not 'all'
+          const filteredProducts = selectedCategory === 'all' 
+            ? products 
+            : products.filter(product => product.category === selectedCategory);
+          
+          if (filteredProducts.length === 0) {
+            menuGrid.innerHTML = '<p style="text-align: center; color: #aaa; grid-column: 1/-1;">No products found in this category.</p>';
+            return;
+          }
+          
+          // Clear loading indicator
+          document.getElementById('menuLoader').style.display = 'none';
+          menuGrid.innerHTML = '';
+          
+          // Add products to grid with animation
+          filteredProducts.forEach((product, index) => {
+            const menuItem = createProductElement(product);
+            
+            // Add fade-in animation
+            menuItem.style.opacity = '0';
+            menuItem.style.transform = 'translateY(20px)';
+            menuItem.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            
+            menuGrid.appendChild(menuItem);
+            
+            // Stagger the animations
+            setTimeout(() => {
+              menuItem.style.opacity = '1';
+              menuItem.style.transform = 'translateY(0)';
+            }, 100 * index);
+          });
+        }, 800);
       }
       
-      // Создание элемента товара
+      // Create product element
       function createProductElement(product) {
         const menuItem = document.createElement('div');
         menuItem.className = 'menu-item';
         menuItem.dataset.category = product.category;
         menuItem.dataset.id = product.id;
         
-        // Проверяем, является ли изображение base64-строкой
+        // Check if image is base64 string
         const imageSrc = product.image && product.image.startsWith('data:image') 
           ? product.image 
           : `images/${product.image || 'default.jpg'}`;
@@ -984,29 +1203,29 @@
             <div class="description">
               ${product.description}
             </div>
-            <button class="order-btn" data-id="${product.id}">Добавить в корзину</button>
+            <button class="order-btn" data-id="${product.id}">Add to cart</button>
           </div>
         `;
         
-        // Добавляем обработчик добавления в корзину
+        // Add to cart button handler
         const addButton = menuItem.querySelector('.order-btn');
         addButton.addEventListener('click', function() {
           const result = db.cart.addItem(product.id);
           
           if (result.success) {
-            // Анимация добавления в корзину
-            this.textContent = "Добавлено!";
+            // Add to cart animation
+            this.textContent = "Added!";
             setTimeout(() => {
-              this.textContent = "Добавить в корзину";
+              this.textContent = "Add to cart";
             }, 1000);
             
-            // Обновляем счетчик товаров в корзине
+            // Update cart counter
             updateCartCount();
             
-            // Показываем уведомление
-            showNotification(`Товар "${product.name}" добавлен в корзину`);
+            // Show notification
+            showNotification(`Item "${product.name}" added to cart`);
           } else {
-            // Если произошла ошибка
+            // Show error if any
             showNotification(result.error, 'error');
           }
         });
@@ -1014,59 +1233,65 @@
         return menuItem;
       }
       
-      // Загрузка категорий
+      // Load categories
       function loadCategories() {
-  const categoriesContainer = document.getElementById('categoriesContainer');
-  categoriesContainer.innerHTML = ''; // Очищаем текущие категории
-  
-  const categories = db.categories.getActive();
-  
-  // Добавляем кнопку "All" (только один раз)
-  const allCategoryBtn = document.createElement('button');
-  allCategoryBtn.className = `category-btn ${selectedCategory === 'all' ? 'active' : ''}`;
-  allCategoryBtn.dataset.category = 'all';
-  allCategoryBtn.textContent = 'All'; // Переведено на английский
-  
-  // Добавляем обработчик клика
-  allCategoryBtn.addEventListener('click', function() {
-    // Меняем активную категорию
-    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-    this.classList.add('active');
-    
-    selectedCategory = this.dataset.category;
-    
-    // Перезагружаем меню с новой категорией
-    loadMenuForRestaurant(selectedRestaurantId);
-  });
-  
-  categoriesContainer.appendChild(allCategoryBtn);
-  
-  // Фильтруем категории, чтобы исключить системную категорию "all" для избежания дублирования
-  const filteredCategories = categories.filter(category => category.id !== 'all');
-  
-  filteredCategories.forEach(category => {
-    const categoryBtn = document.createElement('button');
-    categoryBtn.className = `category-btn ${category.id === selectedCategory ? 'active' : ''}`;
-    categoryBtn.dataset.category = category.id;
-    categoryBtn.textContent = category.name; // Имя категории будет из БД (нужно перевести в БД)
-    
-    // Добавляем обработчик клика
-    categoryBtn.addEventListener('click', function() {
-      // Меняем активную категорию
-      document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-      this.classList.add('active');
+        const categoriesContainer = document.getElementById('categoriesContainer');
+        categoriesContainer.innerHTML = '';
+        
+        // Get all active categories
+        const allCategories = db.categories.getActive();
+        
+        // Add "All" button
+        const allCategoryBtn = document.createElement('button');
+        allCategoryBtn.className = `category-btn ${selectedCategory === 'all' ? 'active' : ''}`;
+        allCategoryBtn.dataset.category = 'all';
+        allCategoryBtn.textContent = 'All';
+        
+        // Add click handler
+        allCategoryBtn.addEventListener('click', function() {
+          // Change active category
+          document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+          
+          selectedCategory = this.dataset.category;
+          
+          // Reload menu with new category
+          loadMenuForRestaurant(selectedRestaurantId);
+        });
+        
+        categoriesContainer.appendChild(allCategoryBtn);
+        
+        // Filter out system 'all' category and categories that don't have products
+        const filteredCategories = allCategories.filter(category => 
+          category.id !== 'all' && availableCategories.includes(category.id)
+        );
+        
+        filteredCategories.forEach(category => {
+          const categoryBtn = document.createElement('button');
+          categoryBtn.className = `category-btn ${category.id === selectedCategory ? 'active' : ''}`;
+          categoryBtn.dataset.category = category.id;
+          categoryBtn.textContent = category.name;
+          
+          // Add click handler
+          categoryBtn.addEventListener('click', function() {
+            // Change active category
+            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            selectedCategory = this.dataset.category;
+            
+            // Reload menu with new category
+            loadMenuForRestaurant(selectedRestaurantId);
+          });
+          
+          categoriesContainer.appendChild(categoryBtn);
+        });
+        
+        // Hide categories loader
+        document.getElementById('categoriesLoader').style.display = 'none';
+      }
       
-      selectedCategory = this.dataset.category;
-      
-      // Перезагружаем меню с новой категорией
-      loadMenuForRestaurant(selectedRestaurantId);
-    });
-    
-    categoriesContainer.appendChild(categoryBtn);
-  });
-}
-      
-      // Инициализация корзины
+      // Initialize cart
       function initCart() {
         const cartIcon = document.getElementById('cartIcon');
         const cartModal = document.getElementById('cartModal');
@@ -1074,32 +1299,32 @@
         const clearCartBtn = document.getElementById('clearCartBtn');
         const checkoutForm = document.getElementById('checkoutForm');
         
-        // Обновляем счетчик товаров
+        // Update cart counter
         updateCartCount();
         
-        // Обработчик клика по иконке корзины
+        // Cart icon click handler
         cartIcon.addEventListener('click', function() {
           openCart();
         });
         
-        // Обработчик закрытия корзины
+        // Close cart button handler
         closeCartBtn.addEventListener('click', function() {
           cartModal.classList.remove('active');
         });
         
-        // Обработчик очистки корзины
+        // Clear cart button handler
         clearCartBtn.addEventListener('click', function() {
           db.cart.clear();
           updateCartCount();
           updateCartItems();
-          showNotification('Корзина очищена');
+          showNotification('Cart cleared');
         });
         
-        // Обработчик формы оформления заказа
+        // Checkout form handler
         checkoutForm.addEventListener('submit', function(e) {
           e.preventDefault();
           
-          // Получаем данные формы
+          // Get form data
           const formData = new FormData(this);
           const customerInfo = {
             name: formData.get('name'),
@@ -1107,64 +1332,92 @@
             pickupTime: formData.get('pickup')
           };
           
-          // Оформляем заказ
+          // Checkout
           const result = db.cart.checkout(customerInfo);
           
           if (result.success) {
-            // Показываем уведомление об успешном оформлении заказа
-            showNotification(`Заказ успешно оформлен! Будет готов через ${customerInfo.pickupTime} минут.`);
+            // Show success notification
+            showNotification(`Order successfully placed! Will be ready in ${customerInfo.pickupTime} minutes.`);
             
-            // Закрываем корзину
+            // Close cart modal
             cartModal.classList.remove('active');
             
-            // Сбрасываем форму
+            // Reset form
             checkoutForm.reset();
             
-            // Обновляем счетчик товаров
+            // Update cart counter
             updateCartCount();
           } else {
-            // Если произошла ошибка
+            // Show error if any
             showNotification(result.error, 'error');
           }
         });
+        
+        // Add swipe to close for mobile
+        addSwipeToCloseCart();
       }
       
-      // Открытие корзины
+      // Function to add swipe down to close cart on mobile
+      function addSwipeToCloseCart() {
+        const cartModal = document.getElementById('cartModal');
+        const modalContent = cartModal.querySelector('.modal-content');
+        
+        let touchStartY = 0;
+        let touchEndY = 0;
+        
+        modalContent.addEventListener('touchstart', function(e) {
+          touchStartY = e.changedTouches[0].screenY;
+        }, false);
+        
+        modalContent.addEventListener('touchend', function(e) {
+          touchEndY = e.changedTouches[0].screenY;
+          handleSwipe();
+        }, false);
+        
+        function handleSwipe() {
+          // If swiped down more than 100px, close modal
+          if (touchEndY - touchStartY > 100) {
+            cartModal.classList.remove('active');
+          }
+        }
+      }
+      
+      // Open cart
       function openCart() {
-        // Обновляем содержимое корзины
+        // Update cart content
         updateCartItems();
         
-        // Показываем модальное окно
+        // Show modal
         const cartModal = document.getElementById('cartModal');
         cartModal.classList.add('active');
       }
       
-      // Обновление счетчика товаров в корзине
+      // Update cart counter
       function updateCartCount() {
         const cartCount = document.getElementById('cartCount');
         const count = db.cart.getTotalItems();
         cartCount.textContent = count;
       }
       
-      // Обновление содержимого корзины
+      // Update cart items
       function updateCartItems() {
         const cartItems = document.getElementById('cartItems');
         const cartTotal = document.getElementById('cartTotal');
         const cart = db.cart.get();
         
-        // Очищаем текущее содержимое
+        // Clear current content
         cartItems.innerHTML = '';
         
         if (cart.items.length === 0) {
-          cartItems.innerHTML = '<div class="cart-empty">Ваша корзина пуста</div>';
+          cartItems.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
           cartTotal.innerHTML = `
-            <div>Итого:</div>
+            <div>Total:</div>
             <div>0₽</div>
           `;
           return;
         }
         
-        // Добавляем товары в корзину
+        // Add items to cart
         cart.items.forEach(item => {
           const cartItem = document.createElement('div');
           cartItem.className = 'cart-item';
@@ -1189,7 +1442,7 @@
           cartItems.appendChild(cartItem);
         });
         
-        // Добавляем обработчики для кнопок изменения количества
+        // Add handlers for quantity buttons
         const decreaseButtons = cartItems.querySelectorAll('.decrease');
         const increaseButtons = cartItems.querySelectorAll('.increase');
         const removeButtons = cartItems.querySelectorAll('.remove-item');
@@ -1230,28 +1483,28 @@
           });
         });
         
-        // Обновляем итоговую сумму
+        // Update total amount
         const totalAmount = db.cart.getTotalPrice();
         cartTotal.innerHTML = `
-          <div>Итого:</div>
+          <div>Total:</div>
           <div>${totalAmount}₽</div>
         `;
       }
       
-      // Отображение уведомления
+      // Show notification
       function showNotification(message, type = '') {
         const notification = document.getElementById('notification');
         notification.textContent = message;
         notification.className = `notification ${type}`;
         notification.classList.add('show');
         
-        // Автоматически скрываем уведомление через 3 секунды
+        // Auto-hide notification after 3 seconds
         setTimeout(() => {
           notification.classList.remove('show');
         }, 3000);
       }
       
-      // Инициализация страницы
+      // Initialize page
       initRestaurantSelection();
       initCart();
     });

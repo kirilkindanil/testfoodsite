@@ -1016,52 +1016,55 @@
       
       // Загрузка категорий
       function loadCategories() {
-        const categoriesContainer = document.getElementById('categoriesContainer');
-        categoriesContainer.innerHTML = ''; // Очищаем текущие категории
-        
-        const categories = db.categories.getActive();
-        
-        // Добавляем кнопку "Все"
-        const allCategoryBtn = document.createElement('button');
-        allCategoryBtn.className = `category-btn ${selectedCategory === 'all' ? 'active' : ''}`;
-        allCategoryBtn.dataset.category = 'all';
-        allCategoryBtn.textContent = 'Все';
-        
-        // Добавляем обработчик клика
-        allCategoryBtn.addEventListener('click', function() {
-          // Меняем активную категорию
-          document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-          this.classList.add('active');
-          
-          selectedCategory = this.dataset.category;
-          
-          // Перезагружаем меню с новой категорией
-          loadMenuForRestaurant(selectedRestaurantId);
-        });
-        
-        categoriesContainer.appendChild(allCategoryBtn);
-        
-        categories.forEach(category => {
-          const categoryBtn = document.createElement('button');
-          categoryBtn.className = `category-btn ${category.id === selectedCategory ? 'active' : ''}`;
-          categoryBtn.dataset.category = category.id;
-          categoryBtn.textContent = category.name;
-          
-          // Добавляем обработчик клика
-          categoryBtn.addEventListener('click', function() {
-            // Меняем активную категорию
-            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            
-            selectedCategory = this.dataset.category;
-            
-            // Перезагружаем меню с новой категорией
-            loadMenuForRestaurant(selectedRestaurantId);
-          });
-          
-          categoriesContainer.appendChild(categoryBtn);
-        });
-      }
+  const categoriesContainer = document.getElementById('categoriesContainer');
+  categoriesContainer.innerHTML = ''; // Очищаем текущие категории
+  
+  const categories = db.categories.getActive();
+  
+  // Добавляем кнопку "All" (только один раз)
+  const allCategoryBtn = document.createElement('button');
+  allCategoryBtn.className = `category-btn ${selectedCategory === 'all' ? 'active' : ''}`;
+  allCategoryBtn.dataset.category = 'all';
+  allCategoryBtn.textContent = 'All'; // Переведено на английский
+  
+  // Добавляем обработчик клика
+  allCategoryBtn.addEventListener('click', function() {
+    // Меняем активную категорию
+    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+    this.classList.add('active');
+    
+    selectedCategory = this.dataset.category;
+    
+    // Перезагружаем меню с новой категорией
+    loadMenuForRestaurant(selectedRestaurantId);
+  });
+  
+  categoriesContainer.appendChild(allCategoryBtn);
+  
+  // Фильтруем категории, чтобы исключить системную категорию "all" для избежания дублирования
+  const filteredCategories = categories.filter(category => category.id !== 'all');
+  
+  filteredCategories.forEach(category => {
+    const categoryBtn = document.createElement('button');
+    categoryBtn.className = `category-btn ${category.id === selectedCategory ? 'active' : ''}`;
+    categoryBtn.dataset.category = category.id;
+    categoryBtn.textContent = category.name; // Имя категории будет из БД (нужно перевести в БД)
+    
+    // Добавляем обработчик клика
+    categoryBtn.addEventListener('click', function() {
+      // Меняем активную категорию
+      document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+      this.classList.add('active');
+      
+      selectedCategory = this.dataset.category;
+      
+      // Перезагружаем меню с новой категорией
+      loadMenuForRestaurant(selectedRestaurantId);
+    });
+    
+    categoriesContainer.appendChild(categoryBtn);
+  });
+}
       
       // Инициализация корзины
       function initCart() {

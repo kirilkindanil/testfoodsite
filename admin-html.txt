@@ -1,0 +1,1931 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админ-панель | Food Menu</title>
+  
+  <!-- Подключаем шрифт через Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    body {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    
+    .admin-header {
+      background-color: #1a1a1a;
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .admin-logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .admin-logo img {
+      height: 40px;
+      width: auto;
+    }
+    
+    .admin-title {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    
+    .admin-logout {
+      background-color: transparent;
+      color: #9AFF2B;
+      border: 1px solid #9AFF2B;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+    
+    .admin-logout:hover {
+      background-color: #9AFF2B;
+      color: black;
+    }
+    
+    .admin-container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    
+    .admin-tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+      overflow-x: auto;
+      white-space: nowrap;
+      padding-bottom: 5px;
+    }
+    
+    .admin-tab {
+      padding: 12px 20px;
+      cursor: pointer;
+      background-color: #f0f0f0;
+      border: 1px solid #ddd;
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      margin-right: 5px;
+      transition: all 0.3s ease;
+    }
+    
+    .admin-tab.active {
+      background-color: #9AFF2B;
+      color: black;
+      font-weight: 600;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .admin-card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    
+    .admin-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .admin-card-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    
+    .admin-btn {
+      background-color: #9AFF2B;
+      color: black;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .admin-btn:hover {
+      background-color: #8DF529;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .admin-btn.secondary {
+      background-color: #f0f0f0;
+      color: #333;
+    }
+    
+    .admin-btn.danger {
+      background-color: #ff5757;
+      color: white;
+    }
+    
+    .admin-btn.danger:hover {
+      background-color: #ff4242;
+    }
+    
+    /* Таблица стилей */
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .admin-table th,
+    .admin-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .admin-table th {
+      background-color: #f8f8f8;
+      font-weight: 600;
+    }
+    
+    .admin-table tr:hover {
+      background-color: #f9f9f9;
+    }
+    
+    .admin-table .actions {
+      display: flex;
+      gap: 10px;
+    }
+    
+    /* Форма стилей */
+    .admin-form {
+      margin-top: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    
+    .form-input, 
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      background-color: white;
+      color: #333;
+      font-size: 16px;
+    }
+    
+    .form-input:focus, 
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: #9AFF2B;
+      box-shadow: 0 0 5px rgba(154, 255, 43, 0.3);
+    }
+    
+    .form-textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    
+    .form-price-input {
+      position: relative;
+    }
+    
+    .form-price-input::before {
+      content: "₽";
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #777;
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      margin-top: 30px;
+    }
+    
+    /* Статус заказа */
+    .status-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .status-new {
+      background-color: rgba(79, 195, 247, 0.2);
+      color: #0277bd;
+    }
+    
+    .status-processing {
+      background-color: rgba(255, 152, 0, 0.2);
+      color: #e65100;
+    }
+    
+    .status-ready {
+      background-color: rgba(154, 255, 43, 0.2);
+      color: #2e7d32;
+    }
+    
+    .status-completed {
+      background-color: rgba(139, 195, 74, 0.2);
+      color: #558b2f;
+    }
+    
+    .status-cancelled {
+      background-color: rgba(255, 87, 87, 0.2);
+      color: #d32f2f;
+    }
+    
+    /* Изображение товара предпросмотр */
+    .image-preview {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-top: 10px;
+      border: 1px solid #ddd;
+    }
+    
+    /* Модальное окно */
+    .admin-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .admin-modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background-color: white;
+      border-radius: 8px;
+      padding: 25px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #777;
+    }
+    
+    /* Сообщения о статусе */
+    .status-message {
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      display: none;
+    }
+    
+    .status-message.success {
+      background-color: rgba(154, 255, 43, 0.2);
+      color: #3c7a00;
+      border: 1px solid rgba(154, 255, 43, 0.5);
+      display: block;
+    }
+    
+    .status-message.error {
+      background-color: rgba(255, 87, 87, 0.2);
+      color: #aa2222;
+      border: 1px solid rgba(255, 87, 87, 0.5);
+      display: block;
+    }
+    
+    /* Панель статистики */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 36px;
+      font-weight: 700;
+      margin: 10px 0;
+      color: #9AFF2B;
+    }
+    
+    .stat-label {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    /* Switch/Toggle */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+    
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: #9AFF2B;
+    }
+    
+    input:focus + .slider {
+      box-shadow: 0 0 1px #9AFF2B;
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    
+    /* Мобильная адаптивность */
+    @media (max-width: 768px) {
+      .admin-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 5px;
+      }
+      
+      .admin-table {
+        display: block;
+        overflow-x: auto;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .admin-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+      }
+      
+      .form-actions button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="admin-header">
+    <div class="admin-logo">
+      <img src="images/logo.png" alt="Logo">
+      <div class="admin-title">Админ-панель</div>
+    </div>
+    <a href="index.html" class="admin-logout" id="viewSiteBtn">Просмотр сайта</a>
+  </header>
+  
+  <div class="admin-container">
+    <!-- Tabs -->
+    <div class="admin-tabs">
+      <div class="admin-tab active" data-tab="dashboard">Дашборд</div>
+      <div class="admin-tab" data-tab="restaurants">Рестораны</div>
+      <div class="admin-tab" data-tab="products">Товары</div>
+      <div class="admin-tab" data-tab="categories">Категории</div>
+      <div class="admin-tab" data-tab="orders">Заказы</div>
+      <div class="admin-tab" data-tab="settings">Настройки</div>
+    </div>
+    
+    <!-- Dashboard Tab -->
+    <div class="tab-content active" id="dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="restaurantCount">0</div>
+          <div class="stat-label">Рестораны</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="productCount">0</div>
+          <div class="stat-label">Товары</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="totalOrders">0</div>
+          <div class="stat-label">Заказы</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="totalRevenue">0₽</div>
+          <div class="stat-label">Выручка</div>
+        </div>
+      </div>
+      
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="admin-card-title">Последние заказы</div>
+          <button class="admin-btn" id="viewAllOrdersBtn" data-tab="orders">Все заказы</button>
+        </div>
+        <div id="recentOrdersList">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Клиент</th>
+                <th>Ресторан</th>
+                <th>Сумма</th>
+                <th>Статус</th>
+                <th>Дата</th>
+              </tr>
+            </thead>
+            <tbody id="recentOrdersTable">
+              <!-- Заказы будут добавлены через JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Restaurants Tab -->
+    <div class="tab-content" id="restaurants">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="admin-card-title">Рестораны</div>
+          <button class="admin-btn" id="addRestaurantBtn">Добавить ресторан</button>
+        </div>
+        <div id="restaurantsStatusMessage" class="status-message"></div>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Название</th>
+              <th>Адрес</th>
+              <th>Телефон</th>
+              <th>Статус</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="restaurantsTable">
+            <!-- Рестораны будут добавлены через JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Products Tab -->
+    <div class="tab-content" id="products">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="admin-card-title">Товары</div>
+          <button class="admin-btn" id="addProductBtn">Добавить товар</button>
+        </div>
+        <div id="productsStatusMessage" class="status-message"></div>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Название</th>
+              <th>Категория</th>
+              <th>Цена</th>
+              <th>Рестораны</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="productsTable">
+            <!-- Товары будут добавлены через JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Categories Tab -->
+    <div class="tab-content" id="categories">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="admin-card-title">Категории</div>
+          <button class="admin-btn" id="addCategoryBtn">Добавить категорию</button>
+        </div>
+        <div id="categoriesStatusMessage" class="status-message"></div>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Название</th>
+              <th>Slug</th>
+              <th>Статус</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="categoriesTable">
+            <!-- Категории будут добавлены через JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Orders Tab -->
+    <div class="tab-content" id="orders">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="admin-card-title">Заказы</div>
+          <div>
+            <select id="orderFilterRestaurant" class="form-select" style="width: auto; display: inline-block; margin-right: 10px;">
+              <option value="">Все рестораны</option>
+              <!-- Рестораны будут добавлены через JavaScript -->
+            </select>
+            <select id="orderFilterStatus" class="form-select" style="width: auto; display: inline-block;">
+              <option value="">Все статусы</option>
+              <option value="new">Новые</option>
+              <option value="processing">В обработке</option>
+              <option value="ready">Готовы к выдаче</option>
+              <option value="completed">Завершены</option>
+              <option value="cancelled">Отменены</option>
+            </select>
+          </div>
+        </div>
+        <div id="ordersStatusMessage" class="status-message"></div>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Клиент</th>
+              <th>Ресторан</th>
+              <th>Сумма</th>
+              <th>Статус</th>
+              <th>Дата</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTable">
+            <!-- Заказы будут добавлены через JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Settings Tab -->
+    <div class="tab-content" id="settings">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="admin-card-title">Настройки сайта</div>
+        </div>
+        <div id="settingsStatusMessage" class="status-message"></div>
+        <form id="settingsForm" class="admin-form">
+          <div class="form-group">
+            <label class="form-label">Название сайта</label>
+            <input type="text" id="siteTitle" name="siteTitle" class="form-input" value="FOOD MENU">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Контактный Email</label>
+            <input type="email" id="contactEmail" name="contactEmail" class="form-input" value="info@foodmenu.com">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Контактный телефон</label>
+            <input type="tel" id="contactPhone" name="contactPhone" class="form-input" value="+7 (123) 456-78-90">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Настройки Telegram-бота</label>
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+              <label class="switch" style="margin-right: 10px;">
+                <input type="checkbox" id="telegramBotEnabled" name="telegramBotEnabled">
+                <span class="slider"></span>
+              </label>
+              <span>Включить уведомления о заказах</span>
+            </div>
+            
+            <input type="text" id="telegramBotToken" name="telegramBotToken" class="form-input" placeholder="Токен Telegram-бота" style="margin-bottom: 10px;">
+            <input type="text" id="telegramChatId" name="telegramChatId" class="form-input" placeholder="ID чата для уведомлений">
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="admin-btn">Сохранить настройки</button>
+          </div>
+        </form>
+      </div>
+      
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="admin-card-title">Настройки администратора</div>
+        </div>
+        <div id="adminStatusMessage" class="status-message"></div>
+        <form id="adminForm" class="admin-form">
+          <div class="form-group">
+            <label class="form-label">Имя пользователя</label>
+            <input type="text" id="adminUsername" name="adminUsername" class="form-input">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Новый пароль</label>
+            <input type="password" id="adminPassword" name="adminPassword" class="form-input">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Подтверждение пароля</label>
+            <input type="password" id="adminPasswordConfirm" name="adminPasswordConfirm" class="form-input">
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="admin-btn">Сохранить данные администратора</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Модальное окно ресторана -->
+  <div class="admin-modal" id="restaurantModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="restaurantModalTitle">Добавить ресторан</h3>
+        <button type="button" class="modal-close" id="closeRestaurantModal">&times;</button>
+      </div>
+      <form id="restaurantForm" class="admin-form">
+        <input type="hidden" id="restaurantId" name="restaurantId">
+        
+        <div class="form-group">
+          <label class="form-label">Название ресторана</label>
+          <input type="text" id="restaurantName" name="name" class="form-input" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Адрес</label>
+          <input type="text" id="restaurantAddress" name="address" class="form-input" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Часы работы</label>
+          <input type="text" id="restaurantHours" name="hours" class="form-input" 
+                 placeholder="Пн-Пт: 10:00 - 22:00, Сб-Вс: 11:00 - 23:00" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Телефон</label>
+          <input type="text" id="restaurantPhone" name="phone" class="form-input" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="restaurantEmail" name="email" class="form-input" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Статус</label>
+          <label class="switch">
+            <input type="checkbox" id="restaurantIsActive" name="isActive" checked>
+            <span class="slider"></span>
+          </label>
+          <span style="margin-left: 10px;">Активен</span>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="admin-btn secondary" id="cancelRestaurantBtn">Отмена</button>
+          <button type="submit" class="admin-btn">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Модальное окно товара -->
+  <div class="admin-modal" id="productModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="productModalTitle">Добавить товар</h3>
+        <button type="button" class="modal-close" id="closeProductModal">&times;</button>
+      </div>
+      <form id="productForm" class="admin-form">
+        <input type="hidden" id="productId" name="productId">
+        
+        <div class="form-group">
+          <label class="form-label">Название товара</label>
+          <input type="text" id="productName" name="name" class="form-input" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Категория</label>
+          <select id="productCategory" name="category" class="form-select" required>
+            <option value="">Выберите категорию</option>
+            <!-- Категории будут добавлены через JavaScript -->
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Цена, ₽</label>
+          <input type="number" id="productPrice" name="price" class="form-input" required min="0">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Описание</label>
+          <textarea id="productDescription" name="description" class="form-textarea" required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Рестораны</label>
+          <div id="productRestaurantsCheckboxes" style="margin-top: 10px;">
+            <!-- Рестораны будут добавлены через JavaScript -->
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Статус</label>
+          <label class="switch">
+            <input type="checkbox" id="productIsActive" name="isActive" checked>
+            <span class="slider"></span>
+          </label>
+          <span style="margin-left: 10px;">Активен</span>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="admin-btn secondary" id="cancelProductBtn">Отмена</button>
+          <button type="submit" class="admin-btn">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Модальное окно категории -->
+  <div class="admin-modal" id="categoryModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="categoryModalTitle">Добавить категорию</h3>
+        <button type="button" class="modal-close" id="closeCategoryModal">&times;</button>
+      </div>
+      <form id="categoryForm" class="admin-form">
+        <input type="hidden" id="categoryId" name="categoryId">
+        
+        <div class="form-group">
+          <label class="form-label">Название категории</label>
+          <input type="text" id="categoryName" name="name" class="form-input" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Slug (для URL)</label>
+          <input type="text" id="categorySlug" name="slug" class="form-input" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Статус</label>
+          <label class="switch">
+            <input type="checkbox" id="categoryIsActive" name="isActive" checked>
+            <span class="slider"></span>
+          </label>
+          <span style="margin-left: 10px;">Активна</span>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="admin-btn secondary" id="cancelCategoryBtn">Отмена</button>
+          <button type="submit" class="admin-btn">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Модальное окно заказа -->
+  <div class="admin-modal" id="orderModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="orderModalTitle">Просмотр заказа</h3>
+        <button type="button" class="modal-close" id="closeOrderModal">&times;</button>
+      </div>
+      
+      <div id="orderDetails">
+        <div class="form-group">
+          <label class="form-label">Номер заказа</label>
+          <div id="orderNumber" style="font-size: 18px; font-weight: bold;"></div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Статус</label>
+          <select id="orderStatus" class="form-select">
+            <option value="new">Новый</option>
+            <option value="processing">В обработке</option>
+            <option value="ready">Готов к выдаче</option>
+            <option value="completed">Завершен</option>
+            <option value="cancelled">Отменен</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Клиент</label>
+          <div id="orderCustomer"></div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Телефон</label>
+          <div id="orderPhone"></div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Ресторан</label>
+          <div id="orderRestaurant"></div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Время самовывоза</label>
+          <div id="orderPickupTime"></div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Дата/время заказа</label>
+          <div id="orderDateTime"></div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Состав заказа</label>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Товар</th>
+                <th>Цена</th>
+                <th>Кол-во</th>
+                <th>Сумма</th>
+              </tr>
+            </thead>
+            <tbody id="orderItems"></tbody>
+          </table>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Итого</label>
+          <div id="orderTotal" style="font-size: 18px; font-weight: bold;"></div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="admin-btn secondary" id="closeOrderBtn">Закрыть</button>
+          <button type="button" class="admin-btn" id="saveOrderStatusBtn">Сохранить статус</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Подключение скриптов -->
+  <script src="db.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Проверка авторизации
+      if (!db.auth.isAuthenticated()) {
+        window.location.href = 'index.html?admin=true';
+        return;
+      }
+      
+      // Переменные для текущих данных
+      let currentRestaurantId = null;
+      let currentProductId = null;
+      let currentCategoryId = null;
+      let currentOrderId = null;
+      
+      // Инициализация вкладок
+      function initTabs() {
+        const tabs = document.querySelectorAll('.admin-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+          tab.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            
+            // Убираем активный класс со всех вкладок и контента
+            tabs.forEach(t => t.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Добавляем активный класс к выбранной вкладке и контенту
+            this.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+            
+            // Загружаем данные для выбранной вкладки
+            loadTabData(tabId);
+          });
+        });
+        
+        // Кнопка "Все заказы"
+        document.getElementById('viewAllOrdersBtn').addEventListener('click', function() {
+          const tabId = this.getAttribute('data-tab');
+          
+          // Убираем активный класс со всех вкладок и контента
+          tabs.forEach(t => t.classList.remove('active'));
+          tabContents.forEach(content => content.classList.remove('active'));
+          
+          // Добавляем активный класс к выбранной вкладке и контенту
+          document.querySelector(`.admin-tab[data-tab="${tabId}"]`).classList.add('active');
+          document.getElementById(tabId).classList.add('active');
+          
+          // Загружаем данные для выбранной вкладки
+          loadTabData(tabId);
+        });
+      }
+      
+      // Заполнение чекбоксов ресторанов
+      function fillRestaurantCheckboxes() {
+        const restaurantCheckboxes = document.getElementById('productRestaurantsCheckboxes');
+        restaurantCheckboxes.innerHTML = '';
+        
+        const restaurants = db.restaurants.getActive();
+        
+        restaurants.forEach(restaurant => {
+          const div = document.createElement('div');
+          div.style.marginBottom = '5px';
+          
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.name = 'productRestaurant';
+          checkbox.value = restaurant.id;
+          checkbox.id = `restaurant_${restaurant.id}`;
+          
+          // Если редактируем товар, проверяем, выбран ли ресторан
+          if (currentProductId) {
+            const product = db.products.getById(currentProductId);
+            if (product && product.restaurantIds.includes(restaurant.id)) {
+              checkbox.checked = true;
+            }
+          }
+          
+          const label = document.createElement('label');
+          label.textContent = restaurant.name;
+          label.setAttribute('for', `restaurant_${restaurant.id}`);
+          label.style.marginLeft = '5px';
+          
+          div.appendChild(checkbox);
+          div.appendChild(label);
+          
+          restaurantCheckboxes.appendChild(div);
+        });
+      }
+      
+      // Редактирование товара
+      function editProduct(productId) {
+        const product = db.products.getById(productId);
+        if (!product) return;
+        
+        currentProductId = productId;
+        document.getElementById('productModalTitle').textContent = 'Редактировать товар';
+        
+        document.getElementById('productId').value = product.id;
+        document.getElementById('productName').value = product.name;
+        document.getElementById('productCategory').value = product.category;
+        document.getElementById('productPrice').value = product.price;
+        document.getElementById('productDescription').value = product.description;
+        document.getElementById('productIsActive').checked = product.isActive !== false;
+        
+        // Заполняем чекбоксы ресторанов
+        fillRestaurantCheckboxes();
+        
+        document.getElementById('productModal').classList.add('active');
+      }
+      
+      // Удаление товара
+      function deleteProduct(productId) {
+        const product = db.products.getById(productId);
+        if (!product) return;
+        
+        // Подтверждение удаления
+        if (confirm(`Вы действительно хотите удалить товар "${product.name}"?`)) {
+          db.products.delete(productId);
+          showStatusMessage('productsStatusMessage', `Товар "${product.name}" успешно удален`, 'success');
+          
+          // Обновление списка товаров и статистики
+          loadProducts();
+          loadDashboardData();
+        }
+      }
+      
+      // Функции для работы с категориями
+      function initCategoryForm() {
+        const addCategoryBtn = document.getElementById('addCategoryBtn');
+        const categoryModal = document.getElementById('categoryModal');
+        const closeCategoryModal = document.getElementById('closeCategoryModal');
+        const cancelCategoryBtn = document.getElementById('cancelCategoryBtn');
+        const categoryForm = document.getElementById('categoryForm');
+        
+        // Открытие модального окна для добавления категории
+        addCategoryBtn.addEventListener('click', function() {
+          currentCategoryId = null;
+          document.getElementById('categoryModalTitle').textContent = 'Добавить категорию';
+          categoryForm.reset();
+          categoryModal.classList.add('active');
+        });
+        
+        // Закрытие модального окна
+        closeCategoryModal.addEventListener('click', function() {
+          categoryModal.classList.remove('active');
+        });
+        
+        cancelCategoryBtn.addEventListener('click', function() {
+          categoryModal.classList.remove('active');
+        });
+        
+        // Автоматическое заполнение slug
+        document.getElementById('categoryName').addEventListener('input', function() {
+          if (!currentCategoryId) { // Только для новой категории
+            const slug = this.value.toLowerCase()
+              .replace(/[^\w\s-]/g, '') // Удаляем спецсимволы
+              .replace(/\s+/g, '-') // Заменяем пробелы на дефисы
+              .replace(/-+/g, '-'); // Заменяем множественные дефисы на один
+            
+            document.getElementById('categorySlug').value = slug;
+          }
+        });
+        
+        // Обработка формы добавления/редактирования категории
+        categoryForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const categoryData = {
+            name: document.getElementById('categoryName').value,
+            slug: document.getElementById('categorySlug').value,
+            isActive: document.getElementById('categoryIsActive').checked
+          };
+          
+          // Проверка уникальности slug
+          const existingCategory = db.categories.getAll().find(
+            cat => cat.slug === categoryData.slug && cat.id !== currentCategoryId
+          );
+          
+          if (existingCategory) {
+            showStatusMessage('categoriesStatusMessage', `Категория с таким slug уже существует`, 'error');
+            return;
+          }
+          
+          if (currentCategoryId) {
+            // Редактирование категории
+            db.categories.update(currentCategoryId, categoryData);
+            showStatusMessage('categoriesStatusMessage', `Категория "${categoryData.name}" успешно обновлена`, 'success');
+          } else {
+            // Добавление категории
+            db.categories.add(categoryData);
+            showStatusMessage('categoriesStatusMessage', `Категория "${categoryData.name}" успешно добавлена`, 'success');
+          }
+          
+          // Закрытие модального окна и обновление списка категорий
+          categoryModal.classList.remove('active');
+          loadCategories();
+        });
+      }
+      
+      // Редактирование категории
+      function editCategory(categoryId) {
+        const category = db.categories.getById(categoryId);
+        if (!category) return;
+        
+        currentCategoryId = categoryId;
+        document.getElementById('categoryModalTitle').textContent = 'Редактировать категорию';
+        
+        document.getElementById('categoryId').value = category.id;
+        document.getElementById('categoryName').value = category.name;
+        document.getElementById('categorySlug').value = category.slug;
+        document.getElementById('categoryIsActive').checked = category.isActive !== false;
+        
+        document.getElementById('categoryModal').classList.add('active');
+      }
+      
+      // Удаление категории
+      function deleteCategory(categoryId) {
+        const category = db.categories.getById(categoryId);
+        if (!category) return;
+        
+        // Проверка на наличие товаров в категории
+        const hasProducts = db.products.getAll().some(product => product.category === categoryId);
+        
+        if (hasProducts) {
+          showStatusMessage('categoriesStatusMessage', `Невозможно удалить категорию "${category.name}": с ней связаны товары`, 'error');
+          return;
+        }
+        
+        // Подтверждение удаления
+        if (confirm(`Вы действительно хотите удалить категорию "${category.name}"?`)) {
+          db.categories.delete(categoryId);
+          showStatusMessage('categoriesStatusMessage', `Категория "${category.name}" успешно удалена`, 'success');
+          
+          // Обновление списка категорий
+          loadCategories();
+        }
+      }
+      
+      // Изменение статуса категории
+      function toggleCategoryStatus(categoryId, isActive) {
+        const category = db.categories.getById(categoryId);
+        if (!category) return;
+        
+        db.categories.update(categoryId, { isActive });
+        showStatusMessage('categoriesStatusMessage', `Статус категории "${category.name}" изменен на "${isActive ? 'активна' : 'неактивна'}"`, 'success');
+      }
+      
+      // Функции для работы с заказами
+      function initOrderModal() {
+        const orderModal = document.getElementById('orderModal');
+        const closeOrderModal = document.getElementById('closeOrderModal');
+        const closeOrderBtn = document.getElementById('closeOrderBtn');
+        const saveOrderStatusBtn = document.getElementById('saveOrderStatusBtn');
+        
+        // Закрытие модального окна
+        closeOrderModal.addEventListener('click', function() {
+          orderModal.classList.remove('active');
+        });
+        
+        closeOrderBtn.addEventListener('click', function() {
+          orderModal.classList.remove('active');
+        });
+        
+        // Сохранение статуса заказа
+        saveOrderStatusBtn.addEventListener('click', function() {
+          const newStatus = document.getElementById('orderStatus').value;
+          
+          if (currentOrderId) {
+            db.orders.update(currentOrderId, { status: newStatus });
+            showStatusMessage('ordersStatusMessage', `Статус заказа #${currentOrderId} изменен на "${getStatusText(newStatus)}"`, 'success');
+            
+            // Закрытие модального окна и обновление списка заказов
+            orderModal.classList.remove('active');
+            loadOrders();
+            
+            // Обновляем статистику на дашборде
+            loadDashboardData();
+          }
+        });
+      }
+      
+      // Просмотр заказа
+      function viewOrder(orderId) {
+        const order = db.orders.getById(orderId);
+        if (!order) return;
+        
+        currentOrderId = orderId;
+        
+        const restaurant = db.restaurants.getById(order.restaurantId);
+        const restaurantName = restaurant ? restaurant.name : 'Неизвестный ресторан';
+        
+        document.getElementById('orderNumber').textContent = `#${order.id}`;
+        document.getElementById('orderStatus').value = order.status;
+        document.getElementById('orderCustomer').textContent = order.customerName;
+        document.getElementById('orderPhone').textContent = order.customerPhone;
+        document.getElementById('orderRestaurant').textContent = restaurantName;
+        document.getElementById('orderPickupTime').textContent = `${order.pickupTime} минут`;
+        document.getElementById('orderDateTime').textContent = formatDate(order.createdAt);
+        
+        // Заполняем таблицу товаров
+        const orderItems = document.getElementById('orderItems');
+        orderItems.innerHTML = '';
+        
+        order.items.forEach(item => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${item.productName}</td>
+            <td>${formatCurrency(item.price)}</td>
+            <td>${item.quantity}</td>
+            <td>${formatCurrency(item.price * item.quantity)}</td>
+          `;
+          
+          orderItems.appendChild(row);
+        });
+        
+        document.getElementById('orderTotal').textContent = formatCurrency(order.totalAmount);
+        
+        document.getElementById('orderModal').classList.add('active');
+      }
+      
+      // Функции для работы с настройками
+      function initSettingsForms() {
+        const settingsForm = document.getElementById('settingsForm');
+        const adminForm = document.getElementById('adminForm');
+        
+        // Обработка формы настроек сайта
+        settingsForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const settings = {
+            siteTitle: document.getElementById('siteTitle').value,
+            contactEmail: document.getElementById('contactEmail').value,
+            contactPhone: document.getElementById('contactPhone').value,
+            telegramBotEnabled: document.getElementById('telegramBotEnabled').checked,
+            telegramBotToken: document.getElementById('telegramBotToken').value,
+            telegramChatId: document.getElementById('telegramChatId').value
+          };
+          
+          db.settings.update(settings);
+          showStatusMessage('settingsStatusMessage', 'Настройки успешно сохранены', 'success');
+        });
+        
+        // Обработка формы настроек администратора
+        adminForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const username = document.getElementById('adminUsername').value;
+          const password = document.getElementById('adminPassword').value;
+          const passwordConfirm = document.getElementById('adminPasswordConfirm').value;
+          
+          // Проверка заполненности полей
+          if (!username) {
+            showStatusMessage('adminStatusMessage', 'Имя пользователя не может быть пустым', 'error');
+            return;
+          }
+          
+          // Если пароль не указан, оставляем старый
+          if (!password) {
+            db.auth.updateCredentials(username, db.auth.getCredentials().password);
+            showStatusMessage('adminStatusMessage', 'Имя пользователя успешно обновлено', 'success');
+            return;
+          }
+          
+          // Проверка совпадения паролей
+          if (password !== passwordConfirm) {
+            showStatusMessage('adminStatusMessage', 'Пароли не совпадают', 'error');
+            return;
+          }
+          
+          // Обновление учетных данных
+          db.auth.updateCredentials(username, password);
+          showStatusMessage('adminStatusMessage', 'Учетные данные администратора успешно обновлены', 'success');
+          
+          // Сброс полей пароля
+          document.getElementById('adminPassword').value = '';
+          document.getElementById('adminPasswordConfirm').value = '';
+        });
+      }
+      
+      // Вспомогательные функции
+      
+      // Форматирование даты
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleString('ru-RU', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      }
+      
+      // Форматирование валюты
+      function formatCurrency(amount) {
+        return `${amount} ₽`;
+      }
+      
+      // Получение текстового представления статуса заказа
+      function getStatusText(status) {
+        const statuses = {
+          'new': 'Новый',
+          'processing': 'В обработке',
+          'ready': 'Готов к выдаче',
+          'completed': 'Завершен',
+          'cancelled': 'Отменен'
+        };
+        
+        return statuses[status] || status;
+      }
+      
+      // Отображение сообщения о статусе операции
+      function showStatusMessage(elementId, message, type) {
+        const statusMessage = document.getElementById(elementId);
+        statusMessage.textContent = message;
+        statusMessage.className = `status-message ${type}`;
+        
+        // Автоматическое скрытие сообщения через 5 секунд
+        setTimeout(() => {
+          statusMessage.className = 'status-message';
+        }, 5000);
+      }
+      
+      // Инициализация всех компонентов
+      function init() {
+        // Инициализация вкладок
+        initTabs();
+        
+        // Инициализация форм
+        initRestaurantForm();
+        initProductForm();
+        initCategoryForm();
+        initOrderModal();
+        initSettingsForms();
+        
+        // Загрузка начальных данных
+        loadDashboardData();
+        
+        // Кнопка выхода
+        document.getElementById('viewSiteBtn').addEventListener('click', function(e) {
+          e.preventDefault();
+          window.location.href = 'index.html';
+        });
+      }
+      
+      // Запускаем инициализацию
+      init();
+    });
+  </script>
+</body>
+</html>
+      
+      // Загрузка категорий
+      function loadCategories() {
+        const categories = db.categories.getAll();
+        const categoriesTable = document.getElementById('categoriesTable');
+        categoriesTable.innerHTML = '';
+        
+        if (categories.length === 0) {
+          categoriesTable.innerHTML = '<tr><td colspan="5" style="text-align: center;">Нет категорий</td></tr>';
+          return;
+        }
+        
+        categories.forEach(category => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${category.id}</td>
+            <td>${category.name}</td>
+            <td>${category.slug}</td>
+            <td>
+              <label class="switch">
+                <input type="checkbox" data-category-id="${category.id}" data-action="toggle-category" ${category.isActive ? 'checked' : ''}>
+                <span class="slider"></span>
+              </label>
+            </td>
+            <td class="actions">
+              <button class="admin-btn" data-category-id="${category.id}" data-action="edit-category">Редактировать</button>
+              <button class="admin-btn danger" data-category-id="${category.id}" data-action="delete-category">Удалить</button>
+            </td>
+          `;
+          
+          categoriesTable.appendChild(row);
+        });
+        
+        // Добавление обработчиков событий
+        document.querySelectorAll('[data-action="edit-category"]').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const categoryId = this.getAttribute('data-category-id');
+            editCategory(categoryId);
+          });
+        });
+        
+        document.querySelectorAll('[data-action="delete-category"]').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const categoryId = this.getAttribute('data-category-id');
+            deleteCategory(categoryId);
+          });
+        });
+        
+        document.querySelectorAll('[data-action="toggle-category"]').forEach(checkbox => {
+          checkbox.addEventListener('change', function() {
+            const categoryId = this.getAttribute('data-category-id');
+            const isActive = this.checked;
+            toggleCategoryStatus(categoryId, isActive);
+          });
+        });
+      }
+      
+      // Загрузка заказов
+      function loadOrders() {
+        const orders = db.orders.getAll();
+        const ordersTable = document.getElementById('ordersTable');
+        ordersTable.innerHTML = '';
+        
+        // Заполняем выпадающий список ресторанов для фильтрации
+        const orderFilterRestaurant = document.getElementById('orderFilterRestaurant');
+        if (orderFilterRestaurant.childElementCount <= 1) { // Проверяем, не заполнен ли уже список
+          const restaurants = db.restaurants.getAll();
+          restaurants.forEach(restaurant => {
+            const option = document.createElement('option');
+            option.value = restaurant.id;
+            option.textContent = restaurant.name;
+            orderFilterRestaurant.appendChild(option);
+          });
+        }
+        
+        // Получаем выбранные фильтры
+        const selectedRestaurantId = document.getElementById('orderFilterRestaurant').value;
+        const selectedStatus = document.getElementById('orderFilterStatus').value;
+        
+        // Применяем фильтрацию
+        let filteredOrders = orders;
+        
+        if (selectedRestaurantId) {
+          filteredOrders = filteredOrders.filter(order => order.restaurantId === selectedRestaurantId);
+        }
+        
+        if (selectedStatus) {
+          filteredOrders = filteredOrders.filter(order => order.status === selectedStatus);
+        }
+        
+        if (filteredOrders.length === 0) {
+          ordersTable.innerHTML = '<tr><td colspan="7" style="text-align: center;">Нет заказов</td></tr>';
+          return;
+        }
+        
+        filteredOrders.forEach(order => {
+          const restaurant = db.restaurants.getById(order.restaurantId);
+          const restaurantName = restaurant ? restaurant.name : 'Неизвестный ресторан';
+          
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>#${order.id}</td>
+            <td>${order.customerName}</td>
+            <td>${restaurantName}</td>
+            <td>${formatCurrency(order.totalAmount)}</td>
+            <td><span class="status-badge status-${order.status}">${getStatusText(order.status)}</span></td>
+            <td>${formatDate(order.createdAt)}</td>
+            <td class="actions">
+              <button class="admin-btn" data-order-id="${order.id}" data-action="view-order">Просмотр</button>
+            </td>
+          `;
+          
+          ordersTable.appendChild(row);
+        });
+        
+        // Добавление обработчиков событий
+        document.querySelectorAll('[data-action="view-order"]').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const orderId = this.getAttribute('data-order-id');
+            viewOrder(orderId);
+          });
+        });
+        
+        // Добавление обработчиков для фильтров
+        document.getElementById('orderFilterRestaurant').addEventListener('change', loadOrders);
+        document.getElementById('orderFilterStatus').addEventListener('change', loadOrders);
+      }
+      
+      // Загрузка настроек
+      function loadSettings() {
+        // Загрузка настроек сайта
+        const settings = db.settings.getAll();
+        
+        document.getElementById('siteTitle').value = settings.siteTitle || 'FOOD MENU';
+        document.getElementById('contactEmail').value = settings.contactEmail || 'info@foodmenu.com';
+        document.getElementById('contactPhone').value = settings.contactPhone || '+7 (123) 456-78-90';
+        document.getElementById('telegramBotEnabled').checked = settings.telegramBotEnabled || false;
+        document.getElementById('telegramBotToken').value = settings.telegramBotToken || '';
+        document.getElementById('telegramChatId').value = settings.telegramChatId || '';
+        
+        // Загрузка данных администратора
+        const adminCredentials = db.auth.getCredentials();
+        document.getElementById('adminUsername').value = adminCredentials.username || '';
+      }
+      
+      // Функции для работы с ресторанами
+      function initRestaurantForm() {
+        const addRestaurantBtn = document.getElementById('addRestaurantBtn');
+        const restaurantModal = document.getElementById('restaurantModal');
+        const closeRestaurantModal = document.getElementById('closeRestaurantModal');
+        const cancelRestaurantBtn = document.getElementById('cancelRestaurantBtn');
+        const restaurantForm = document.getElementById('restaurantForm');
+        
+        // Открытие модального окна для добавления ресторана
+        addRestaurantBtn.addEventListener('click', function() {
+          currentRestaurantId = null;
+          document.getElementById('restaurantModalTitle').textContent = 'Добавить ресторан';
+          restaurantForm.reset();
+          restaurantModal.classList.add('active');
+        });
+        
+        // Закрытие модального окна
+        closeRestaurantModal.addEventListener('click', function() {
+          restaurantModal.classList.remove('active');
+        });
+        
+        cancelRestaurantBtn.addEventListener('click', function() {
+          restaurantModal.classList.remove('active');
+        });
+        
+        // Обработка формы добавления/редактирования ресторана
+        restaurantForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const restaurantData = {
+            name: document.getElementById('restaurantName').value,
+            address: document.getElementById('restaurantAddress').value,
+            hours: document.getElementById('restaurantHours').value,
+            phone: document.getElementById('restaurantPhone').value,
+            email: document.getElementById('restaurantEmail').value,
+            isActive: document.getElementById('restaurantIsActive').checked
+          };
+          
+          if (currentRestaurantId) {
+            // Редактирование ресторана
+            db.restaurants.update(currentRestaurantId, restaurantData);
+            showStatusMessage('restaurantsStatusMessage', `Ресторан "${restaurantData.name}" успешно обновлен`, 'success');
+          } else {
+            // Добавление ресторана
+            db.restaurants.add(restaurantData);
+            showStatusMessage('restaurantsStatusMessage', `Ресторан "${restaurantData.name}" успешно добавлен`, 'success');
+          }
+          
+          // Закрытие модального окна и обновление списка ресторанов
+          restaurantModal.classList.remove('active');
+          loadRestaurants();
+          
+          // Обновляем статистику на дашборде
+          loadDashboardData();
+        });
+      }
+      
+      // Редактирование ресторана
+      function editRestaurant(restaurantId) {
+        const restaurant = db.restaurants.getById(restaurantId);
+        if (!restaurant) return;
+        
+        currentRestaurantId = restaurantId;
+        document.getElementById('restaurantModalTitle').textContent = 'Редактировать ресторан';
+        
+        document.getElementById('restaurantId').value = restaurant.id;
+        document.getElementById('restaurantName').value = restaurant.name;
+        document.getElementById('restaurantAddress').value = restaurant.address;
+        document.getElementById('restaurantHours').value = restaurant.hours;
+        document.getElementById('restaurantPhone').value = restaurant.phone;
+        document.getElementById('restaurantEmail').value = restaurant.email;
+        document.getElementById('restaurantIsActive').checked = restaurant.isActive;
+        
+        document.getElementById('restaurantModal').classList.add('active');
+      }
+      
+      // Удаление ресторана
+      function deleteRestaurant(restaurantId) {
+        const restaurant = db.restaurants.getById(restaurantId);
+        if (!restaurant) return;
+        
+        // Проверяем, связаны ли с рестораном заказы
+        const hasOrders = db.orders.getAll().some(order => order.restaurantId === restaurantId);
+        
+        if (hasOrders) {
+          showStatusMessage('restaurantsStatusMessage', `Невозможно удалить ресторан "${restaurant.name}": с ним связаны заказы`, 'error');
+          return;
+        }
+        
+        // Подтверждение удаления
+        if (confirm(`Вы действительно хотите удалить ресторан "${restaurant.name}"?`)) {
+          db.restaurants.delete(restaurantId);
+          showStatusMessage('restaurantsStatusMessage', `Ресторан "${restaurant.name}" успешно удален`, 'success');
+          
+          // Обновление списка ресторанов и статистики
+          loadRestaurants();
+          loadDashboardData();
+        }
+      }
+      
+      // Изменение статуса ресторана
+      function toggleRestaurantStatus(restaurantId, isActive) {
+        const restaurant = db.restaurants.getById(restaurantId);
+        if (!restaurant) return;
+        
+        db.restaurants.update(restaurantId, { isActive });
+        showStatusMessage('restaurantsStatusMessage', `Статус ресторана "${restaurant.name}" изменен на "${isActive ? 'активен' : 'неактивен'}"`, 'success');
+      }
+      
+      // Функции для работы с товарами
+      function initProductForm() {
+        const addProductBtn = document.getElementById('addProductBtn');
+        const productModal = document.getElementById('productModal');
+        const closeProductModal = document.getElementById('closeProductModal');
+        const cancelProductBtn = document.getElementById('cancelProductBtn');
+        const productForm = document.getElementById('productForm');
+        
+        // Заполняем выпадающий список категорий
+        const productCategory = document.getElementById('productCategory');
+        const categories = db.categories.getActive();
+        
+        // Очищаем текущие категории
+        while (productCategory.firstChild) {
+          productCategory.removeChild(productCategory.firstChild);
+        }
+        
+        // Добавляем пустую опцию
+        const emptyOption = document.createElement('option');
+        emptyOption.value = '';
+        emptyOption.textContent = 'Выберите категорию';
+        productCategory.appendChild(emptyOption);
+        
+        // Добавляем категории
+        categories.forEach(category => {
+          const option = document.createElement('option');
+          option.value = category.id;
+          option.textContent = category.name;
+          productCategory.appendChild(option);
+        });
+        
+        // Открытие модального окна для добавления товара
+        addProductBtn.addEventListener('click', function() {
+          currentProductId = null;
+          document.getElementById('productModalTitle').textContent = 'Добавить товар';
+          productForm.reset();
+          
+          // Заполняем чекбоксы ресторанов
+          fillRestaurantCheckboxes();
+          
+          productModal.classList.add('active');
+        });
+        
+        // Закрытие модального окна
+        closeProductModal.addEventListener('click', function() {
+          productModal.classList.remove('active');
+        });
+        
+        cancelProductBtn.addEventListener('click', function() {
+          productModal.classList.remove('active');
+        });
+        
+        // Обработка формы добавления/редактирования товара
+        productForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          // Получаем выбранные рестораны
+          const restaurantIds = [];
+          document.querySelectorAll('input[name="productRestaurant"]:checked').forEach(checkbox => {
+            restaurantIds.push(checkbox.value);
+          });
+          
+          if (restaurantIds.length === 0) {
+            showStatusMessage('productsStatusMessage', 'Выберите хотя бы один ресторан', 'error');
+            return;
+          }
+          
+          const productData = {
+            name: document.getElementById('productName').value,
+            category: document.getElementById('productCategory').value,
+            price: parseFloat(document.getElementById('productPrice').value),
+            description: document.getElementById('productDescription').value,
+            restaurantIds: restaurantIds,
+            isActive: document.getElementById('productIsActive').checked
+          };
+          
+          if (currentProductId) {
+            // Редактирование товара
+            db.products.update(currentProductId, productData);
+            showStatusMessage('productsStatusMessage', `Товар "${productData.name}" успешно обновлен`, 'success');
+          } else {
+            // Добавление товара
+            db.products.add(productData);
+            showStatusMessage('productsStatusMessage', `Товар "${productData.name}" успешно добавлен`, 'success');
+          }
+          
+          // Закрытие модального окна и обновление списка товаров
+          productModal.classList.remove('active');
+          loadProducts();
+          
+          // Обновляем статистику на дашборде
+          loadDashboardData();
+        });
+      }
+      
+      // Загрузка данных для выбранной вкладки
+      function loadTabData(tabId) {
+        switch(tabId) {
+          case 'dashboard':
+            loadDashboardData();
+            break;
+          case 'restaurants':
+            loadRestaurants();
+            break;
+          case 'products':
+            loadProducts();
+            break;
+          case 'categories':
+            loadCategories();
+            break;
+          case 'orders':
+            loadOrders();
+            break;
+          case 'settings':
+            loadSettings();
+            break;
+        }
+      }
+      
+      // Загрузка данных для дашборда
+      function loadDashboardData() {
+        const stats = db.statistics.getDashboardStats();
+        
+        document.getElementById('restaurantCount').textContent = stats.restaurantCount;
+        document.getElementById('productCount').textContent = stats.productCount;
+        document.getElementById('totalOrders').textContent = stats.orderCount;
+        document.getElementById('totalRevenue').textContent = formatCurrency(stats.totalRevenue);
+        
+        // Загрузка последних заказов
+        const recentOrdersTable = document.getElementById('recentOrdersTable');
+        recentOrdersTable.innerHTML = '';
+        
+        if (stats.recentOrders.length === 0) {
+          recentOrdersTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет заказов</td></tr>';
+          return;
+        }
+        
+        stats.recentOrders.forEach(order => {
+          const restaurant = db.restaurants.getById(order.restaurantId);
+          const restaurantName = restaurant ? restaurant.name : 'Неизвестный ресторан';
+          
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>#${order.id}</td>
+            <td>${order.customerName}</td>
+            <td>${restaurantName}</td>
+            <td>${formatCurrency(order.totalAmount)}</td>
+            <td><span class="status-badge status-${order.status}">${getStatusText(order.status)}</span></td>
+            <td>${formatDate(order.createdAt)}</td>
+          `;
+          
+          recentOrdersTable.appendChild(row);
+        });
+      }
+      
+      // Загрузка ресторанов
+      function loadRestaurants() {
+        const restaurants = db.restaurants.getAll();
+        const restaurantsTable = document.getElementById('restaurantsTable');
+        restaurantsTable.innerHTML = '';
+        
+        if (restaurants.length === 0) {
+          restaurantsTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет ресторанов</td></tr>';
+          return;
+        }
+        
+        restaurants.forEach(restaurant => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${restaurant.id}</td>
+            <td>${restaurant.name}</td>
+            <td>${restaurant.address}</td>
+            <td>${restaurant.phone}</td>
+            <td>
+              <label class="switch">
+                <input type="checkbox" data-restaurant-id="${restaurant.id}" data-action="toggle-restaurant" ${restaurant.isActive ? 'checked' : ''}>
+                <span class="slider"></span>
+              </label>
+            </td>
+            <td class="actions">
+              <button class="admin-btn" data-restaurant-id="${restaurant.id}" data-action="edit-restaurant">Редактировать</button>
+              <button class="admin-btn danger" data-restaurant-id="${restaurant.id}" data-action="delete-restaurant">Удалить</button>
+            </td>
+          `;
+          
+          restaurantsTable.appendChild(row);
+        });
+        
+        // Добавление обработчиков событий
+        document.querySelectorAll('[data-action="edit-restaurant"]').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const restaurantId = this.getAttribute('data-restaurant-id');
+            editRestaurant(restaurantId);
+          });
+        });
+        
+        document.querySelectorAll('[data-action="delete-restaurant"]').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const restaurantId = this.getAttribute('data-restaurant-id');
+            deleteRestaurant(restaurantId);
+          });
+        });
+        
+        document.querySelectorAll('[data-action="toggle-restaurant"]').forEach(checkbox => {
+          checkbox.addEventListener('change', function() {
+            const restaurantId = this.getAttribute('data-restaurant-id');
+            const isActive = this.checked;
+            toggleRestaurantStatus(restaurantId, isActive);
+          });
+        });
+      }
+      
+      // Загрузка товаров
+      function loadProducts() {
+        const products = db.products.getAll();
+        const productsTable = document.getElementById('productsTable');
+        productsTable.innerHTML = '';
+        
+        if (products.length === 0) {
+          productsTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет товаров</td></tr>';
+          return;
+        }
+        
+        products.forEach(product => {
+          const category = db.categories.getById(product.category);
+          const categoryName = category ? category.name : 'Неизвестная категория';
+          
+          // Получаем названия ресторанов
+          const restaurantNames = product.restaurantIds.map(id => {
+            const restaurant = db.restaurants.getById(id);
+            return restaurant ? restaurant.name : 'Неизвестный ресторан';
+          }).join(', ');
+          
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${product.id}</td>
+            <td>${product.name}</td>
+            <td>${categoryName}</td>
+            <td>${formatCurrency(product.price)}</td>
+            <td>${restaurantNames}</td>
+            <td class="actions">
+              <button class="admin-btn" data-product-id="${product.id}" data-action="edit-product">Редактировать</button>
+              <button class="admin-btn danger" data-product-id="${product.id}" data-action="delete-product">Удалить</button>
+            </td>
+          `;
+          
+          productsTable.appendChild(row);
+        });
+        
+        // Добавление обработчиков событий
+        document.querySelectorAll('[data-action="edit-product"]').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            editProduct(productId);
+          });
+        });
+        
+        document.querySelectorAll('[data-action="delete-product"]').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            deleteProduct(productId);
+          });
+        });
+      }

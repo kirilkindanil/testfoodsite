@@ -1,1208 +1,4 @@
-document.querySelectorAll('[data-action="edit-restaurant"]').forEach(btn => {
-              btn.addEventListener('click', function() {
-                const restaurantId = this.getAttribute('data-restaurant-id');
-                editRestaurant(restaurantId);
-              });
-            });
-            
-            document.querySelectorAll('[data-action="delete-restaurant"]').forEach(btn => {
-              btn.addEventListener('click', function() {
-                const restaurantId = this.getAttribute('data-restaurant-id');
-                deleteRestaurant(restaurantId);
-              });
-            });
-            
-            document.querySelectorAll('[data-action="toggle-restaurant"]').forEach(checkbox => {
-              checkbox.addEventListener('change', function() {
-                const restaurantId = this.getAttribute('data-restaurant-id');
-                const isActive = this.checked;
-                toggleRestaurantStatus(restaurantId, isActive);
-              });
-            });
-          } else {
-            console.warn('db.restaurants.getAll не найден');
-            document.getElementById('restaurantsTable').innerHTML = '<tr><td colspan="6" style="text-align: center;">Данные недоступны</td></tr>';
-          }
-        } catch (error) {
-          console.error('Ошибка при загрузке ресторанов:', error);
-          document.getElementById('restaurantsTable').innerHTML = `<tr><td colspan="6" style="text-align: center;">Ошибка: ${error.message}</td></tr>`;
-        }
-      }
-      
-      // ФУНКЦИИ ДЛЯ РАБОТЫ С ТОВАРАМИ
-      
-      // Заполнение чекбоксов ресторанов
-      function fillRestaurantCheckboxes() {
-        console.log('Заполнение чекбоксов ресторанов');
-        const restaurantCheckboxes = document.getElementById('productRestaurantsCheckboxes');
-        restaurantCheckboxes.innerHTML = '';
-        
-        const restaurants = db.restaurants.getActive();
-        
-        restaurants.forEach(restaurant => {
-          const div = document.createElement('div');
-          div.style.marginBottom = '5px';
-          
-          const checkbox = document.createElement('input');
-          checkbox.type = 'checkbox';
-          checkbox.name = 'productRestaurant';
-          checkbox.value = restaurant.id;
-          checkbox.id = `restaurant_${restaurant.id}`;
-          
-          // Если редактируем товар, проверяем, выбран ли ресторан
-          if (currentProductId) {
-            const product = db.products.getById(currentProductId);
-            if (product && product.restaurantIds && product.restaurantIds.includes(restaurant.id)) {
-              checkbox.checked = true;
-            }
-          }
-          
-          const label = document.createElement('label');
-          label.textContent = restaurant.name;
-          label.setAttribute('for', `restaurant_${restaurant.id}`);
-          label.style.marginLeft = '5px';
-          
-          div.appendChild(checkbox);
-          div.appendChild(label);
-          
-          restaurantCheckboxes.appendChild(div);
-        });
-      }
-      
-      // Инициализация формы товара
-      function initProductForm() {
-        console.log('Инициализация формы товара');
-        const addProductBtn = document.getElementById('addProductBtn');
-        const productModal = document.getElementById('productModal');
-        const closeProductModal = document.getElementById('closeProductModal');
-        const cancelProductBtn = document.getElementById('cancelProductBtn');
-        const productForm = document.getElementById('productForm');
-        
-        // Обработчик загрузки изображения для предпросмотра
-        const imageInput = document.getElementById('productImageFile');
-        const imagePreview = document.getElementById('productImagePreview');
-        const imageField = document.getElementById('productImage');
-
-        imageInput.addEventListener('change', function(e) {
-          const file = e.target.files[0];
-          if (!file) return;
-          
-          // Проверка размера файла (макс. 2MB)
-          if (file.size > 2 * 1024 * 1024) {
-            showStatusMessage('productsStatusMessage', 'Размер файла не должен превышать 2MB', 'error');
-            imageInput.value = '';
-            return;
-          }
-          
-          // Проверка типа файла
-          if (!file.type.match('image.*')) {
-            showStatusMessage('productsStatusMessage', 'Пожалуйста, выберите изображение', 'error');
-            imageInput.value = '';
-            return;
-          }
-          
-          // Читаем файл для предпросмотра
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            imagePreview.src = e.target.result;
-            
-            // Сохраняем изображение в base64 для последующего сохранения
-            imageField.value = e.target.result;
-          };
-          reader.readAsDataURL(file);
-        });
-        
-        // Открытие модального окна для добавления товара
-        addProductBtn.addEventListener('click', function() {
-          console.log('Нажатие кнопки "Добавить товар"');
-          currentProductId = null;
-          document.getElementById('productModalTitle').textContent = 'Добавить товар';
-          productForm.reset();
-          imagePreview.src = 'images/default.jpg';
-          imageField.value = 'default.jpg';
-          
-          // Заполняем выпадающий список категорий
-          fillCategoriesDropdown();
-          
-          // Заполняем чекбоксы ресторанов
-          fillRestaurantCheckboxes();
-          
-          productModal.classList.add('active');
-        });
-        
-        // Закрытие модального окна
-        closeProductModal.addEventListener('click', function() {
-          productModal.classList.remove('active');
-        });
-        
-        cancelProductBtn.addEventListener('click', function() {
-          productModal.classList.remove('active');
-        });
-        
-        // Обработка формы добавления/редактирования товара
-        productForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          console.log('Отправка формы товара');
-          
-          // Получаем выбранные рестораны
-          const restaurantIds = [];
-          document.querySelectorAll('input[name="productRestaurant"]:checked').forEach(checkbox => {
-            restaurantIds.push(checkbox.value);
-          });
-          
-          if (restaurantIds.length === 0) {
-            showStatusMessage('productsStatusMessage', 'Выберите хотя бы один ресторан', 'error');
-            return;
-          }
-          
-          try {
-            const productData = {
-              name: document.getElementById('productName').value,
-              category: document.getElementById('productCategory').value,
-              price: parseFloat(document.getElementById('productPrice').value),
-              description: document.getElementById('productDescription').value,
-              image: document.getElementById('productImage').value,
-              restaurantIds: restaurantIds,
-              isActive: document.getElementById('productIsActive').checked !== false
-            };
-            
-            if (currentProductId) {
-              // Редактирование товара
-              db.products.update(currentProductId, productData);
-              showStatusMessage('productsStatusMessage', `Товар "${productData.name}" успешно обновлен`, 'success');
-            } else {
-              // Создаем ID для нового товара
-              const slug = productData.name.toLowerCase()
-                .replace(/[^\w\s-]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/-+/g, '-');
-              
-              productData.id = slug + '-' + Date.now();
-              
-              // Добавление товара
-              db.products.add(productData);
-              showStatusMessage('productsStatusMessage', `Товар "${productData.name}" успешно добавлен`, 'success');
-            }
-            
-            // Закрытие модального окна и обновление списка товаров
-            productModal.classList.remove('active');
-            loadProducts();
-            
-            // Обновляем статистику на дашборде
-            loadDashboardData();
-          } catch (error) {
-            console.error('Ошибка при сохранении товара:', error);
-            showStatusMessage('productsStatusMessage', `Ошибка: ${error.message}`, 'error');
-          }
-        });
-      }
-      
-      // Заполнение выпадающего списка категорий
-      function fillCategoriesDropdown() {
-        console.log('Заполнение выпадающего списка категорий');
-        const productCategory = document.getElementById('productCategory');
-        
-        // Очищаем текущие категории
-        while (productCategory.firstChild) {
-          productCategory.removeChild(productCategory.firstChild);
-        }
-        
-        // Добавляем пустую опцию
-        const emptyOption = document.createElement('option');
-        emptyOption.value = '';
-        emptyOption.textContent = 'Выберите категорию';
-        productCategory.appendChild(emptyOption);
-        
-        // Добавляем категории
-        const categories = db.categories.getActive();
-        categories.forEach(category => {
-          const option = document.createElement('option');
-          option.value = category.id;
-          option.textContent = category.name;
-          productCategory.appendChild(option);
-        });
-      }
-      
-      // Редактирование товара
-      function editProduct(productId) {
-        console.log('Редактирование товара:', productId);
-        const product = db.products.getById(productId);
-        if (!product) return;
-        
-        currentProductId = productId;
-        document.getElementById('productModalTitle').textContent = 'Редактировать товар';
-        
-        // Заполняем выпадающий список категорий
-        fillCategoriesDropdown();
-        
-        document.getElementById('productId').value = product.id;
-        document.getElementById('productName').value = product.name;
-        document.getElementById('productCategory').value = product.category;
-        document.getElementById('productPrice').value = product.price;
-        document.getElementById('productDescription').value = product.description;
-        
-        // Заполняем изображение
-        const imagePreview = document.getElementById('productImagePreview');
-        const imageField = document.getElementById('productImage');
-        
-        if (product.image) {
-          if (product.image.startsWith('data:image')) {
-            // Если base64-изображение
-            imagePreview.src = product.image;
-            imageField.value = product.image;
-          } else {
-            // Если стандартное изображение
-            imagePreview.src = `images/${product.image}`;
-            imageField.value = product.image;
-          }
-        } else {
-          imagePreview.src = 'images/default.jpg';
-          imageField.value = 'default.jpg';
-        }
-        
-        document.getElementById('productIsActive').checked = product.isActive !== false;
-        
-        // Заполняем чекбоксы ресторанов
-        fillRestaurantCheckboxes();
-        
-        document.getElementById('productModal').classList.add('active');
-      }
-      
-      // Удаление товара
-      function deleteProduct(productId) {
-        console.log('Удаление товара:', productId);
-        const product = db.products.getById(productId);
-        if (!product) return;
-        
-        // Подтверждение удаления
-        if (confirm(`Вы действительно хотите удалить товар "${product.name}"?`)) {
-          db.products.delete(productId);
-          showStatusMessage('productsStatusMessage', `Товар "${product.name}" успешно удален`, 'success');
-          
-          // Обновление списка товаров и статистики
-          loadProducts();
-          loadDashboardData();
-        }
-      }
-      
-      // Загрузка товаров
-      function loadProducts() {
-        console.log('Загрузка товаров');
-        try {
-          if (window.db && window.db.products && typeof window.db.products.getAll === 'function') {
-            const products = db.products.getAll();
-            const productsTable = document.getElementById('productsTable');
-            productsTable.innerHTML = '';
-            
-            if (products.length === 0) {
-              productsTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет товаров</td></tr>';
-              return;
-            }
-            
-            products.forEach(product => {
-              const category = db.categories.getById(product.category);
-              const categoryName = category ? category.name : 'Неизвестная категория';
-              
-              // Получаем названия ресторанов
-              const restaurantIds = product.restaurantIds || [];
-              const restaurantNames = restaurantIds.map(id => {
-                const restaurant = db.restaurants.getById(id);
-                return restaurant ? restaurant.name : 'Неизвестный ресторан';
-              }).join(', ');
-              
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                <td>${product.id}</td>
-                <td>${product.name}</td>
-                <td>${categoryName}</td>
-                <td>${formatCurrency(product.price)}</td>
-                <td>${restaurantNames}</td>
-                <td class="actions">
-                  <button class="admin-btn" data-product-id="${product.id}" data-action="edit-product">Редактировать</button>
-                  <button class="admin-btn danger" data-product-id="${product.id}" data-action="delete-product">Удалить</button>
-                </td>
-              `;
-              
-              productsTable.appendChild(row);
-            });
-            
-            // Добавление обработчиков событий
-            document.querySelectorAll('[data-action="edit-product"]').forEach(btn => {
-              btn.addEventListener('click', function() {
-                const productId = this.getAttribute('data-product-id');
-                editProduct(productId);
-              });
-            });
-            
-            document.querySelectorAll('[data-action="delete-product"]').forEach(btn => {
-              btn.addEventListener('click', function() {
-                const productId = this.getAttribute('data-product-id');
-                deleteProduct(productId);
-              });
-            });
-          } else {
-            console.warn('db.products.getAll не найден');
-            document.getElementById('productsTable').innerHTML = '<tr><td colspan="6" style="text-align: center;">Данные недоступны</td></tr>';
-          }
-        } catch (error) {
-          console.error('Ошибка при загрузке товаров:', error);
-          document.getElementById('productsTable').innerHTML = `<tr><td colspan="6" style="text-align: center;">Ошибка: ${error.message}</td></tr>`;
-        }
-      }
-      
-      // ФУНКЦИИ ДЛЯ РАБОТЫ С КАТЕГОРИЯМИ
-      
-      // Инициализация формы категории
-      function initCategoryForm() {
-        console.log('Инициализация формы категории');
-        const addCategoryBtn = document.getElementById('addCategoryBtn');
-        const categoryModal = document.getElementById('categoryModal');
-        const closeCategoryModal = document.getElementById('closeCategoryModal');
-        const cancelCategoryBtn = document.getElementById('cancelCategoryBtn');
-        const categoryForm = document.getElementById('categoryForm');
-        
-        // Открытие модального окна для добавления категории
-        addCategoryBtn.addEventListener('click', function() {
-          console.log('Нажатие кнопки "Добавить категорию"');
-          currentCategoryId = null;
-          document.getElementById('categoryModalTitle').textContent = 'Добавить категорию';
-          categoryForm.reset();
-          categoryModal.classList.add('active');
-        });
-        
-        // Закрытие модального окна
-        closeCategoryModal.addEventListener('click', function() {
-          categoryModal.classList.remove('active');
-        });
-        
-        cancelCategoryBtn.addEventListener('click', function() {
-          categoryModal.classList.remove('active');
-        });
-        
-        // Автоматическое заполнение slug
-        document.getElementById('categoryName').addEventListener('input', function() {
-          if (!currentCategoryId) { // Только для новой категории
-            const slug = this.value.toLowerCase()
-              .replace(/[^\w\s-]/g, '') // Удаляем спецсимволы
-              .replace(/\s+/g, '-') // Заменяем пробелы на дефисы
-              .replace(/-+/g, '-'); // Заменяем множественные дефисы на один
-            
-            document.getElementById('categorySlug').value = slug;
-          }
-        });
-        
-        // Обработка формы добавления/редактирования категории
-        categoryForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          console.log('Отправка формы категории');
-          
-          try {
-            const categoryData = {
-              name: document.getElementById('categoryName').value,
-              slug: document.getElementById('categorySlug').value,
-              isActive: document.getElementById('categoryIsActive').checked
-            };
-            
-            // Проверка уникальности slug
-            const existingCategory = db.categories.getAll().find(
-              cat => cat.slug === categoryData.slug && cat.id !== currentCategoryId
-            );
-            
-            if (existingCategory) {
-              showStatusMessage('categoriesStatusMessage', `Категория с таким slug уже существует`, 'error');
-              return;
-            }
-            
-            if (currentCategoryId) {
-              // Редактирование категории
-              db.categories.update(currentCategoryId, categoryData);
-              showStatusMessage('categoriesStatusMessage', `Категория "${categoryData.name}" успешно обновлена`, 'success');
-            } else {
-              // Создание ID для новой категории
-              categoryData.id = categoryData.slug;
-              
-              // Добавление категории
-              db.categories.add(categoryData);
-              showStatusMessage('categoriesStatusMessage', `Категория "${categoryData.name}" успешно добавлена`, 'success');
-            }
-            
-            // Закрытие модального окна и обновление списка категорий
-            categoryModal.classList.remove('active');
-            loadCategories();
-          } catch (error) {
-            console.error('Ошибка при сохранении категории:', error);
-            showStatusMessage('categoriesStatusMessage', `Ошибка: ${error.message}`, 'error');
-          }
-        });
-      }
-      
-      // Редактирование категории
-      function editCategory(categoryId) {
-        console.log('Редактирование категории:', categoryId);
-        const category = db.categories.getById(categoryId);
-        if (!category) return;
-        
-        currentCategoryId = categoryId;
-        document.getElementById('categoryModalTitle').textContent = 'Редактировать категорию';
-        
-        document.getElementById('categoryId').value = category.id;
-        document.getElementById('categoryName').value = category.name;
-        document.getElementById('categorySlug').value = category.slug;
-        document.getElementById('categoryIsActive').checked = category.isActive !== false;
-        
-        document.getElementById('categoryModal').classList.add('active');
-      }
-      
-      // Удаление категории
-      function deleteCategory(categoryId) {
-        console.log('Удаление категории:', categoryId);
-        const category = db.categories.getById(categoryId);
-        if (!category) return;
-        
-        // Проверка на наличие товаров в категории
-        const hasProducts = db.products.getAll().some(product => product.category === categoryId);
-        
-        if (hasProducts) {
-          showStatusMessage('categoriesStatusMessage', `Невозможно удалить категорию "${category.name}": с ней связаны товары`, 'error');
-          return;
-        }
-        
-        // Подтверждение удаления
-        if (confirm(`Вы действительно хотите удалить категорию "${category.name}"?`)) {
-          db.categories.delete(categoryId);
-          showStatusMessage('categoriesStatusMessage', `Категория "${category.name}" успешно удалена`, 'success');
-          
-          // Обновление списка категорий
-          loadCategories();
-        }
-      }
-      
-      // Изменение статуса категории
-      function toggleCategoryStatus(categoryId, isActive) {
-        console.log('Изменение статуса категории:', categoryId, isActive);
-        try {
-          const category = db.categories.getById(categoryId);
-          if (!category) return;
-          
-          db.categories.update(categoryId, { isActive });
-          showStatusMessage('categoriesStatusMessage', `Статус категории "${category.name}" изменен на "${isActive ? 'активна' : 'неактивна'}"`, 'success');
-        } catch (error) {
-          console.error('Ошибка при изменении статуса категории:', error);
-          showStatusMessage('categoriesStatusMessage', `Ошибка: ${error.message}`, 'error');
-        }
-      }
-      
-      // Загрузка категорий
-      function loadCategories() {
-        console.log('Загрузка категорий');
-        try {
-          if (window.db && window.db.categories && typeof window.db.categories.getAll === 'function') {
-            const categories = db.categories.getAll();
-            const categoriesTable = document.getElementById('categoriesTable');
-            categoriesTable.innerHTML = '';
-            
-            if (categories.length === 0) {
-              categoriesTable.innerHTML = '<tr><td colspan="5" style="text-align: center;">Нет категорий</td></tr>';
-              return;
-            }
-            
-            categories.forEach(category => {
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                <td>${category.id}</td>
-                <td>${category.name}</td>
-                <td>${category.slug}</td>
-                <td>
-                  <label class="switch">
-                    <input type="checkbox" data-category-id="${category.id}" data-action="toggle-category" ${category.isActive ? 'checked' : ''}>
-                    <span class="slider"></span>
-                  </label>
-                </td>
-                <td class="actions">
-                  <button class="admin-btn" data-category-id="${category.id}" data-action="edit-category">Редактировать</button>
-                  <button class="admin-btn danger" data-category-id="${category.id}" data-action="delete-category">Удалить</button>
-                </td>
-              `;
-              
-              categoriesTable.appendChild(row);
-            });
-            
-            // Добавление обработчиков событий
-            document.querySelectorAll('[data-action="edit-category"]').forEach(btn => {
-              btn.addEventListener('click', function() {
-                const categoryId = this.getAttribute('data-category-id');
-                editCategory(categoryId);
-              });
-            });
-            
-            document.querySelectorAll('[data-action="delete-category"]').forEach(btn => {
-              btn.addEventListener('click', function() {
-                const categoryId = this.getAttribute('data-category-id');
-                deleteCategory(categoryId);
-              });
-            });
-            
-            document.querySelectorAll('[data-action="toggle-category"]').forEach(checkbox => {
-              checkbox.addEventListener('change', function() {
-                const categoryId = this.getAttribute('data-category-id');
-                const isActive = this.checked;
-                toggleCategoryStatus(categoryId, isActive);
-              });
-            });
-          } else {
-            console.warn('db.categories.getAll не найден');
-            document.getElementById('categoriesTable').innerHTML = '<tr><td colspan="5" style="text-align: center;">Данные недоступны</td></tr>';
-          }
-        } catch (error) {
-          console.error('Ошибка при загрузке категорий:', error);
-          document.getElementById('categoriesTable').innerHTML = `<tr><td colspan="5" style="text-align: center;">Ошибка: ${error.message}</td></tr>`;
-        }
-      }
-      
-      // ФУНКЦИИ ДЛЯ РАБОТЫ С ЗАКАЗАМИ
-      
-      // Инициализация модального окна заказа
-      function initOrderModal() {
-        console.log('Инициализация модального окна заказа');
-        const orderModal = document.getElementById('orderModal');
-        const closeOrderModal = document.getElementById('closeOrderModal');
-        const closeOrderBtn = document.getElementById('closeOrderBtn');
-        const saveOrderStatusBtn = document.getElementById('saveOrderStatusBtn');
-        
-        // Закрытие модального окна
-        closeOrderModal.addEventListener('click', function() {
-          orderModal.classList.remove('active');
-        });
-        
-        closeOrderBtn.addEventListener('click', function() {
-          orderModal.classList.remove('active');
-        });
-        
-        // Сохранение статуса заказа
-        saveOrderStatusBtn.addEventListener('click', function() {
-          const newStatus = document.getElementById('orderStatus').value;
-          
-          if (currentOrderId) {
-            db.orders.update(currentOrderId, { status: newStatus });
-            showStatusMessage('ordersStatusMessage', `Статус заказа #${currentOrderId} изменен на "${getStatusText(newStatus)}"`, 'success');
-            
-            // Закрытие модального окна и обновление списка заказов
-            orderModal.classList.remove('active');
-            loadOrders();
-            
-            // Обновляем статистику на дашборде
-            loadDashboardData();
-          }
-        });
-      }
-      
-      // Просмотр заказа
-      function viewOrder(orderId) {
-        console.log('Просмотр заказа:', orderId);
-        const order = db.orders.getById(orderId);
-        if (!order) return;
-        
-        currentOrderId = orderId;
-        
-        const restaurant = db.restaurants.getById(order.restaurantId);
-        const restaurantName = restaurant ? restaurant.name : 'Неизвестный ресторан';
-        
-        document.getElementById('orderNumber').textContent = `#${order.id}`;
-        document.getElementById('orderStatus').value = order.status;
-        document.getElementById('orderCustomer').textContent = order.customerName;
-        document.getElementById('orderPhone').textContent = order.customerPhone;
-        document.getElementById('orderRestaurant').textContent = restaurantName;
-        document.getElementById('orderPickupTime').textContent = `${order.pickupTime} минут`;
-        document.getElementById('orderDateTime').textContent = formatDate(order.createdAt);
-        
-        // Заполняем таблицу товаров
-        const orderItems = document.getElementById('orderItems');
-        orderItems.innerHTML = '';
-        
-        order.items.forEach(item => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${item.name}</td>
-            <td>${formatCurrency(item.price)}</td>
-            <td>${item.quantity}</td>
-            <td>${formatCurrency(item.price * item.quantity)}</td>
-          `;
-          
-          orderItems.appendChild(row);
-        });
-        
-        document.getElementById('orderTotal').textContent = formatCurrency(order.totalAmount);
-        
-        document.getElementById('orderModal').classList.add('active');
-      }
-      
-      // Загрузка заказов
-      function loadOrders() {
-        console.log('Загрузка заказов');
-        try {
-          if (window.db && window.db.orders && typeof window.db.orders.getAll === 'function') {
-            const orders = db.orders.getAll();
-            const ordersTable = document.getElementById('ordersTable');
-            ordersTable.innerHTML = '';
-            
-            // Заполняем выпадающий список ресторанов для фильтрации
-            const orderFilterRestaurant = document.getElementById('orderFilterRestaurant');
-            if (orderFilterRestaurant.childElementCount <= 1) { // Проверяем, не заполнен ли уже список
-              const restaurants = db.restaurants.getAll();
-              restaurants.forEach(restaurant => {
-                const option = document.createElement('option');
-                option.value = restaurant.id;
-                option.textContent = restaurant.name;
-                orderFilterRestaurant.appendChild(option);
-              });
-            }
-            
-            // Получаем выбранные фильтры
-            const selectedRestaurantId = document.getElementById('orderFilterRestaurant').value;
-            const selectedStatus = document.getElementById('orderFilterStatus').value;
-            
-            // Применяем фильтрацию
-            let filteredOrders = orders;
-            
-            if (selectedRestaurantId) {
-              filteredOrders = filteredOrders.filter(order => order.restaurantId === selectedRestaurantId);
-            }
-            
-            if (selectedStatus) {
-              filteredOrders = filteredOrders.filter(order => order.status === selectedStatus);
-            }
-            
-            if (filteredOrders.length === 0) {
-              ordersTable.innerHTML = '<tr><td colspan="7" style="text-align: center;">Нет заказов</td></tr>';
-              return;
-            }
-            
-            filteredOrders.forEach(order => {
-              const restaurant = db.restaurants.getById(order.restaurantId);
-              const restaurantName = restaurant ? restaurant.name : 'Неизвестный ресторан';
-              
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                <td>#${order.id}</td>
-                <td>${order.customerName}</td>
-                <td>${restaurantName}</td>
-                <td>${formatCurrency(order.totalAmount)}</td>
-                <td><span class="status-badge status-${order.status}">${getStatusText(order.status)}</span></td>
-                <td>${formatDate(order.createdAt)}</td>
-                <td class="actions">
-                  <button class="admin-btn" data-order-id="${order.id}" data-action="view-order">Просмотр</button>
-                </td>
-              `;
-              
-              ordersTable.appendChild(row);
-            });
-            
-            // Добавление обработчиков событий
-            document.querySelectorAll('[data-action="view-order"]').forEach(btn => {
-              btn.addEventListener('click', function() {
-                const orderId = this.getAttribute('data-order-id');
-                viewOrder(orderId);
-              });
-            });
-            
-            // Добавление обработчиков для фильтров
-            document.getElementById('orderFilterRestaurant').addEventListener('change', loadOrders);
-            document.getElementById('orderFilterStatus').addEventListener('change', loadOrders);
-          } else {
-            console.warn('db.orders.getAll не найден');
-            document.getElementById('ordersTable').innerHTML = '<tr><td colspan="7" style="text-align: center;">Данные недоступны</td></tr>';
-          }
-        } catch (error) {
-          console.error('Ошибка при загрузке заказов:', error);
-          document.getElementById('ordersTable').innerHTML = `<tr><td colspan="7" style="text-align: center;">Ошибка: ${error.message}</td></tr>`;
-        }
-      }
-      
-      // ФУНКЦИИ ДЛЯ РАБОТЫ С НАСТРОЙКАМИ
-      
-      // Инициализация форм настроек
-      function initSettingsForms() {
-        console.log('Инициализация форм настроек');
-        const settingsForm = document.getElementById('settingsForm');
-        const adminForm = document.getElementById('adminForm');
-        
-        // Обработка формы настроек сайта
-        settingsForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          try {
-            const settings = {
-              siteTitle: document.getElementById('siteTitle').value,
-              contactEmail: document.getElementById('contactEmail').value,
-              contactPhone: document.getElementById('contactPhone').value,
-              telegramBotEnabled: document.getElementById('telegramBotEnabled').checked,
-              telegramBotToken: document.getElementById('telegramBotToken').value,
-              telegramChatId: document.getElementById('telegramChatId').value
-            };
-            
-            db.settings.update(settings);
-            showStatusMessage('settingsStatusMessage', 'Настройки успешно сохранены', 'success');
-          } catch (error) {
-            console.error('Ошибка при сохранении настроек:', error);
-            showStatusMessage('settingsStatusMessage', `Ошибка: ${error.message}`, 'error');
-          }
-        });
-        
-        // Обработка формы настроек администратора
-        adminForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          try {
-            const username = document.getElementById('adminUsername').value;
-            const password = document.getElementById('adminPassword').value;
-            const passwordConfirm = document.getElementById('adminPasswordConfirm').value;
-            
-            // Проверка заполненности полей
-            if (!username) {
-              showStatusMessage('adminStatusMessage', 'Имя пользователя не может быть пустым', 'error');
-              return;
-            }
-            
-            // Если пароль не указан, оставляем старый
-            if (!password) {
-              db.auth.updateCredentials(username, db.auth.getCredentials().password);
-              showStatusMessage('adminStatusMessage', 'Имя пользователя успешно обновлено', 'success');
-              return;
-            }
-            
-            // Проверка совпадения паролей
-            if (password !== passwordConfirm) {
-              showStatusMessage('adminStatusMessage', 'Пароли не совпадают', 'error');
-              return;
-            }
-            
-            // Обновление учетных данных
-            db.auth.updateCredentials(username, password);
-            showStatusMessage('adminStatusMessage', 'Учетные данные администратора успешно обновлены', 'success');
-            
-            // Сброс полей пароля
-            document.getElementById('adminPassword').value = '';
-            document.getElementById('adminPasswordConfirm').value = '';
-          } catch (error) {
-            console.error('Ошибка при обновлении учетных данных:', error);
-            showStatusMessage('adminStatusMessage', `Ошибка: ${error.message}`, 'error');
-          }
-        });
-      }
-      
-      // Загрузка настроек
-      function loadSettings() {
-        console.log('Загрузка настроек');
-        try {
-          // Загрузка настроек сайта
-          const settings = db.settings.getAll();
-          
-          document.getElementById('siteTitle').value = settings.siteTitle || 'FOOD MENU';
-          document.getElementById('contactEmail').value = settings.contactEmail || 'info@foodmenu.com';
-          document.getElementById('contactPhone').value = settings.contactPhone || '+7 (123) 456-78-90';
-          document.getElementById('telegramBotEnabled').checked = settings.telegramBotEnabled || false;
-          document.getElementById('telegramBotToken').value = settings.telegramBotToken || '';
-          document.getElementById('telegramChatId').value = settings.telegramChatId || '';
-          
-          // Загрузка данных администратора
-          const adminCredentials = db.auth.getCredentials();
-          document.getElementById('adminUsername').value = adminCredentials.username || '';
-        } catch (error) {
-          console.error('Ошибка при загрузке настроек:', error);
-        }
-      }
-      
-      // ФУНКЦИИ ДЛЯ РАБОТЫ С ДАШБОРДОМ
-      
-      // Загрузка данных для дашборда
-      function loadDashboardData() {
-        console.log('Загрузка данных для дашборда');
-        try {
-          if (window.db && window.db.statistics && typeof window.db.statistics.getDashboardStats === 'function') {
-            const stats = db.statistics.getDashboardStats();
-            
-            document.getElementById('restaurantCount').textContent = stats.restaurantCount;
-            document.getElementById('productCount').textContent = stats.productCount;
-            document.getElementById('totalOrders').textContent = stats.orderCount;
-            document.getElementById('totalRevenue').textContent = formatCurrency(stats.totalRevenue);
-            
-            // Загрузка последних заказов
-            const recentOrdersTable = document.getElementById('recentOrdersTable');
-            recentOrdersTable.innerHTML = '';
-            
-            if (stats.recentOrders.length === 0) {
-              recentOrdersTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет заказов</td></tr>';
-              return;
-            }
-            
-            stats.recentOrders.forEach(order => {
-              const restaurant = db.restaurants.getById(order.restaurantId);
-              const restaurantName = restaurant ? restaurant.name : 'Неизвестный ресторан';
-              
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                <td>#${order.id}</td>
-                <td>${order.customerName}</td>
-                <td>${restaurantName}</td>
-                <td>${formatCurrency(order.totalAmount)}</td>
-                <td><span class="status-badge status-${order.status}">${getStatusText(order.status)}</span></td>
-                <td>${formatDate(order.createdAt)}</td>
-              `;
-              
-              recentOrdersTable.appendChild(row);
-            });
-          } else {
-            console.warn('db.statistics.getDashboardStats не найден');
-            document.getElementById('restaurantCount').textContent = '?';
-            document.getElementById('productCount').textContent = '?';
-            document.getElementById('totalOrders').textContent = '?';
-            document.getElementById('totalRevenue').textContent = '?₽';
-            document.getElementById('recentOrdersTable').innerHTML = '<tr><td colspan="6" style="text-align: center;">Данные недоступны</td></tr>';
-          }
-        } catch (error) {
-          console.error('Ошибка при загрузке данных дашборда:', error);
-          document.getElementById('recentOrdersTable').innerHTML = `<tr><td colspan="6" style="text-align: center;">Ошибка: ${error.message}</td></tr>`;
-        }
-      }
-      
-      // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
-      
-      // Форматирование даты
-      function formatDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleString('ru-RU', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-      }
-      
-      // Форматирование валюты
-      function formatCurrency(amount) {
-        return `${amount} ₽`;
-      }
-      
-      // Получение текстового представления статуса заказа
-      function getStatusText(status) {
-        const statuses = {
-          'new': 'Новый',
-          'processing': 'В обработке',
-          'ready': 'Готов к выдаче',
-          'completed': 'Завершен',
-          'cancelled': 'Отменен'
-        };
-        
-        return statuses[status] || status;
-      }
-      
-      // Отображение сообщения о статусе операции
-      function showStatusMessage(elementId, message, type) {
-        const statusMessage = document.getElementById(elementId);
-        statusMessage.textContent = message;
-        statusMessage.className = `status-message ${type}`;
-        
-        // Автоматическое скрытие сообщения через 5 секунд
-        setTimeout(() => {
-          statusMessage.className = 'status-message';
-        }, 5000);
-      }
-      
-      // ИНИЦИАЛИЗАЦИЯ СТРАНИЦЫ
-      
-      // Инициализируем все компоненты админ-панели
-      initTabs();
-      initRestaurantForm();
-      initProductForm();
-      initCategoryForm();
-      initOrderModal();
-      initSettingsForms();
-      
-      // Загружаем начальные данные
-      loadDashboardData();
-    });
-  </script>
-</body>
-</html>
-        </div>
-  
-  <!-- Подключение скриптов -->
-  <script src="db.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('Админ-панель загружена');
-      
-      // Проверка авторизации
-      if (!sessionStorage.getItem('adminSession')) {
-        console.log('Не авторизован, перенаправляем на страницу входа');
-        window.location.href = 'login.html';
-        return;
-      }
-      
-      // Переменные для текущих данных
-      let currentRestaurantId = null;
-      let currentProductId = null;
-      let currentCategoryId = null;
-      let currentOrderId = null;
-      
-      // Выход из админ-панели
-      document.getElementById('logoutBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        console.log('Выход из админ-панели');
-        
-        // Пытаемся использовать функцию logout из db.js если она доступна
-        try {
-          if (window.db && window.db.auth && typeof window.db.auth.logout === 'function') {
-            window.db.auth.logout();
-          }
-        } catch (error) {
-          console.error('Ошибка при выходе:', error);
-        }
-        
-        // Удаляем сессию в любом случае
-        sessionStorage.removeItem('adminSession');
-        
-        // Перенаправляем на страницу входа
-        window.location.href = 'login.html';
-      });
-      
-      // Инициализация вкладок
-      function initTabs() {
-        const tabs = document.querySelectorAll('.admin-tab');
-        const tabContents = document.querySelectorAll('.tab-content');
-        
-        tabs.forEach(tab => {
-          tab.addEventListener('click', function() {
-            const tabId = this.getAttribute('data-tab');
-            
-            // Убираем активный класс со всех вкладок и контента
-            tabs.forEach(t => t.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-            
-            // Добавляем активный класс к выбранной вкладке и контенту
-            this.classList.add('active');
-            document.getElementById(tabId).classList.add('active');
-            
-            // Загружаем данные для выбранной вкладки
-            loadTabData(tabId);
-          });
-        });
-        
-        // Кнопка "Все заказы"
-        document.getElementById('viewAllOrdersBtn').addEventListener('click', function() {
-          const tabId = this.getAttribute('data-tab');
-          
-          // Убираем активный класс со всех вкладок и контента
-          tabs.forEach(t => t.classList.remove('active'));
-          tabContents.forEach(content => content.classList.remove('active'));
-          
-          // Добавляем активный класс к выбранной вкладке и контенту
-          document.querySelector(`.admin-tab[data-tab="${tabId}"]`).classList.add('active');
-          document.getElementById(tabId).classList.add('active');
-          
-          // Загружаем данные для выбранной вкладки
-          loadTabData(tabId);
-        });
-      }
-      
-      // Загрузка данных для выбранной вкладки
-      function loadTabData(tabId) {
-        console.log('Загрузка данных для вкладки:', tabId);
-        switch(tabId) {
-          case 'dashboard':
-            loadDashboardData();
-            break;
-          case 'restaurants':
-            loadRestaurants();
-            break;
-          case 'products':
-            loadProducts();
-            break;
-          case 'categories':
-            loadCategories();
-            break;
-          case 'orders':
-            loadOrders();
-            break;
-          case 'settings':
-            loadSettings();
-            break;
-        }
-      }
-      
-      // ФУНКЦИИ ДЛЯ РАБОТЫ С РЕСТОРАНАМИ
-      
-      // Инициализация формы ресторана
-      function initRestaurantForm() {
-        console.log('Инициализация формы ресторана');
-        const addRestaurantBtn = document.getElementById('addRestaurantBtn');
-        const restaurantModal = document.getElementById('restaurantModal');
-        const closeRestaurantModal = document.getElementById('closeRestaurantModal');
-        const cancelRestaurantBtn = document.getElementById('cancelRestaurantBtn');
-        const restaurantForm = document.getElementById('restaurantForm');
-        
-        // Открытие модального окна для добавления ресторана
-        addRestaurantBtn.addEventListener('click', function() {
-          console.log('Открытие модального окна ресторана');
-          currentRestaurantId = null;
-          document.getElementById('restaurantModalTitle').textContent = 'Добавить ресторан';
-          restaurantForm.reset();
-          restaurantModal.classList.add('active');
-        });
-        
-        // Закрытие модального окна
-        closeRestaurantModal.addEventListener('click', function() {
-          restaurantModal.classList.remove('active');
-        });
-        
-        cancelRestaurantBtn.addEventListener('click', function() {
-          restaurantModal.classList.remove('active');
-        });
-        
-        // Обработка формы добавления/редактирования ресторана
-        restaurantForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          console.log('Отправка формы ресторана');
-          
-          const restaurantData = {
-            name: document.getElementById('restaurantName').value,
-            address: document.getElementById('restaurantAddress').value,
-            hours: document.getElementById('restaurantHours').value,
-            phone: document.getElementById('restaurantPhone').value,
-            email: document.getElementById('restaurantEmail').value,
-            isActive: document.getElementById('restaurantIsActive').checked
-          };
-          
-          try {
-            if (currentRestaurantId) {
-              // Редактирование ресторана
-              db.restaurants.update(currentRestaurantId, restaurantData);
-              showStatusMessage('restaurantsStatusMessage', `Ресторан "${restaurantData.name}" успешно обновлен`, 'success');
-            } else {
-              // Создаем ID для нового ресторана (если нет в БД)
-              const slug = restaurantData.name.toLowerCase()
-                .replace(/[^\w\s-]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/-+/g, '-');
-              restaurantData.id = slug;
-              
-              // Добавление ресторана
-              db.restaurants.add(restaurantData);
-              showStatusMessage('restaurantsStatusMessage', `Ресторан "${restaurantData.name}" успешно добавлен`, 'success');
-            }
-            
-            // Закрытие модального окна и обновление списка ресторанов
-            restaurantModal.classList.remove('active');
-            loadRestaurants();
-            
-            // Обновляем статистику на дашборде
-            loadDashboardData();
-          } catch (error) {
-            console.error('Ошибка при сохранении ресторана:', error);
-            showStatusMessage('restaurantsStatusMessage', `Ошибка: ${error.message}`, 'error');
-          }
-        });
-      }
-      
-      // Редактирование ресторана
-      function editRestaurant(restaurantId) {
-        console.log('Редактирование ресторана:', restaurantId);
-        const restaurant = db.restaurants.getById(restaurantId);
-        if (!restaurant) return;
-        
-        currentRestaurantId = restaurantId;
-        document.getElementById('restaurantModalTitle').textContent = 'Редактировать ресторан';
-        
-        document.getElementById('restaurantId').value = restaurant.id;
-        document.getElementById('restaurantName').value = restaurant.name;
-        document.getElementById('restaurantAddress').value = restaurant.address;
-        document.getElementById('restaurantHours').value = restaurant.hours;
-        document.getElementById('restaurantPhone').value = restaurant.phone;
-        document.getElementById('restaurantEmail').value = restaurant.email;
-        document.getElementById('restaurantIsActive').checked = restaurant.isActive !== false;
-        
-        document.getElementById('restaurantModal').classList.add('active');
-      }
-      
-      // Удаление ресторана
-      function deleteRestaurant(restaurantId) {
-        console.log('Удаление ресторана:', restaurantId);
-        const restaurant = db.restaurants.getById(restaurantId);
-        if (!restaurant) return;
-        
-        // Проверяем, связаны ли с рестораном заказы
-        const hasOrders = db.orders.getAll().some(order => order.restaurantId === restaurantId);
-        
-        if (hasOrders) {
-          showStatusMessage('restaurantsStatusMessage', `Невозможно удалить ресторан "${restaurant.name}": с ним связаны заказы`, 'error');
-          return;
-        }
-        
-        // Подтверждение удаления
-        if (confirm(`Вы действительно хотите удалить ресторан "${restaurant.name}"?`)) {
-          db.restaurants.delete(restaurantId);
-          showStatusMessage('restaurantsStatusMessage', `Ресторан "${restaurant.name}" успешно удален`, 'success');
-          
-          // Обновление списка ресторанов и статистики
-          loadRestaurants();
-          loadDashboardData();
-        }
-      }
-      
-      // Изменение статуса ресторана
-      function toggleRestaurantStatus(restaurantId, isActive) {
-        console.log('Изменение статуса ресторана:', restaurantId, isActive);
-        try {
-          const restaurant = db.restaurants.getById(restaurantId);
-          if (!restaurant) return;
-          
-          db.restaurants.update(restaurantId, { isActive });
-          showStatusMessage('restaurantsStatusMessage', `Статус ресторана "${restaurant.name}" изменен на "${isActive ? 'активен' : 'неактивен'}"`, 'success');
-        } catch (error) {
-          console.error('Ошибка при изменении статуса ресторана:', error);
-          showStatusMessage('restaurantsStatusMessage', `Ошибка: ${error.message}`, 'error');
-        }
-      }
-      
-      // Загрузка ресторанов
-      function loadRestaurants() {
-        console.log('Загрузка ресторанов');
-        try {
-          if (window.db && window.db.restaurants && typeof window.db.restaurants.getAll === 'function') {
-            const restaurants = db.restaurants.getAll();
-            const restaurantsTable = document.getElementById('restaurantsTable');
-            restaurantsTable.innerHTML = '';
-            
-            if (restaurants.length === 0) {
-              restaurantsTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет ресторанов</td></tr>';
-              return;
-            }
-            
-            restaurants.forEach(restaurant => {
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                <td>${restaurant.id}</td>
-                <td>${restaurant.name}</td>
-                <td>${restaurant.address}</td>
-                <td>${restaurant.phone}</td>
-                <td>
-                  <label class="switch">
-                    <input type="checkbox" data-restaurant-id="${restaurant.id}" data-action="toggle-restaurant" ${restaurant.isActive ? 'checked' : ''}>
-                    <span class="slider"></span>
-                  </label>
-                </td>
-                <td class="actions">
-                  <button class="admin-btn" data-restaurant-id="${restaurant.id}" data-action="edit-restaurant">Редактировать</button>
-                  <button class="admin-btn danger" data-restaurant-id="${restaurant.id}" data-action="delete-restaurant">Удалить</button>
-                </td>
-              `;
-              
-              restaurantsTable.appendChild(row);
-            });
-            
-            // Добавление обработчиков событий
-            document.querySelectorAll<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -1755,6 +551,33 @@ document.querySelectorAll('[data-action="edit-restaurant"]').forEach(btn => {
             <thead>
               <tr>
                 <th>ID</th>
+                <th>Клиент</th>
+                <th>Ресторан</th>
+                <th>Сумма</th>
+                <th>Статус</th>
+                <th>Дата</th>
+              </tr>
+            </thead>
+            <tbody id="recentOrdersTable">
+              <!-- Заказы будут добавлены через JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Restaurants Tab -->
+    <div class="tab-content" id="restaurants">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="admin-card-title">Рестораны</div>
+          <button class="admin-btn" id="addRestaurantBtn">Добавить ресторан</button>
+        </div>
+        <div id="restaurantsStatusMessage" class="status-message"></div>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
               <th>Название</th>
               <th>Адрес</th>
               <th>Телефон</th>
@@ -2167,31 +990,310 @@ document.querySelectorAll('[data-action="edit-restaurant"]').forEach(btn => {
         </div>
       </div>
     </div>
-  </div></th>
-                <th>Клиент</th>
-                <th>Ресторан</th>
-                <th>Сумма</th>
-                <th>Статус</th>
-                <th>Дата</th>
-              </tr>
-            </thead>
-            <tbody id="recentOrdersTable">
-              <!-- Заказы будут добавлены через JavaScript -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Restaurants Tab -->
-    <div class="tab-content" id="restaurants">
-      <div class="admin-card">
-        <div class="admin-card-header">
-          <div class="admin-card-title">Рестораны</div>
-          <button class="admin-btn" id="addRestaurantBtn">Добавить ресторан</button>
-        </div>
-        <div id="restaurantsStatusMessage" class="status-message"></div>
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>ID
+  </div>
+  
+  <!-- Подключение скриптов -->
+  <script src="db.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Админ-панель загружена');
+      
+      // Проверка авторизации
+      if (!sessionStorage.getItem('adminSession')) {
+        console.log('Не авторизован, перенаправляем на страницу входа');
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // Переменные для текущих данных
+      let currentRestaurantId = null;
+      let currentProductId = null;
+      let currentCategoryId = null;
+      let currentOrderId = null;
+      
+      // Выход из админ-панели
+      document.getElementById('logoutBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Выход из админ-панели');
+        
+        // Пытаемся использовать функцию logout из db.js если она доступна
+        try {
+          if (window.db && window.db.auth && typeof window.db.auth.logout === 'function') {
+            window.db.auth.logout();
+          }
+        } catch (error) {
+          console.error('Ошибка при выходе:', error);
+        }
+        
+        // Удаляем сессию в любом случае
+        sessionStorage.removeItem('adminSession');
+        
+        // Перенаправляем на страницу входа
+        window.location.href = 'login.html';
+      });
+      
+      // Инициализация вкладок
+      function initTabs() {
+        const tabs = document.querySelectorAll('.admin-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+          tab.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            
+            // Убираем активный класс со всех вкладок и контента
+            tabs.forEach(t => t.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Добавляем активный класс к выбранной вкладке и контенту
+            this.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+            
+            // Загружаем данные для выбранной вкладки
+            loadTabData(tabId);
+          });
+        });
+        
+        // Кнопка "Все заказы"
+        document.getElementById('viewAllOrdersBtn').addEventListener('click', function() {
+          const tabId = this.getAttribute('data-tab');
+          
+          // Убираем активный класс со всех вкладок и контента
+          tabs.forEach(t => t.classList.remove('active'));
+          tabContents.forEach(content => content.classList.remove('active'));
+          
+          // Добавляем активный класс к выбранной вкладке и контенту
+          document.querySelector(`.admin-tab[data-tab="${tabId}"]`).classList.add('active');
+          document.getElementById(tabId).classList.add('active');
+          
+          // Загружаем данные для выбранной вкладки
+          loadTabData(tabId);
+        });
+      }
+      
+      // Загрузка данных для выбранной вкладки
+      function loadTabData(tabId) {
+        console.log('Загрузка данных для вкладки:', tabId);
+        switch(tabId) {
+          case 'dashboard':
+            loadDashboardData();
+            break;
+          case 'restaurants':
+            loadRestaurants();
+            break;
+          case 'products':
+            loadProducts();
+            break;
+          case 'categories':
+            loadCategories();
+            break;
+          case 'orders':
+            loadOrders();
+            break;
+          case 'settings':
+            loadSettings();
+            break;
+        }
+      }
+      
+      // ФУНКЦИИ ДЛЯ РАБОТЫ С РЕСТОРАНАМИ
+      
+      // Инициализация формы ресторана
+      function initRestaurantForm() {
+        console.log('Инициализация формы ресторана');
+        const addRestaurantBtn = document.getElementById('addRestaurantBtn');
+        const restaurantModal = document.getElementById('restaurantModal');
+        const closeRestaurantModal = document.getElementById('closeRestaurantModal');
+        const cancelRestaurantBtn = document.getElementById('cancelRestaurantBtn');
+        const restaurantForm = document.getElementById('restaurantForm');
+        
+        // Открытие модального окна для добавления ресторана
+        addRestaurantBtn.addEventListener('click', function() {
+          console.log('Открытие модального окна ресторана');
+          currentRestaurantId = null;
+          document.getElementById('restaurantModalTitle').textContent = 'Добавить ресторан';
+          restaurantForm.reset();
+          restaurantModal.classList.add('active');
+        });
+        
+        // Закрытие модального окна
+        closeRestaurantModal.addEventListener('click', function() {
+          restaurantModal.classList.remove('active');
+        });
+        
+        cancelRestaurantBtn.addEventListener('click', function() {
+          restaurantModal.classList.remove('active');
+        });
+        
+        // Обработка формы добавления/редактирования ресторана
+        restaurantForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          console.log('Отправка формы ресторана');
+          
+          const restaurantData = {
+            name: document.getElementById('restaurantName').value,
+            address: document.getElementById('restaurantAddress').value,
+            hours: document.getElementById('restaurantHours').value,
+            phone: document.getElementById('restaurantPhone').value,
+            email: document.getElementById('restaurantEmail').value,
+            isActive: document.getElementById('restaurantIsActive').checked
+          };
+          
+          try {
+            if (currentRestaurantId) {
+              // Редактирование ресторана
+              db.restaurants.update(currentRestaurantId, restaurantData);
+              showStatusMessage('restaurantsStatusMessage', `Ресторан "${restaurantData.name}" успешно обновлен`, 'success');
+            } else {
+              // Создаем ID для нового ресторана (если нет в БД)
+              const slug = restaurantData.name.toLowerCase()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+              restaurantData.id = slug;
+              
+              // Добавление ресторана
+              db.restaurants.add(restaurantData);
+              showStatusMessage('restaurantsStatusMessage', `Ресторан "${restaurantData.name}" успешно добавлен`, 'success');
+            }
+            
+            // Закрытие модального окна и обновление списка ресторанов
+            restaurantModal.classList.remove('active');
+            loadRestaurants();
+            
+            // Обновляем статистику на дашборде
+            loadDashboardData();
+          } catch (error) {
+            console.error('Ошибка при сохранении ресторана:', error);
+            showStatusMessage('restaurantsStatusMessage', `Ошибка: ${error.message}`, 'error');
+          }
+        });
+      }
+      
+      // Редактирование ресторана
+      function editRestaurant(restaurantId) {
+        console.log('Редактирование ресторана:', restaurantId);
+        const restaurant = db.restaurants.getById(restaurantId);
+        if (!restaurant) return;
+        
+        currentRestaurantId = restaurantId;
+        document.getElementById('restaurantModalTitle').textContent = 'Редактировать ресторан';
+        
+        document.getElementById('restaurantId').value = restaurant.id;
+        document.getElementById('restaurantName').value = restaurant.name;
+        document.getElementById('restaurantAddress').value = restaurant.address;
+        document.getElementById('restaurantHours').value = restaurant.hours;
+        document.getElementById('restaurantPhone').value = restaurant.phone;
+        document.getElementById('restaurantEmail').value = restaurant.email;
+        document.getElementById('restaurantIsActive').checked = restaurant.isActive !== false;
+        
+        document.getElementById('restaurantModal').classList.add('active');
+      }
+      
+      // Удаление ресторана
+      function deleteRestaurant(restaurantId) {
+        console.log('Удаление ресторана:', restaurantId);
+        const restaurant = db.restaurants.getById(restaurantId);
+        if (!restaurant) return;
+        
+        // Проверяем, связаны ли с рестораном заказы
+        const hasOrders = db.orders.getAll().some(order => order.restaurantId === restaurantId);
+        
+        if (hasOrders) {
+          showStatusMessage('restaurantsStatusMessage', `Невозможно удалить ресторан "${restaurant.name}": с ним связаны заказы`, 'error');
+          return;
+        }
+        
+        // Подтверждение удаления
+        if (confirm(`Вы действительно хотите удалить ресторан "${restaurant.name}"?`)) {
+          db.restaurants.delete(restaurantId);
+          showStatusMessage('restaurantsStatusMessage', `Ресторан "${restaurant.name}" успешно удален`, 'success');
+          
+          // Обновление списка ресторанов и статистики
+          loadRestaurants();
+          loadDashboardData();
+        }
+      }
+      
+      // Изменение статуса ресторана
+      function toggleRestaurantStatus(restaurantId, isActive) {
+        console.log('Изменение статуса ресторана:', restaurantId, isActive);
+        try {
+          const restaurant = db.restaurants.getById(restaurantId);
+          if (!restaurant) return;
+          
+          db.restaurants.update(restaurantId, { isActive });
+          showStatusMessage('restaurantsStatusMessage', `Статус ресторана "${restaurant.name}" изменен на "${isActive ? 'активен' : 'неактивен'}"`, 'success');
+        } catch (error) {
+          console.error('Ошибка при изменении статуса ресторана:', error);
+          showStatusMessage('restaurantsStatusMessage', `Ошибка: ${error.message}`, 'error');
+        }
+      }
+      
+      // Загрузка ресторанов
+      function loadRestaurants() {
+        console.log('Загрузка ресторанов');
+        try {
+          if (window.db && window.db.restaurants && typeof window.db.restaurants.getAll === 'function') {
+            const restaurants = db.restaurants.getAll();
+            const restaurantsTable = document.getElementById('restaurantsTable');
+            restaurantsTable.innerHTML = '';
+            
+            if (restaurants.length === 0) {
+              restaurantsTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет ресторанов</td></tr>';
+              return;
+            }
+            
+            restaurants.forEach(restaurant => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${restaurant.id}</td>
+                <td>${restaurant.name}</td>
+                <td>${restaurant.address}</td>
+                <td>${restaurant.phone}</td>
+                <td>
+                  <label class="switch">
+                    <input type="checkbox" data-restaurant-id="${restaurant.id}" data-action="toggle-restaurant" ${restaurant.isActive ? 'checked' : ''}>
+                    <span class="slider"></span>
+                  </label>
+                </td>
+                <td class="actions">
+                  <button class="admin-btn" data-restaurant-id="${restaurant.id}" data-action="edit-restaurant">Редактировать</button>
+                  <button class="admin-btn danger" data-restaurant-id="${restaurant.id}" data-action="delete-restaurant">Удалить</button>
+                </td>
+              `;
+              
+              restaurantsTable.appendChild(row);
+            });
+            
+            // Добавление обработчиков событий
+            document.querySelectorAll('[data-action="edit-restaurant"]').forEach(btn => {
+              btn.addEventListener('click', function() {
+                const restaurantId = this.getAttribute('data-restaurant-id');
+                editRestaurant(restaurantId);
+              });
+            });
+            
+            document.querySelectorAll('[data-action="delete-restaurant"]').forEach(btn => {
+              btn.addEventListener('click', function() {
+                const restaurantId = this.getAttribute('data-restaurant-id');
+                deleteRestaurant(restaurantId);
+              });
+            });
+            
+            document.querySelectorAll('[data-action="toggle-restaurant"]').forEach(checkbox => {
+              checkbox.addEventListener('change', function() {
+                const restaurantId = this.getAttribute('data-restaurant-id');
+                const isActive = this.checked;
+                toggleRestaurantStatus(restaurantId, isActive);
+              });
+            });
+          } else {
+            console.warn('db.restaurants.getAll не найден');
+            document.getElementById('restaurantsTable').innerHTML = '<tr><td colspan="6" style="text-align: center;">Данные недоступны</td></tr>';
+          }
+        } catch (error) {
+          console.error('Ошибка при загрузке ресторанов:', error);
+          document.getElementById('restaurantsTable').innerHTML = `<tr><td colspan="6" style="text-align: center;">Ошибка: ${error.message}</td></tr>`;
+        }
+      }

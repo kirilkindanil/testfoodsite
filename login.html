@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Вход в админ-панель | Food Menu</title>
+  <title>Admin Login | Food Menu</title>
   
-  <!-- Подключаем шрифт через Google Fonts -->
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;800&display=swap" rel="stylesheet">
   
   <style>
@@ -47,6 +47,12 @@
       width: 90%;
       max-width: 450px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     
     .login-logo {
@@ -142,6 +148,13 @@
     
     .error-message.show {
       display: block;
+      animation: shake 0.5s ease-in-out;
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
     }
   </style>
 </head>
@@ -153,38 +166,38 @@
       <img src="images/logo.png" alt="Logo">
     </div>
     
-    <h1 class="login-title">Вход в админ-панель</h1>
+    <h1 class="login-title">Admin Panel Login</h1>
     
     <div class="error-message" id="errorMessage"></div>
     
     <form id="loginForm">
       <div class="form-group">
-        <label class="form-label">Имя пользователя</label>
+        <label class="form-label">Username</label>
         <input type="text" id="username" class="form-input" required>
       </div>
       
       <div class="form-group">
-        <label class="form-label">Пароль</label>
+        <label class="form-label">Password</label>
         <input type="password" id="password" class="form-input" required>
       </div>
       
-      <button type="submit" class="login-btn">Войти</button>
+      <button type="submit" class="login-btn">Login</button>
     </form>
     
     <div class="back-btn">
-      <a href="index.html">Вернуться на сайт</a>
+      <a href="index.html">Return to website</a>
     </div>
   </div>
   
-  <!-- Подключение скриптов -->
+  <!-- Scripts -->
   <script src="db.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('Страница авторизации загружена');
+      console.log('Login page loaded');
       
-      // Если пользователь уже авторизован, перенаправляем на админку
+      // If user is already authenticated, redirect to admin panel
       if (sessionStorage.getItem('adminSession')) {
-        console.log('Уже авторизован, перенаправляем на админ-панель');
+        console.log('Already authenticated, redirecting to admin panel');
         window.location.href = 'admin-panel.html';
         return;
       }
@@ -194,48 +207,48 @@
       
       loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        console.log('Форма отправлена');
+        console.log('Form submitted');
         
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
         
-        // Проверка на пустые поля
+        // Check for empty fields
         if (!username || !password) {
-          errorMessage.textContent = 'Введите имя пользователя и пароль';
+          errorMessage.textContent = 'Please enter both username and password';
           errorMessage.classList.add('show');
           return;
         }
         
-        // Попытка авторизации через db.js
+        // Attempt authentication via db.js
         try {
           if (window.db && window.db.auth && typeof window.db.auth.login === 'function') {
-            console.log('Используем db.auth.login');
+            console.log('Using db.auth.login');
             
             if (window.db.auth.login(username, password)) {
-              console.log('Авторизация успешна, перенаправляем');
+              console.log('Authentication successful, redirecting');
               window.location.href = 'admin-panel.html';
             } else {
-              errorMessage.textContent = 'Неверное имя пользователя или пароль';
+              errorMessage.textContent = 'Invalid username or password';
               errorMessage.classList.add('show');
             }
           } else {
-            // Запасной вариант если db.js не загрузился
-            console.warn('db.auth.login не найден, используем запасной вариант');
+            // Fallback if db.js didn't load
+            console.warn('db.auth.login not found, using fallback');
             
-            // Простая проверка (только для демонстрации)
+            // Simple check (for demonstration only)
             if (username === 'admin' && password === 'admin') {
-              console.log('Авторизация успешна (запасной вариант)');
-              // Создаем сессию вручную
+              console.log('Authentication successful (fallback)');
+              // Create session manually
               sessionStorage.setItem('adminSession', 'simple-auth-' + Date.now());
               window.location.href = 'admin-panel.html';
             } else {
-              errorMessage.textContent = 'Неверное имя пользователя или пароль';
+              errorMessage.textContent = 'Invalid username or password';
               errorMessage.classList.add('show');
             }
           }
         } catch (error) {
-          console.error('Ошибка при авторизации:', error);
-          errorMessage.textContent = 'Произошла ошибка при входе: ' + error.message;
+          console.error('Authentication error:', error);
+          errorMessage.textContent = 'An error occurred during login: ' + error.message;
           errorMessage.classList.add('show');
         }
       });

@@ -1,4 +1,46 @@
-// db.js - Single file for storing data and API logic for restaurant application
+// db.js - Unified file for data storage and API logic for the restaurant application
+
+// Telegram notification function
+function sendTelegramNotification(botToken, chatId, message) {
+  // Check if the required parameters are present
+  if (!botToken || !chatId || !message) {
+    console.error('Missing required parameters for Telegram notification');
+    return false;
+  }
+  
+  // Create the API URL with the bot token
+  const apiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+  
+  // Create the request payload
+  const requestData = {
+    chat_id: chatId,
+    text: message,
+    parse_mode: 'HTML'
+  };
+  
+  // Send the API request
+  return fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestData)
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Telegram API response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Telegram notification sent successfully:', data);
+    return true;
+  })
+  .catch(error => {
+    console.error('Error sending Telegram notification:', error);
+    return false;
+  });
+}
 
 // Initialize local storage if it's empty
 if (!localStorage.getItem('restaurants')) {
@@ -7,7 +49,7 @@ if (!localStorage.getItem('restaurants')) {
     {
       id: 'central',
       name: 'Food Menu Central',
-      address: '15 Main Street, Moscow, 123056',
+      address: '15 Tverskaya St., Moscow, 123056',
       hours: 'Mon-Fri: 10:00 - 22:00, Sat-Sun: 11:00 - 23:00',
       phone: '+7 (495) 123-45-67',
       email: 'central@foodmenu.com',
@@ -16,7 +58,7 @@ if (!localStorage.getItem('restaurants')) {
     {
       id: 'west',
       name: 'Food Menu West',
-      address: '30 Kutuzovsky Avenue, Moscow, 121165',
+      address: '30 Kutuzovsky Ave., Moscow, 121165',
       hours: 'Mon-Sun: 09:00 - 22:00',
       phone: '+7 (495) 987-65-43',
       email: 'west@foodmenu.com',
@@ -25,7 +67,7 @@ if (!localStorage.getItem('restaurants')) {
     {
       id: 'north',
       name: 'Food Menu North',
-      address: '163A Dmitrovskoye Highway, Moscow, 127280',
+      address: '163A Dmitrovskoye Hwy., Moscow, 127280',
       hours: 'Mon-Fri: 10:00 - 21:00, Sat-Sun: 11:00 - 22:00',
       phone: '+7 (495) 111-22-33',
       email: 'north@foodmenu.com',
@@ -50,7 +92,7 @@ if (!localStorage.getItem('categories')) {
 }
 
 if (!localStorage.getItem('products')) {
-  // Default products with restaurant links
+  // Default products linked to restaurants
   const defaultProducts = [
     // Central restaurant
     {
@@ -58,7 +100,7 @@ if (!localStorage.getItem('products')) {
       name: 'CLASSIC BURGER',
       category: 'burgers',
       price: 450,
-      description: 'Juicy beef patty, signature sauce, fresh vegetables and crispy bun. Perfect combination of ingredients for true burger lovers.',
+      description: 'Juicy beef patty, signature sauce, fresh vegetables, and a crispy bun. The perfect combination of ingredients for true burger lovers.',
       image: 'burger.jpg',
       restaurantIds: ['central']
     },
@@ -67,7 +109,7 @@ if (!localStorage.getItem('products')) {
       name: 'PREMIUM COFFEE',
       category: 'coffee',
       price: 250,
-      description: 'Premium arabica, rich taste, velvety texture and exquisite aftertaste. Perfect choice for real coffee gourmets.',
+      description: 'Premium arabica, rich taste, velvety texture, and exquisite aftertaste. The ideal choice for true coffee connoisseurs.',
       image: 'coffee.jpg',
       restaurantIds: ['central']
     },
@@ -76,7 +118,7 @@ if (!localStorage.getItem('products')) {
       name: 'ITALIAN PASTA',
       category: 'pasta',
       price: 480,
-      description: 'Traditional pasta with aromatic sauce, fresh herbs and parmesan. Real taste of Italy in every portion of our signature pasta.',
+      description: 'Traditional pasta with fragrant sauce, fresh herbs, and parmesan. The authentic taste of Italy in every portion of our signature pasta.',
       image: 'pasta.jpg',
       restaurantIds: ['central']
     },
@@ -85,7 +127,7 @@ if (!localStorage.getItem('products')) {
       name: 'CHEESECAKE',
       category: 'dessert',
       price: 320,
-      description: 'Delicate creamy cheesecake with a crispy base, fresh berries and vanilla sauce.',
+      description: 'Delicate creamy cheesecake with a crunchy base, fresh berries, and vanilla sauce.',
       image: 'dessert.jpg',
       restaurantIds: ['central', 'west']
     },
@@ -96,7 +138,7 @@ if (!localStorage.getItem('products')) {
       name: 'DELUXE BURGER',
       category: 'burgers',
       price: 520,
-      description: 'Signature burger with marbled beef, caramelized onions, fried bacon and cheddar cheese on a brioche bun.',
+      description: 'Signature burger with marbled beef, caramelized onions, fried bacon, and cheddar cheese on a brioche bun.',
       image: 'burger.jpg',
       restaurantIds: ['west']
     },
@@ -114,7 +156,7 @@ if (!localStorage.getItem('products')) {
       name: 'PASTA CARBONARA',
       category: 'pasta',
       price: 520,
-      description: 'Classic carbonara with guanciale, egg, pecorino romano cheese and freshly ground black pepper.',
+      description: 'Classic carbonara with guanciale, egg, pecorino romano cheese, and freshly ground black pepper.',
       image: 'pasta.jpg',
       restaurantIds: ['west']
     },
@@ -125,7 +167,7 @@ if (!localStorage.getItem('products')) {
       name: 'BBQ BURGER',
       category: 'burgers',
       price: 480,
-      description: 'Juicy burger with beef patty, signature BBQ sauce, onion rings and cheddar cheese.',
+      description: 'Juicy burger with beef patty, signature BBQ sauce, onion rings, and cheddar cheese.',
       image: 'burger.jpg',
       restaurantIds: ['north']
     },
@@ -134,7 +176,7 @@ if (!localStorage.getItem('products')) {
       name: 'CARAMEL LATTE',
       category: 'coffee',
       price: 270,
-      description: 'Delicate latte with caramel syrup, whipped cream and caramel crumble.',
+      description: 'Delicate latte with caramel syrup, whipped cream, and caramel crumble.',
       image: 'coffee.jpg',
       restaurantIds: ['north']
     },
@@ -143,7 +185,7 @@ if (!localStorage.getItem('products')) {
       name: 'APPLE PIE',
       category: 'dessert',
       price: 280,
-      description: 'Homemade apple pie with cinnamon and vanilla ice cream. Warm and cozy dessert for any time of year.',
+      description: 'Homemade apple pie with cinnamon and vanilla ice cream. A warm and cozy dessert for any time of year.',
       image: 'dessert.jpg',
       restaurantIds: ['north']
     }
@@ -173,6 +215,18 @@ if (!localStorage.getItem('adminCredentials')) {
     password: 'admin' // In a real application, the password should be hashed
   };
   localStorage.setItem('adminCredentials', JSON.stringify(defaultCredentials));
+}
+
+// Function to format date and time
+function formatDateTime(dateTimeString) {
+  const dateTime = new Date(dateTimeString);
+  return dateTime.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 }
 
 // Database object
@@ -364,7 +418,7 @@ const db = {
       orders.push(newOrder);
       localStorage.setItem('orders', JSON.stringify(orders));
       
-      // Send Telegram notification
+      // Send notification to Telegram
       this.sendTelegramNotification(newOrder);
       
       return newOrder;
@@ -395,88 +449,43 @@ const db = {
       return false;
     },
     
-    // Send actual Telegram notification
+    // Send notification to Telegram
     sendTelegramNotification: function(order) {
       const settings = JSON.parse(localStorage.getItem('settings') || '{}');
       
       if (settings.telegramBotEnabled && settings.telegramBotToken && settings.telegramChatId) {
-        console.log('Sending Telegram notification for new order:', order);
+        console.log('Sending Telegram notification about new order:', order);
         
-        // Get restaurant name
-        const restaurant = db.restaurants.getById(order.restaurantId);
-        const restaurantName = restaurant ? restaurant.name : 'Unknown restaurant';
+        // Format order details for message
+        const restaurant = db.restaurants.getById(order.restaurantId) || { name: 'Unknown Restaurant' };
+        const orderItems = order.items.map(item => `• ${item.name} x${item.quantity} - ${item.price * item.quantity}₽`).join('\n');
         
-        // Format order items
-        const orderItems = order.items.map(item => 
-          `${item.name} x${item.quantity} - ${item.price * item.quantity}₽`
-        ).join('\n');
-        
-        // Format message for Telegram
+        // Create notification message
         const message = `
-🔔 *NEW ORDER #${order.id}*
+<b>🔔 NEW ORDER #${order.id}</b>
 
-👤 *Customer*: ${order.customerName}
-📱 *Phone*: ${order.customerPhone}
-🏪 *Restaurant*: ${restaurantName}
-⏱ *Pickup time*: ${order.pickupTime} minutes
-💰 *Total amount*: ${order.totalAmount}₽
+<b>Customer:</b> ${order.customerName}
+<b>Phone:</b> ${order.customerPhone}
+<b>Restaurant:</b> ${restaurant.name}
+<b>Pickup Time:</b> ${order.pickupTime} minutes
+<b>Order Time:</b> ${formatDateTime(order.createdAt)}
+<b>Total Amount:</b> ${order.totalAmount}₽
 
-📋 *Order items*:
+<b>Order Items:</b>
 ${orderItems}
-
-📅 *Order time*: ${new Date(order.createdAt).toLocaleString()}
-        `;
+        `.trim();
         
-        // Send request to Telegram API
-        const telegramApiUrl = `https://api.telegram.org/bot${settings.telegramBotToken}/sendMessage`;
-        
-        // Create request data
-        const data = {
-          chat_id: settings.telegramChatId,
-          text: message,
-          parse_mode: 'Markdown'
-        };
-        
-        // Send request
-        fetch(telegramApiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(result => {
-          console.log('Telegram API response:', result);
-          if (result.ok) {
-            console.log('Notification successfully sent to Telegram');
+        // Try to send the notification to Telegram
+        sendTelegramNotification(settings.telegramBotToken, settings.telegramChatId, message)
+          .then(success => {
+            // Save notification status
             localStorage.setItem('lastTelegramNotification', JSON.stringify({
               type: 'new_order',
               orderId: order.id,
               sentAt: new Date().toISOString(),
-              success: true
+              success: success
             }));
-          } else {
-            console.error('Error sending notification to Telegram:', result.description);
-            localStorage.setItem('lastTelegramNotification', JSON.stringify({
-              type: 'new_order',
-              orderId: order.id,
-              sentAt: new Date().toISOString(),
-              success: false,
-              error: result.description
-            }));
-          }
-        })
-        .catch(error => {
-          console.error('Error sending request to Telegram API:', error);
-          localStorage.setItem('lastTelegramNotification', JSON.stringify({
-            type: 'new_order',
-            orderId: order.id,
-            sentAt: new Date().toISOString(),
-            success: false,
-            error: error.message
-          }));
-        });
+          });
       }
     }
   },
@@ -500,7 +509,7 @@ ${orderItems}
     }
   },
   
-  // Methods for admin authentication
+  // Methods for administrator authorization
   auth: {
     getCredentials: function() {
       return JSON.parse(localStorage.getItem('adminCredentials') || '{}');
@@ -534,7 +543,7 @@ ${orderItems}
     }
   },
   
-  // Methods for cart
+  // Methods for the shopping cart
   cart: {
     get: function() {
       return JSON.parse(localStorage.getItem('cart') || '{"items":[], "restaurantId": null}');
@@ -552,7 +561,7 @@ ${orderItems}
       if (cart.restaurantId && product.restaurantIds && !product.restaurantIds.includes(cart.restaurantId)) {
         return { 
           success: false, 
-          error: 'Cart can only contain items from one restaurant. Please clear your cart first.' 
+          error: 'You can only add items from one restaurant at a time. Please clear your cart first.' 
         };
       }
       
@@ -583,7 +592,7 @@ ${orderItems}
       const existingItemIndex = cart.items.findIndex(item => item.productId === productId);
       
       if (existingItemIndex === -1) {
-        return { success: false, error: 'Product not found in cart' };
+        return { success: false, error: 'Item not found in cart' };
       }
       
       if (quantity <= 0) {
@@ -624,11 +633,11 @@ ${orderItems}
       const cart = this.get();
       
       if (cart.items.length === 0) {
-        return { success: false, error: 'Cart is empty' };
+        return { success: false, error: 'Your cart is empty' };
       }
       
       if (!cart.restaurantId) {
-        return { success: false, error: 'Restaurant not specified' };
+        return { success: false, error: 'No restaurant selected' };
       }
       
       // Create order
@@ -646,7 +655,7 @@ ${orderItems}
       
       const newOrder = db.orders.add(order);
       
-      // Clear cart after successful checkout
+      // Clear cart after successful order
       this.clear();
       
       return { success: true, order: newOrder };

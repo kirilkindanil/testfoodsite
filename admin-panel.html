@@ -599,8 +599,7 @@
         </div>
       </div>
     </div>
-
-
+    
     <!-- Restaurants Tab -->
     <div class="tab-content" id="restaurants">
       <div class="admin-card">
@@ -626,7 +625,7 @@
         </table>
       </div>
     </div>
-
+    
     <!-- Products Tab -->
     <div class="tab-content" id="products">
       <div class="admin-card">
@@ -652,7 +651,7 @@
         </table>
       </div>
     </div>
-
+    
     <!-- Categories Tab -->
     <div class="tab-content" id="categories">
       <div class="admin-card">
@@ -677,7 +676,7 @@
         </table>
       </div>
     </div>
-
+    
     <!-- Orders Tab -->
     <div class="tab-content" id="orders">
       <div class="admin-card">
@@ -717,7 +716,7 @@
         </table>
       </div>
     </div>
-
+    
     <!-- Settings Tab -->
     <div class="tab-content" id="settings">
       <div class="admin-card">
@@ -730,17 +729,17 @@
             <label class="form-label">Website Name</label>
             <input type="text" id="siteTitle" name="siteTitle" class="form-input" value="FOOD MENU">
           </div>
-
+          
           <div class="form-group">
             <label class="form-label">Contact Email</label>
             <input type="email" id="contactEmail" name="contactEmail" class="form-input" value="info@foodmenu.com">
           </div>
-
+          
           <div class="form-group">
             <label class="form-label">Contact Phone</label>
             <input type="tel" id="contactPhone" name="contactPhone" class="form-input" value="+7 (123) 456-78-90">
           </div>
-
+          
           <div class="form-group">
             <label class="form-label">Telegram Bot Settings</label>
             <div style="display: flex; align-items: center; margin-bottom: 10px;">
@@ -750,18 +749,18 @@
               </label>
               <span>Enable order notifications</span>
             </div>
-
+            
             <input type="text" id="telegramBotToken" name="telegramBotToken" class="form-input" placeholder="Telegram Bot Token" style="margin-bottom: 10px;">
             <input type="text" id="telegramChatId" name="telegramChatId" class="form-input" placeholder="Chat ID for notifications">
             <p class="form-hint">To receive notifications, you need to create a Telegram bot (@BotFather) and get a chat ID. <a href="https://core.telegram.org/bots#how-do-i-create-a-bot" target="_blank">Learn how</a></p>
           </div>
-
+          
           <div class="form-actions">
             <button type="submit" class="admin-btn">Save Settings</button>
           </div>
         </form>
       </div>
-
+      
       <div class="admin-card">
         <div class="admin-card-header">
           <div class="admin-card-title">Administrator Settings</div>
@@ -772,17 +771,17 @@
             <label class="form-label">Username</label>
             <input type="text" id="adminUsername" name="adminUsername" class="form-input">
           </div>
-
+          
           <div class="form-group">
             <label class="form-label">New Password</label>
             <input type="password" id="adminPassword" name="adminPassword" class="form-input">
           </div>
-
+          
           <div class="form-group">
             <label class="form-label">Confirm Password</label>
             <input type="password" id="adminPasswordConfirm" name="adminPasswordConfirm" class="form-input">
           </div>
-
+          
           <div class="form-actions">
             <button type="submit" class="admin-btn">Save Admin Details</button>
           </div>
@@ -790,7 +789,7 @@
       </div>
     </div>
   </div>
-
+  
   <!-- Restaurant Modal -->
   <div class="admin-modal" id="restaurantModal">
     <div class="modal-content">
@@ -800,33 +799,33 @@
       </div>
       <form id="restaurantForm" class="admin-form">
         <input type="hidden" id="restaurantId" name="restaurantId">
-
+        
         <div class="form-group">
           <label class="form-label">Restaurant Name</label>
           <input type="text" id="restaurantName" name="name" class="form-input" required>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Address</label>
           <input type="text" id="restaurantAddress" name="address" class="form-input" required>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Working Hours</label>
-          <input type="text" id="restaurantHours" name="hours" class="form-input"
+          <input type="text" id="restaurantHours" name="hours" class="form-input" 
                  placeholder="Mon-Fri: 10:00 - 22:00, Sat-Sun: 11:00 - 23:00" required>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Phone</label>
           <input type="text" id="restaurantPhone" name="phone" class="form-input" required>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Email</label>
           <input type="email" id="restaurantEmail" name="email" class="form-input" required>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Status</label>
           <label class="switch">
@@ -835,7 +834,7 @@
           </label>
           <span style="margin-left: 10px;">Active</span>
         </div>
-
+        
         <div class="form-actions">
           <button type="button" class="admin-btn secondary" id="cancelRestaurantBtn">Cancel</button>
           <button type="submit" class="admin-btn">Save</button>
@@ -843,7 +842,7 @@
       </form>
     </div>
   </div>
-
+  
   <!-- Product Modal -->
   <div class="admin-modal" id="productModal">
     <div class="modal-content">
@@ -853,12 +852,12 @@
       </div>
       <form id="productForm" class="admin-form">
         <input type="hidden" id="productId" name="productId">
-
+        
         <div class="form-group">
           <label class="form-label">Product Name</label>
           <input type="text" id="productName" name="name" class="form-input" required>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Category</label>
           <select id="productCategory" name="category" class="form-select" required>
@@ -866,17 +865,17 @@
             <!-- Categories will be added via JavaScript -->
           </select>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Price, ₽</label>
           <input type="number" id="productPrice" name="price" class="form-input" required min="0">
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Description</label>
           <textarea id="productDescription" name="description" class="form-textarea" required></textarea>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Product Image</label>
           <div class="image-upload-container">
@@ -888,14 +887,14 @@
           <input type="hidden" id="productImage" name="image" value="default.jpg">
           <p class="form-hint">Select an image in JPG, PNG, or GIF format. Recommended size: 400x300 pixels.</p>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Restaurants</label>
           <div id="productRestaurantsCheckboxes" style="margin-top: 10px;">
             <!-- Restaurants will be added via JavaScript -->
           </div>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Status</label>
           <label class="switch">
@@ -904,7 +903,7 @@
           </label>
           <span style="margin-left: 10px;">Active</span>
         </div>
-
+        
         <div class="form-actions">
           <button type="button" class="admin-btn secondary" id="cancelProductBtn">Cancel</button>
           <button type="submit" class="admin-btn">Save</button>
@@ -912,8 +911,7 @@
       </form>
     </div>
   </div>
-
-
+  
   <!-- Category Modal -->
   <div class="admin-modal" id="categoryModal">
     <div class="modal-content">
@@ -923,17 +921,17 @@
       </div>
       <form id="categoryForm" class="admin-form">
         <input type="hidden" id="categoryId" name="categoryId">
-
+        
         <div class="form-group">
           <label class="form-label">Category Name</label>
           <input type="text" id="categoryName" name="name" class="form-input" required>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Slug (for URL)</label>
           <input type="text" id="categorySlug" name="slug" class="form-input" required>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Status</label>
           <label class="switch">
@@ -942,7 +940,7 @@
           </label>
           <span style="margin-left: 10px;">Active</span>
         </div>
-
+        
         <div class="form-actions">
           <button type="button" class="admin-btn secondary" id="cancelCategoryBtn">Cancel</button>
           <button type="submit" class="admin-btn">Save</button>
@@ -950,7 +948,7 @@
       </form>
     </div>
   </div>
-
+  
   <!-- Order Modal -->
   <div class="admin-modal" id="orderModal">
     <div class="modal-content">
@@ -958,13 +956,13 @@
         <h3 class="modal-title" id="orderModalTitle">View Order</h3>
         <button type="button" class="modal-close" id="closeOrderModal">&times;</button>
       </div>
-
+      
       <div id="orderDetails">
         <div class="form-group">
           <label class="form-label">Order Number</label>
           <div id="orderNumber" style="font-size: 18px; font-weight: bold;"></div>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Status</label>
           <select id="orderStatus" class="form-select">
@@ -975,32 +973,32 @@
             <option value="cancelled">Cancelled</option>
           </select>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Customer</label>
           <div id="orderCustomer"></div>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Phone</label>
           <div id="orderPhone"></div>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Restaurant</label>
           <div id="orderRestaurant"></div>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Pickup Time</label>
           <div id="orderPickupTime"></div>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Date/Time</label>
           <div id="orderDateTime"></div>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Order Items</label>
           <table class="admin-table">
@@ -1015,12 +1013,12 @@
             <tbody id="orderItems"></tbody>
           </table>
         </div>
-
+        
         <div class="form-group">
           <label class="form-label">Total</label>
           <div id="orderTotal" style="font-size: 18px; font-weight: bold;"></div>
         </div>
-
+        
         <div class="form-actions">
           <button type="button" class="admin-btn secondary" id="closeOrderBtn">Close</button>
           <button type="button" class="admin-btn" id="saveOrderStatusBtn">Save Status</button>
@@ -1028,31 +1026,31 @@
       </div>
     </div>
   </div>
-
+  
   <!-- Scripts -->
   <script src="db.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       console.log('Admin panel loaded');
-
+      
       // Authentication check
       if (!sessionStorage.getItem('adminSession')) {
         console.log('Not authenticated, redirecting to login page');
         window.location.href = 'login.html';
         return;
       }
-
+      
       // Variables for current data
       let currentRestaurantId = null;
       let currentProductId = null;
       let currentCategoryId = null;
       let currentOrderId = null;
-
+      
       // Admin panel logout
       document.getElementById('logoutBtn').addEventListener('click', function(e) {
         e.preventDefault();
         console.log('Logging out of admin panel');
-
+        
         // Try to use the logout function from db.js if available
         try {
           if (window.db && window.db.auth && typeof window.db.auth.logout === 'function') {
@@ -1061,53 +1059,53 @@
         } catch (error) {
           console.error('Error during logout:', error);
         }
-
+        
         // Remove session in any case
         sessionStorage.removeItem('adminSession');
-
+        
         // Redirect to login page
         window.location.href = 'login.html';
       });
-
+      
       // Initialize tabs
       function initTabs() {
         const tabs = document.querySelectorAll('.admin-tab');
         const tabContents = document.querySelectorAll('.tab-content');
-
+        
         tabs.forEach(tab => {
           tab.addEventListener('click', function() {
             const tabId = this.getAttribute('data-tab');
-
+            
             // Remove active class from all tabs and content
             tabs.forEach(t => t.classList.remove('active'));
             tabContents.forEach(content => content.classList.remove('active'));
-
+            
             // Add active class to selected tab and content
             this.classList.add('active');
             document.getElementById(tabId).classList.add('active');
-
+            
             // Load data for selected tab
             loadTabData(tabId);
           });
         });
-
+        
         // "All Orders" button
         document.getElementById('viewAllOrdersBtn').addEventListener('click', function() {
           const tabId = this.getAttribute('data-tab');
-
+          
           // Remove active class from all tabs and content
           tabs.forEach(t => t.classList.remove('active'));
           tabContents.forEach(content => content.classList.remove('active'));
-
+          
           // Add active class to selected tab and content
           document.querySelector(`.admin-tab[data-tab="${tabId}"]`).classList.add('active');
           document.getElementById(tabId).classList.add('active');
-
+          
           // Load data for selected tab
           loadTabData(tabId);
         });
       }
-
+      
       // Load data for selected tab
       function loadTabData(tabId) {
         console.log('Loading data for tab:', tabId);
@@ -1132,9 +1130,9 @@
             break;
         }
       }
-
+      
       // RESTAURANT FUNCTIONS
-
+      
       // Initialize restaurant form
       function initRestaurantForm() {
         console.log('Initializing restaurant form');
@@ -1143,7 +1141,7 @@
         const closeRestaurantModal = document.getElementById('closeRestaurantModal');
         const cancelRestaurantBtn = document.getElementById('cancelRestaurantBtn');
         const restaurantForm = document.getElementById('restaurantForm');
-
+        
         // Open modal for adding restaurant
         addRestaurantBtn.addEventListener('click', function() {
           console.log('Opening restaurant modal');
@@ -1152,21 +1150,21 @@
           restaurantForm.reset();
           restaurantModal.classList.add('active');
         });
-
+        
         // Close modal
         closeRestaurantModal.addEventListener('click', function() {
           restaurantModal.classList.remove('active');
         });
-
+        
         cancelRestaurantBtn.addEventListener('click', function() {
           restaurantModal.classList.remove('active');
         });
-
+        
         // Form submission handler for adding/editing restaurant
         restaurantForm.addEventListener('submit', function(e) {
           e.preventDefault();
           console.log('Submitting restaurant form');
-
+          
           const restaurantData = {
             name: document.getElementById('restaurantName').value,
             address: document.getElementById('restaurantAddress').value,
@@ -1175,7 +1173,7 @@
             email: document.getElementById('restaurantEmail').value,
             isActive: document.getElementById('restaurantIsActive').checked
           };
-
+          
           try {
             if (currentRestaurantId) {
               // Edit restaurant
@@ -1188,16 +1186,16 @@
                 .replace(/\s+/g, '-')
                 .replace(/-+/g, '-');
               restaurantData.id = slug;
-
+              
               // Add restaurant
               db.restaurants.add(restaurantData);
               showStatusMessage('restaurantsStatusMessage', `Restaurant "${restaurantData.name}" successfully added`, 'success');
             }
-
+            
             // Close modal and update restaurant list
             restaurantModal.classList.remove('active');
             loadRestaurants();
-
+            
             // Update dashboard statistics
             loadDashboardData();
           } catch (error) {
@@ -1206,16 +1204,16 @@
           }
         });
       }
-
+      
       // Edit restaurant
       function editRestaurant(restaurantId) {
         console.log('Editing restaurant:', restaurantId);
         const restaurant = db.restaurants.getById(restaurantId);
         if (!restaurant) return;
-
+        
         currentRestaurantId = restaurantId;
         document.getElementById('restaurantModalTitle').textContent = 'Edit Restaurant';
-
+        
         document.getElementById('restaurantId').value = restaurant.id;
         document.getElementById('restaurantName').value = restaurant.name;
         document.getElementById('restaurantAddress').value = restaurant.address;
@@ -1223,50 +1221,53 @@
         document.getElementById('restaurantPhone').value = restaurant.phone;
         document.getElementById('restaurantEmail').value = restaurant.email;
         document.getElementById('restaurantIsActive').checked = restaurant.isActive !== false;
-
+        
         document.getElementById('restaurantModal').classList.add('active');
       }
-
+      
       // Delete restaurant
       function deleteRestaurant(restaurantId) {
         console.log('Deleting restaurant:', restaurantId);
         const restaurant = db.restaurants.getById(restaurantId);
         if (!restaurant) return;
-
+        
         // Check if there are orders linked to the restaurant
         const hasOrders = db.orders.getAll().some(order => order.restaurantId === restaurantId);
-
+        
         if (hasOrders) {
           showStatusMessage('restaurantsStatusMessage', `Cannot delete restaurant "${restaurant.name}": it has associated orders`, 'error');
           return;
         }
-
+        
         // Confirm deletion
         if (confirm(`Are you sure you want to delete restaurant "${restaurant.name}"?`)) {
           db.restaurants.delete(restaurantId);
           showStatusMessage('restaurantsStatusMessage', `Restaurant "${restaurant.name}" successfully deleted`, 'success');
-
+          
           // Update restaurant list and statistics
           loadRestaurants();
           loadDashboardData();
         }
       }
-
+      
       // Toggle restaurant status
       function toggleRestaurantStatus(restaurantId, isActive) {
         console.log('Toggling restaurant status:', restaurantId, isActive);
         try {
           const restaurant = db.restaurants.getById(restaurantId);
           if (!restaurant) return;
-
+          
           db.restaurants.update(restaurantId, { isActive });
           showStatusMessage('restaurantsStatusMessage', `Restaurant "${restaurant.name}" status changed to "${isActive ? 'active' : 'inactive'}"`, 'success');
+          
+          // Reload restaurants
+          loadRestaurants();
         } catch (error) {
           console.error('Error changing restaurant status:', error);
           showStatusMessage('restaurantsStatusMessage', `Error: ${error.message}`, 'error');
         }
       }
-
+      
       // Load restaurants
       function loadRestaurants() {
         console.log('Loading restaurants');
@@ -1275,12 +1276,12 @@
             const restaurants = db.restaurants.getAll();
             const restaurantsTable = document.getElementById('restaurantsTable');
             restaurantsTable.innerHTML = '';
-
+            
             if (restaurants.length === 0) {
               restaurantsTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">No restaurants found</td></tr>';
               return;
             }
-
+            
             restaurants.forEach(restaurant => {
               const row = document.createElement('tr');
               row.innerHTML = `
@@ -1299,10 +1300,10 @@
                   <button class="admin-btn danger" data-restaurant-id="${restaurant.id}" data-action="delete-restaurant">Delete</button>
                 </td>
               `;
-
+              
               restaurantsTable.appendChild(row);
             });
-
+            
             // Add event handlers
             document.querySelectorAll('[data-action="edit-restaurant"]').forEach(btn => {
               btn.addEventListener('click', function() {
@@ -1310,14 +1311,14 @@
                 editRestaurant(restaurantId);
               });
             });
-
+            
             document.querySelectorAll('[data-action="delete-restaurant"]').forEach(btn => {
               btn.addEventListener('click', function() {
                 const restaurantId = this.getAttribute('data-restaurant-id');
                 deleteRestaurant(restaurantId);
               });
             });
-
+            
             document.querySelectorAll('[data-action="toggle-restaurant"]').forEach(checkbox => {
               checkbox.addEventListener('change', function() {
                 const restaurantId = this.getAttribute('data-restaurant-id');
@@ -1334,9 +1335,9 @@
           document.getElementById('restaurantsTable').innerHTML = `<tr><td colspan="6" style="text-align: center;">Error: ${error.message}</td></tr>`;
         }
       }
-
+      
       // PRODUCT FUNCTIONS
-
+      
       // Initialize product form
       function initProductForm() {
         console.log('Initializing product form');
@@ -1347,17 +1348,17 @@
         const productForm = document.getElementById('productForm');
         const productImageFile = document.getElementById('productImageFile');
         const productImagePreview = document.getElementById('productImagePreview');
-
+        
         // Load categories for the dropdown
         function loadCategoriesForSelect() {
           const categorySelect = document.getElementById('productCategory');
           const categories = db.categories.getActive();
-
+          
           // Clear existing options except the first one
           while (categorySelect.options.length > 1) {
             categorySelect.remove(1);
           }
-
+          
           // Add categories to dropdown
           categories.forEach(category => {
             if (category.id !== 'all') { // Skip the "All" category
@@ -1368,186 +1369,14 @@
             }
           });
         }
-
+        
         // Load restaurants for checkboxes
         function loadRestaurantsForCheckboxes() {
           const restaurantsContainer = document.getElementById('productRestaurantsCheckboxes');
           const restaurants = db.restaurants.getActive();
-
+          
           restaurantsContainer.innerHTML = '';
-
-          restaurants.forEach(restaurant => {
-            const checkboxDiv = document.createElement('div');
-            checkboxDiv.innerHTML = `
-              <label style="display: flex; align-items: center; margin-bottom: 10px;">
-                <input type="checkbox" name="restaurant-${restaurant.id}" value="${restaurant.id}" style="margin-right: 10px;">
-                ${restaurant.name}
-              </label>
-            `;
-            restaurantsContainer.appendChild(checkboxDiv);
-          });
-        }
-
-        // Image file change handler
-        productImageFile.addEventListener('change', function(e) {
-          const file = e.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-              productImagePreview.src = event.target.result;
-              document.getElementById('productImage').value = event.target.result;
-            };
-            reader.readAsDataURL(file);
-          }
-        });
-
-        // Open modal for adding product
-        addProductBtn.addEventListener('click', function() {
-          console.log('Opening product modal');
-          currentProductId = null;
-          document.getElementById('productModalTitle').textContent = 'Add Product';
-          productForm.reset();
-          productImagePreview.src = 'images/default.jpg';
-          document.getElementById('productImage').value = 'default.jpg';
-
-          loadCategoriesForSelect();
-          loadRestaurantsForCheckboxes();
-
-          productModal.classList.add('active');
-        });
-
-        // Close modal
-        closeProductModal.addEventListener('click', function() {
-          productModal.classList.remove('active');
-        });
-
-        cancelProductBtn.addEventListener('click', function() {
-          productModal.classList.remove('active');
-        });
-
-        // Form submission handler for adding/editing product
-        productForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          console.log('Submitting product form');
-
-          // Get selected restaurants
-          const restaurantIds = [];
-          document.querySelectorAll('#productRestaurantsCheckboxes input[type="checkbox"]:checked').forEach(checkbox => {
-            restaurantIds.push(checkbox.value);
-          });
-
-          if (restaurantIds.length === 0) {
-            alert('Please select at least one restaurant');
-            return;
-          }
-
-          const productData = {
-            name: document.getElementById('productName').value,
-            category: document.getElementById('productCategory').value,
-            price: parseFloat(document.getElementById('productPrice').value),
-            description: document.getElementById('productDescription').value,
-            image: document.getElementById('productImage').value,
-            restaurantIds: restaurantIds,
-            isActive: true
-          };
-
-          try {
-            if (currentProductId) {
-              // Edit product
-              db.products.update(currentProductId, productData);
-              showStatusMessage('productsStatusMessage', `Product "${productData.name}" successfully updated`, 'success');
-            } else {
-              // Create ID for new product
-              const slug = productData.name.toLowerCase()
-                .replace(/[^\w\s-]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/-+/g, '-');
-              productData.id = slug + '-' + Date.now().toString().slice(-4);
-
-              // Add product
-              db.products.add(productData);
-              showStatusMessage('productsStatusMessage', `Product "${productData.name}" successfully added`, 'success');
-            }
-
-            // Close modal and update product list
-            productModal.classList.remove('active');
-            loadProducts();
-
-            // Update dashboard statistics
-            loadDashboardData();
-          } catch (error) {
-            console.error('Error saving product:', error);
-            showStatusMessage('productsStatusMessage', `Error: ${error.message}`, 'error');
-          }
-        });
-      }
-
-      // Edit product
-      function editProduct(productId) {
-        console.log('Editing product:', productId);
-        const product = db.products.getById(productId);
-        if (!product) return;
-
-        currentProductId = productId;
-        document.getElementById('productModalTitle').textContent = 'Edit Product';
-
-        // Load categories and restaurants first
-        loadCategoriesForSelect();
-        loadRestaurantsForCheckboxes();
-
-        // Set form values
-        document.getElementById('productId').value = product.id;
-        document.getElementById('productName').value = product.name;
-        document.getElementById('productCategory').value = product.category;
-        document.getElementById('productPrice').value = product.price;
-        document.getElementById('productDescription').value = product.description;
-
-        // Set image preview
-        const imageSrc = product.image && product.image.startsWith('data:image')
-          ? product.image
-          : `images/${product.image || 'default.jpg'}`;
-        document.getElementById('productImagePreview').src = imageSrc;
-        document.getElementById('productImage').value = product.image || 'default.jpg';
-
-        // Check restaurant checkboxes
-        setTimeout(() => {
-          document.querySelectorAll('#productRestaurantsCheckboxes input[type="checkbox"]').forEach(checkbox => {
-            if (product.restaurantIds && product.restaurantIds.includes(checkbox.value)) {
-              checkbox.checked = true;
-            }
-          });
-        }, 100);
-
-        document.getElementById('productModal').classList.add('active');
-
-        // Helper function to load categories for select
-        function loadCategoriesForSelect() {
-          const categorySelect = document.getElementById('productCategory');
-          const categories = db.categories.getActive();
-
-          // Clear existing options except the first one
-          while (categorySelect.options.length > 1) {
-            categorySelect.remove(1);
-          }
-
-          // Add categories to dropdown
-          categories.forEach(category => {
-            if (category.id !== 'all') { // Skip the "All" category
-              const option = document.createElement('option');
-              option.value = category.id;
-              option.textContent = category.name;
-              categorySelect.appendChild(option);
-            }
-          });
-        }
-
-        // Helper function to load restaurants for checkboxes
-        function loadRestaurantsForCheckboxes() {
-          const restaurantsContainer = document.getElementById('productRestaurantsCheckboxes');
-          const restaurants = db.restaurants.getActive();
-
-          restaurantsContainer.innerHTML = '';
-
+          
           restaurants.forEach(restaurant => {
             const checkboxDiv = document.createElement('div');
             checkboxDiv.innerHTML = `
@@ -1560,550 +1389,35 @@
           });
         }
       }
-
+      
       // Delete product
       function deleteProduct(productId) {
         console.log('Deleting product:', productId);
         const product = db.products.getById(productId);
         if (!product) return;
-
+        
         // Check if there are orders with this product
         const orders = db.orders.getAll();
-        const hasOrders = orders.some(order =>
+        const hasOrders = orders.some(order => 
           order.items.some(item => item.productId === productId)
         );
-
+        
         if (hasOrders) {
           showStatusMessage('productsStatusMessage', `Cannot delete product "${product.name}": it is used in orders`, 'error');
           return;
         }
-
+        
         // Confirm deletion
         if (confirm(`Are you sure you want to delete product "${product.name}"?`)) {
           db.products.delete(productId);
           showStatusMessage('productsStatusMessage', `Product "${product.name}" successfully deleted`, 'success');
-
-          // Update product list and statistics
-          loadProducts();
-          loadDashboardData();
-        }
-      }('.admin-tab');
-        const tabContents = document.querySelectorAll('.tab-content');
-
-        tabs.forEach(tab => {
-          tab.addEventListener('click', function() {
-            const tabId = this.getAttribute('data-tab');
-
-            // Remove active class from all tabs and content
-            tabs.forEach(t => t.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-
-            // Add active class to selected tab and content
-            this.classList.add('active');
-            document.getElementById(tabId).classList.add('active');
-
-            // Load data for selected tab
-            loadTabData(tabId);
-          });
-        });
-
-        // "All Orders" button
-        document.getElementById('viewAllOrdersBtn').addEventListener('click', function() {
-          const tabId = this.getAttribute('data-tab');
-
-          // Remove active class from all tabs and content
-          tabs.forEach(t => t.classList.remove('active'));
-          tabContents.forEach(content => content.classList.remove('active'));
-
-          // Add active class to selected tab and content
-          document.querySelector(`.admin-tab[data-tab="${tabId}"]`).classList.add('active');
-          document.getElementById(tabId).classList.add('active');
-
-          // Load data for selected tab
-          loadTabData(tabId);
-        });
-      }
-
-      // Load data for selected tab
-      function loadTabData(tabId) {
-        console.log('Loading data for tab:', tabId);
-        switch(tabId) {
-          case 'dashboard':
-            loadDashboardData();
-            break;
-          case 'restaurants':
-            loadRestaurants();
-            break;
-          case 'products':
-            loadProducts();
-            break;
-          case 'categories':
-            loadCategories();
-            break;
-          case 'orders':
-            loadOrders();
-            break;
-          case 'settings':
-            loadSettings();
-            break;
-        }
-      }
-
-      // RESTAURANT FUNCTIONS
-
-      // Initialize restaurant form
-      function initRestaurantForm() {
-        console.log('Initializing restaurant form');
-        const addRestaurantBtn = document.getElementById('addRestaurantBtn');
-        const restaurantModal = document.getElementById('restaurantModal');
-        const closeRestaurantModal = document.getElementById('closeRestaurantModal');
-        const cancelRestaurantBtn = document.getElementById('cancelRestaurantBtn');
-        const restaurantForm = document.getElementById('restaurantForm');
-
-        // Open modal for adding restaurant
-        addRestaurantBtn.addEventListener('click', function() {
-          console.log('Opening restaurant modal');
-          currentRestaurantId = null;
-          document.getElementById('restaurantModalTitle').textContent = 'Add Restaurant';
-          restaurantForm.reset();
-          restaurantModal.classList.add('active');
-        });
-
-        // Close modal
-        closeRestaurantModal.addEventListener('click', function() {
-          restaurantModal.classList.remove('active');
-        });
-
-        cancelRestaurantBtn.addEventListener('click', function() {
-          restaurantModal.classList.remove('active');
-        });
-
-        // Form submission handler for adding/editing restaurant
-        restaurantForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          console.log('Submitting restaurant form');
-
-          const restaurantData = {
-            name: document.getElementById('restaurantName').value,
-            address: document.getElementById('restaurantAddress').value,
-            hours: document.getElementById('restaurantHours').value,
-            phone: document.getElementById('restaurantPhone').value,
-            email: document.getElementById('restaurantEmail').value,
-            isActive: document.getElementById('restaurantIsActive').checked
-          };
-
-          try {
-            if (currentRestaurantId) {
-              // Edit restaurant
-              db.restaurants.update(currentRestaurantId, restaurantData);
-              showStatusMessage('restaurantsStatusMessage', `Restaurant "${restaurantData.name}" successfully updated`, 'success');
-            } else {
-              // Create ID for new restaurant (if not in DB)
-              const slug = restaurantData.name.toLowerCase()
-                .replace(/[^\w\s-]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/-+/g, '-');
-              restaurantData.id = slug;
-
-              // Add restaurant
-              db.restaurants.add(restaurantData);
-              showStatusMessage('restaurantsStatusMessage', `Restaurant "${restaurantData.name}" successfully added`, 'success');
-            }
-
-            // Close modal and update restaurant list
-            restaurantModal.classList.remove('active');
-            loadRestaurants();
-
-            // Update dashboard statistics
-            loadDashboardData();
-          } catch (error) {
-            console.error('Error saving restaurant:', error);
-            showStatusMessage('restaurantsStatusMessage', `Error: ${error.message}`, 'error');
-          }
-        });
-      }
-
-      // Edit restaurant
-      function editRestaurant(restaurantId) {
-        console.log('Editing restaurant:', restaurantId);
-        const restaurant = db.restaurants.getById(restaurantId);
-        if (!restaurant) return;
-
-        currentRestaurantId = restaurantId;
-        document.getElementById('restaurantModalTitle').textContent = 'Edit Restaurant';
-
-        document.getElementById('restaurantId').value = restaurant.id;
-        document.getElementById('restaurantName').value = restaurant.name;
-        document.getElementById('restaurantAddress').value = restaurant.address;
-        document.getElementById('restaurantHours').value = restaurant.hours;
-        document.getElementById('restaurantPhone').value = restaurant.phone;
-        document.getElementById('restaurantEmail').value = restaurant.email;
-        document.getElementById('restaurantIsActive').checked = restaurant.isActive !== false;
-
-        document.getElementById('restaurantModal').classList.add('active');
-      }
-
-      // Delete restaurant
-      function deleteRestaurant(restaurantId) {
-        console.log('Deleting restaurant:', restaurantId);
-        const restaurant = db.restaurants.getById(restaurantId);
-        if (!restaurant) return;
-
-        // Check if there are orders linked to the restaurant
-        const hasOrders = db.orders.getAll().some(order => order.restaurantId === restaurantId);
-
-        if (hasOrders) {
-          showStatusMessage('restaurantsStatusMessage', `Cannot delete restaurant "${restaurant.name}": it has associated orders`, 'error');
-          return;
-        }
-
-        // Confirm deletion
-        if (confirm(`Are you sure you want to delete restaurant "${restaurant.name}"?`)) {
-          db.restaurants.delete(restaurantId);
-          showStatusMessage('restaurantsStatusMessage', `Restaurant "${restaurant.name}" successfully deleted`, 'success');
-
-          // Update restaurant list and statistics
-          loadRestaurants();
-          loadDashboardData();
-        }
-      }
-
-      // Toggle restaurant status
-      function toggleRestaurantStatus(restaurantId, isActive) {
-        console.log('Toggling restaurant status:', restaurantId, isActive);
-        try {
-          const restaurant = db.restaurants.getById(restaurantId);
-          if (!restaurant) return;
-
-          db.restaurants.update(restaurantId, { isActive });
-          showStatusMessage('restaurantsStatusMessage', `Restaurant "${restaurant.name}" status changed to "${isActive ? 'active' : 'inactive'}"`, 'success');
-        } catch (error) {
-          console.error('Error changing restaurant status:', error);
-          showStatusMessage('restaurantsStatusMessage', `Error: ${error.message}`, 'error');
-        }
-      }
-
-      // Load restaurants
-      function loadRestaurants() {
-        console.log('Loading restaurants');
-        try {
-          if (window.db && window.db.restaurants && typeof window.db.restaurants.getAll === 'function') {
-            const restaurants = db.restaurants.getAll();
-            const restaurantsTable = document.getElementById('restaurantsTable');
-            restaurantsTable.innerHTML = '';
-
-            if (restaurants.length === 0) {
-              restaurantsTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">No restaurants found</td></tr>';
-              return;
-            }
-
-            restaurants.forEach(restaurant => {
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                <td>${restaurant.id}</td>
-                <td>${restaurant.name}</td>
-                <td>${restaurant.address}</td>
-                <td>${restaurant.phone}</td>
-                <td>
-                  <label class="switch">
-                    <input type="checkbox" data-restaurant-id="${restaurant.id}" data-action="toggle-restaurant" ${restaurant.isActive ? 'checked' : ''}>
-                    <span class="slider"></span>
-                  </label>
-                </td>
-                <td class="actions">
-                  <button class="admin-btn" data-restaurant-id="${restaurant.id}" data-action="edit-restaurant">Edit</button>
-                  <button class="admin-btn danger" data-restaurant-id="${restaurant.id}" data-action="delete-restaurant">Delete</button>
-                </td>
-              `;
-
-              restaurantsTable.appendChild(row);
-            });
-
-            // Add event handlers
-            document.querySelectorAll('[data-action="edit-restaurant"]').forEach(btn => {
-              btn.addEventListener('click', function() {
-                const restaurantId = this.getAttribute('data-restaurant-id');
-                editRestaurant(restaurantId);
-              });
-            });
-
-            document.querySelectorAll('[data-action="delete-restaurant"]').forEach(btn => {
-              btn.addEventListener('click', function() {
-                const restaurantId = this.getAttribute('data-restaurant-id');
-                deleteRestaurant(restaurantId);
-              });
-            });
-
-            document.querySelectorAll('[data-action="toggle-restaurant"]').forEach(checkbox => {
-              checkbox.addEventListener('change', function() {
-                const restaurantId = this.getAttribute('data-restaurant-id');
-                const isActive = this.checked;
-                toggleRestaurantStatus(restaurantId, isActive);
-              });
-            });
-          } else {
-            console.warn('db.restaurants.getAll not found');
-            document.getElementById('restaurantsTable').innerHTML = '<tr><td colspan="6" style="text-align: center;">Data unavailable</td></tr>';
-          }
-        } catch (error) {
-          console.error('Error loading restaurants:', error);
-          document.getElementById('restaurantsTable').innerHTML = `<tr><td colspan="6" style="text-align: center;">Error: ${error.message}</td></tr>`;
-        }
-      }
-
-      // PRODUCT FUNCTIONS
-
-      function initProductForm() {
-        console.log('Initializing product form');
-        const addProductBtn = document.getElementById('addProductBtn');
-        const productModal = document.getElementById('productModal');
-        const closeProductModal = document.getElementById('closeProductModal');
-        const cancelProductBtn = document.getElementById('cancelProductBtn');
-        const productForm = document.getElementById('productForm');
-        const productImageFile = document.getElementById('productImageFile');
-        const productImagePreview = document.getElementById('productImagePreview');
-
-        // Load categories for the dropdown
-        function loadCategoriesForSelect() {
-          const categorySelect = document.getElementById('productCategory');
-          const categories = db.categories.getActive();
-
-          // Clear existing options except the first one
-          while (categorySelect.options.length > 1) {
-            categorySelect.remove(1);
-          }
-
-          // Add categories to dropdown
-          categories.forEach(category => {
-            if (category.id !== 'all') { // Skip the "All" category
-              const option = document.createElement('option');
-              option.value = category.id;
-              option.textContent = category.name;
-              categorySelect.appendChild(option);
-            }
-          });
-        }
-
-        // Load restaurants for checkboxes
-        function loadRestaurantsForCheckboxes() {
-          const restaurantsContainer = document.getElementById('productRestaurantsCheckboxes');
-          const restaurants = db.restaurants.getActive();
-
-          restaurantsContainer.innerHTML = '';
-
-          restaurants.forEach(restaurant => {
-            const checkboxDiv = document.createElement('div');
-            checkboxDiv.innerHTML = `
-              <label style="display: flex; align-items: center; margin-bottom: 10px;">
-                <input type="checkbox" name="restaurant-${restaurant.id}" value="${restaurant.id}" style="margin-right: 10px;">
-                ${restaurant.name}
-              </label>
-            `;
-            restaurantsContainer.appendChild(checkboxDiv);
-          });
-        }
-
-        // Image file change handler
-        productImageFile.addEventListener('change', function(e) {
-          const file = e.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-              productImagePreview.src = event.target.result;
-              document.getElementById('productImage').value = event.target.result;
-            };
-            reader.readAsDataURL(file);
-          }
-        });
-
-        // Open modal for adding product
-        addProductBtn.addEventListener('click', function() {
-          console.log('Opening product modal');
-          currentProductId = null;
-          document.getElementById('productModalTitle').textContent = 'Add Product';
-          productForm.reset();
-          productImagePreview.src = 'images/default.jpg';
-          document.getElementById('productImage').value = 'default.jpg';
-
-          loadCategoriesForSelect();
-          loadRestaurantsForCheckboxes();
-
-          productModal.classList.add('active');
-        });
-
-        // Close modal
-        closeProductModal.addEventListener('click', function() {
-          productModal.classList.remove('active');
-        });
-
-        cancelProductBtn.addEventListener('click', function() {
-          productModal.classList.remove('active');
-        });
-
-        // Form submission handler for adding/editing product
-        productForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          console.log('Submitting product form');
-
-          // Get selected restaurants
-          const restaurantIds = [];
-          document.querySelectorAll('#productRestaurantsCheckboxes input[type="checkbox"]:checked').forEach(checkbox => {
-            restaurantIds.push(checkbox.value);
-          });
-
-          if (restaurantIds.length === 0) {
-            alert('Please select at least one restaurant');
-            return;
-          }
-
-          const productData = {
-            name: document.getElementById('productName').value,
-            category: document.getElementById('productCategory').value,
-            price: parseFloat(document.getElementById('productPrice').value),
-            description: document.getElementById('productDescription').value,
-            image: document.getElementById('productImage').value,
-            restaurantIds: restaurantIds,
-            isActive: true
-          };
-
-          try {
-            if (currentProductId) {
-              // Edit product
-              db.products.update(currentProductId, productData);
-              showStatusMessage('productsStatusMessage', `Product "${productData.name}" successfully updated`, 'success');
-            } else {
-              // Create ID for new product
-              const slug = productData.name.toLowerCase()
-                .replace(/[^\w\s-]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/-+/g, '-');
-              productData.id = slug + '-' + Date.now().toString().slice(-4);
-
-              // Add product
-              db.products.add(productData);
-              showStatusMessage('productsStatusMessage', `Product "${productData.name}" successfully added`, 'success');
-            }
-
-            // Close modal and update product list
-            productModal.classList.remove('active');
-            loadProducts();
-
-            // Update dashboard statistics
-            loadDashboardData();
-          } catch (error) {
-            console.error('Error saving product:', error);
-            showStatusMessage('productsStatusMessage', `Error: ${error.message}`, 'error');
-          }
-        });
-      }
-
-      // Edit product
-      function editProduct(productId) {
-        console.log('Editing product:', productId);
-        const product = db.products.getById(productId);
-        if (!product) return;
-
-        currentProductId = productId;
-        document.getElementById('productModalTitle').textContent = 'Edit Product';
-
-        // Load categories and restaurants first
-        loadCategoriesForSelect();
-        loadRestaurantsForCheckboxes();
-
-        // Set form values
-        document.getElementById('productId').value = product.id;
-        document.getElementById('productName').value = product.name;
-        document.getElementById('productCategory').value = product.category;
-        document.getElementById('productPrice').value = product.price;
-        document.getElementById('productDescription').value = product.description;
-
-        // Set image preview
-        const imageSrc = product.image && product.image.startsWith('data:image')
-          ? product.image
-          : `images/${product.image || 'default.jpg'}`;
-        document.getElementById('productImagePreview').src = imageSrc;
-        document.getElementById('productImage').value = product.image || 'default.jpg';
-
-        // Check restaurant checkboxes
-        setTimeout(() => {
-          document.querySelectorAll('#productRestaurantsCheckboxes input[type="checkbox"]').forEach(checkbox => {
-            if (product.restaurantIds && product.restaurantIds.includes(checkbox.value)) {
-              checkbox.checked = true;
-            }
-          });
-        }, 100);
-
-        document.getElementById('productModal').classList.add('active');
-
-        // Helper function to load categories for select
-        function loadCategoriesForSelect() {
-          const categorySelect = document.getElementById('productCategory');
-          const categories = db.categories.getActive();
-
-          // Clear existing options except the first one
-          while (categorySelect.options.length > 1) {
-            categorySelect.remove(1);
-          }
-
-          // Add categories to dropdown
-          categories.forEach(category => {
-            if (category.id !== 'all') { // Skip the "All" category
-              const option = document.createElement('option');
-              option.value = category.id;
-              option.textContent = category.name;
-              categorySelect.appendChild(option);
-            }
-          });
-        }
-
-        // Helper function to load restaurants for checkboxes
-        function loadRestaurantsForCheckboxes() {
-          const restaurantsContainer = document.getElementById('productRestaurantsCheckboxes');
-          const restaurants = db.restaurants.getActive();
-
-          restaurantsContainer.innerHTML = '';
-
-          restaurants.forEach(restaurant => {
-            const checkboxDiv = document.createElement('div');
-            checkboxDiv.innerHTML = `
-              <label style="display: flex; align-items: center; margin-bottom: 10px;">
-                <input type="checkbox" name="restaurant-${restaurant.id}" value="${restaurant.id}" style="margin-right: 10px;">
-                ${restaurant.name}
-              </label>
-            `;
-            restaurantsContainer.appendChild(checkboxDiv);
-          });
-        }
-      }
-
-      // Delete product
-      function deleteProduct(productId) {
-        console.log('Deleting product:', productId);
-        const product = db.products.getById(productId);
-        if (!product) return;
-
-        // Check if there are orders with this product
-        const orders = db.orders.getAll();
-        const hasOrders = orders.some(order =>
-          order.items.some(item => item.productId === productId)
-        );
-
-        if (hasOrders) {
-          showStatusMessage('productsStatusMessage', `Cannot delete product "${product.name}": it is used in orders`, 'error');
-          return;
-        }
-
-        // Confirm deletion
-        if (confirm(`Are you sure you want to delete product "${product.name}"?`)) {
-          db.products.delete(productId);
-          showStatusMessage('productsStatusMessage', `Product "${product.name}" successfully deleted`, 'success');
-
+          
           // Update product list and statistics
           loadProducts();
           loadDashboardData();
         }
       }
-
+      
       // Load products
       function loadProducts() {
         console.log('Loading products');
@@ -2111,16 +1425,16 @@
           const products = db.products.getAll();
           const productsTable = document.getElementById('productsTable');
           productsTable.innerHTML = '';
-
+          
           if (products.length === 0) {
             productsTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">No products found</td></tr>';
             return;
           }
-
+          
           products.forEach(product => {
             // Get category and restaurant names
             const category = db.categories.getById(product.category) || { name: 'Unknown' };
-
+            
             let restaurantNames = '';
             if (product.restaurantIds && product.restaurantIds.length > 0) {
               restaurantNames = product.restaurantIds.map(id => {
@@ -2128,7 +1442,7 @@
                 return restaurant ? restaurant.name : 'Unknown';
               }).join(', ');
             }
-
+            
             const row = document.createElement('tr');
             row.innerHTML = `
               <td>${product.id}</td>
@@ -2141,10 +1455,10 @@
                 <button class="admin-btn danger" data-product-id="${product.id}" data-action="delete-product">Delete</button>
               </td>
             `;
-
+            
             productsTable.appendChild(row);
           });
-
+          
           // Add event handlers
           document.querySelectorAll('[data-action="edit-product"]').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -2152,7 +1466,7 @@
               editProduct(productId);
             });
           });
-
+          
           document.querySelectorAll('[data-action="delete-product"]').forEach(btn => {
             btn.addEventListener('click', function() {
               const productId = this.getAttribute('data-product-id');
@@ -2164,9 +1478,9 @@
           document.getElementById('productsTable').innerHTML = `<tr><td colspan="6" style="text-align: center;">Error: ${error.message}</td></tr>`;
         }
       }
-
+      
       // CATEGORY FUNCTIONS
-
+      
       // Initialize category form
       function initCategoryForm() {
         console.log('Initializing category form');
@@ -2177,17 +1491,17 @@
         const categoryForm = document.getElementById('categoryForm');
         const categoryName = document.getElementById('categoryName');
         const categorySlug = document.getElementById('categorySlug');
-
+        
         // Auto-generate slug from name
         categoryName.addEventListener('input', function() {
           const slug = this.value.toLowerCase()
             .replace(/[^\w\s-]/g, '')
             .replace(/\s+/g, '-')
             .replace(/-+/g, '-');
-
+          
           categorySlug.value = slug;
         });
-
+        
         // Open modal for adding category
         addCategoryBtn.addEventListener('click', function() {
           console.log('Opening category modal');
@@ -2196,38 +1510,38 @@
           categoryForm.reset();
           categoryModal.classList.add('active');
         });
-
+        
         // Close modal
         closeCategoryModal.addEventListener('click', function() {
           categoryModal.classList.remove('active');
         });
-
+        
         cancelCategoryBtn.addEventListener('click', function() {
           categoryModal.classList.remove('active');
         });
-
+        
         // Form submission handler for adding/editing category
         categoryForm.addEventListener('submit', function(e) {
           e.preventDefault();
           console.log('Submitting category form');
-
+          
           const categoryData = {
             name: categoryName.value,
             slug: categorySlug.value,
             isActive: document.getElementById('categoryIsActive').checked
           };
-
+          
           try {
             // Check if slug is already in use
             const categories = db.categories.getAll();
-            const slugExists = categories.some(cat =>
+            const slugExists = categories.some(cat => 
               cat.slug === categoryData.slug && (!currentCategoryId || cat.id !== currentCategoryId)
             );
-
+            
             if (slugExists) {
               throw new Error('Slug already exists. Please choose a different one.');
             }
-
+            
             if (currentCategoryId) {
               // Edit category
               db.categories.update(currentCategoryId, categoryData);
@@ -2235,12 +1549,12 @@
             } else {
               // Create ID for new category
               categoryData.id = categoryData.slug;
-
+              
               // Add category
               db.categories.add(categoryData);
               showStatusMessage('categoriesStatusMessage', `Category "${categoryData.name}" successfully added`, 'success');
             }
-
+            
             // Close modal and update category list
             categoryModal.classList.remove('active');
             loadCategories();
@@ -2250,73 +1564,73 @@
           }
         });
       }
-
+      
       // Edit category
       function editCategory(categoryId) {
         console.log('Editing category:', categoryId);
         const category = db.categories.getById(categoryId);
         if (!category) return;
-
+        
         // Skip "all" category
         if (category.id === 'all') {
           showStatusMessage('categoriesStatusMessage', 'The "All" category cannot be edited', 'error');
           return;
         }
-
+        
         currentCategoryId = categoryId;
         document.getElementById('categoryModalTitle').textContent = 'Edit Category';
-
+        
         document.getElementById('categoryId').value = category.id;
         document.getElementById('categoryName').value = category.name;
         document.getElementById('categorySlug').value = category.slug;
         document.getElementById('categoryIsActive').checked = category.isActive !== false;
-
+        
         document.getElementById('categoryModal').classList.add('active');
       }
-
+      
       // Delete category
       function deleteCategory(categoryId) {
         console.log('Deleting category:', categoryId);
         const category = db.categories.getById(categoryId);
         if (!category) return;
-
+        
         // Skip "all" category
         if (category.id === 'all') {
           showStatusMessage('categoriesStatusMessage', 'The "All" category cannot be deleted', 'error');
           return;
         }
-
+        
         // Check if there are products in this category
         const hasProducts = db.products.getAll().some(product => product.category === categoryId);
-
+        
         if (hasProducts) {
           showStatusMessage('categoriesStatusMessage', `Cannot delete category "${category.name}": it contains products`, 'error');
           return;
         }
-
+        
         // Confirm deletion
         if (confirm(`Are you sure you want to delete category "${category.name}"?`)) {
           db.categories.delete(categoryId);
           showStatusMessage('categoriesStatusMessage', `Category "${category.name}" successfully deleted`, 'success');
-
+          
           // Update category list
           loadCategories();
         }
       }
-
+      
       // Toggle category status
       function toggleCategoryStatus(categoryId, isActive) {
         console.log('Toggling category status:', categoryId, isActive);
         try {
           const category = db.categories.getById(categoryId);
           if (!category) return;
-
+          
           // Skip "all" category
           if (category.id === 'all') {
             showStatusMessage('categoriesStatusMessage', 'The "All" category status cannot be changed', 'error');
             return;
           }
-
+          
           db.categories.update(categoryId, { isActive });
           showStatusMessage('categoriesStatusMessage', `Category "${category.name}" status changed to "${isActive ? 'active' : 'inactive'}"`, 'success');
         } catch (error) {
@@ -2324,7 +1638,7 @@
           showStatusMessage('categoriesStatusMessage', `Error: ${error.message}`, 'error');
         }
       }
-
+      
       // Load categories
       function loadCategories() {
         console.log('Loading categories');
@@ -2332,12 +1646,12 @@
           const categories = db.categories.getAll();
           const categoriesTable = document.getElementById('categoriesTable');
           categoriesTable.innerHTML = '';
-
+          
           if (categories.length === 0) {
             categoriesTable.innerHTML = '<tr><td colspan="5" style="text-align: center;">No categories found</td></tr>';
             return;
           }
-
+          
           categories.forEach(category => {
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -2355,10 +1669,10 @@
                 <button class="admin-btn danger" data-category-id="${category.id}" data-action="delete-category" ${category.id === 'all' ? 'disabled' : ''}>Delete</button>
               </td>
             `;
-
+            
             categoriesTable.appendChild(row);
           });
-
+          
           // Add event handlers
           document.querySelectorAll('[data-action="edit-category"]').forEach(btn => {
             if (!btn.disabled) {
@@ -2368,7 +1682,7 @@
               });
             }
           });
-
+          
           document.querySelectorAll('[data-action="delete-category"]').forEach(btn => {
             if (!btn.disabled) {
               btn.addEventListener('click', function() {
@@ -2377,7 +1691,7 @@
               });
             }
           });
-
+          
           document.querySelectorAll('[data-action="toggle-category"]').forEach(checkbox => {
             if (!checkbox.disabled) {
               checkbox.addEventListener('change', function() {
@@ -2392,15 +1706,15 @@
           document.getElementById('categoriesTable').innerHTML = `<tr><td colspan="5" style="text-align: center;">Error: ${error.message}</td></tr>`;
         }
       }
-
+      
       // ORDER FUNCTIONS
-
+      
       // Initialize order filters
       function initOrderFilters() {
         console.log('Initializing order filters');
         const restaurantFilter = document.getElementById('orderFilterRestaurant');
         const statusFilter = document.getElementById('orderFilterStatus');
-
+        
         // Fill restaurant filter with active restaurants
         const restaurants = db.restaurants.getActive();
         restaurants.forEach(restaurant => {
@@ -2409,23 +1723,23 @@
           option.textContent = restaurant.name;
           restaurantFilter.appendChild(option);
         });
-
+        
         // Add event listeners to filters
         restaurantFilter.addEventListener('change', loadOrders);
         statusFilter.addEventListener('change', loadOrders);
       }
-
+      
       // View order details
       function viewOrder(orderId) {
         console.log('Viewing order:', orderId);
         const order = db.orders.getById(orderId);
         if (!order) return;
-
+        
         currentOrderId = orderId;
-
+        
         // Get restaurant
         const restaurant = db.restaurants.getById(order.restaurantId) || { name: 'Unknown' };
-
+        
         // Fill order details
         document.getElementById('orderNumber').textContent = order.id;
         document.getElementById('orderStatus').value = order.status || 'new';
@@ -2434,11 +1748,11 @@
         document.getElementById('orderRestaurant').textContent = restaurant.name;
         document.getElementById('orderPickupTime').textContent = order.pickupTime ? `${order.pickupTime} minutes` : 'N/A';
         document.getElementById('orderDateTime').textContent = order.createdAt ? formatDateTime(order.createdAt) : 'N/A';
-
+        
         // Fill order items
         const orderItemsContainer = document.getElementById('orderItems');
         orderItemsContainer.innerHTML = '';
-
+        
         if (order.items && order.items.length > 0) {
           order.items.forEach(item => {
             const row = document.createElement('tr');
@@ -2453,350 +1767,352 @@
         } else {
           orderItemsContainer.innerHTML = '<tr><td colspan="4" style="text-align: center;">No items</td></tr>';
         }
-
+        
         // Set total
         document.getElementById('orderTotal').textContent = `${order.totalAmount || 0}₽`;
-
+        
         // Open modal
         document.getElementById('orderModal').classList.add('active');
       }
+      
       // Update order status
       function updateOrderStatus() {
-       console.log('Updating order status for:', currentOrderId);
-       if (!currentOrderId) return;
-
-       const newStatus = document.getElementById('orderStatus').value;
-
-       try {
-         db.orders.update(currentOrderId, { status: newStatus });
-         showStatusMessage('ordersStatusMessage', `Order status updated to "${newStatus}"`, 'success');
-
-         // Close modal and reload orders
-         document.getElementById('orderModal').classList.remove('active');
-         loadOrders();
-
-         // Also reload dashboard recent orders
-         loadDashboardData();
-       } catch (error) {
-         console.error('Error updating order status:', error);
-         showStatusMessage('ordersStatusMessage', `Error: ${error.message}`, 'error');
-       }
+        console.log('Updating order status for:', currentOrderId);
+        if (!currentOrderId) return;
+        
+        const newStatus = document.getElementById('orderStatus').value;
+        
+        try {
+          db.orders.update(currentOrderId, { status: newStatus });
+          showStatusMessage('ordersStatusMessage', `Order status updated to "${newStatus}"`, 'success');
+          
+          // Close modal and reload orders
+          document.getElementById('orderModal').classList.remove('active');
+          loadOrders();
+          
+          // Also reload dashboard recent orders
+          loadDashboardData();
+        } catch (error) {
+          console.error('Error updating order status:', error);
+          showStatusMessage('ordersStatusMessage', `Error: ${error.message}`, 'error');
+        }
       }
-
+      
       // Load orders
       function loadOrders() {
-       console.log('Loading orders');
-       try {
-         const restaurantFilter = document.getElementById('orderFilterRestaurant').value;
-         const statusFilter = document.getElementById('orderFilterStatus').value;
-
-         let orders = db.orders.getAll();
-
-         // Apply filters
-         if (restaurantFilter) {
-           orders = orders.filter(order => order.restaurantId === restaurantFilter);
-         }
-
-         if (statusFilter) {
-           orders = orders.filter(order => order.status === statusFilter);
-         }
-
-         const ordersTable = document.getElementById('ordersTable');
-         ordersTable.innerHTML = '';
-
-         if (orders.length === 0) {
-           ordersTable.innerHTML = '<tr><td colspan="7" style="text-align: center;">No orders found</td></tr>';
-           return;
-         }
-
-         orders.forEach(order => {
-           // Get restaurant
-           const restaurant = db.restaurants.getById(order.restaurantId) || { name: 'Unknown' };
-
-           // Format status
-           let statusClass = '';
-           let statusText = order.status || 'new';
-
-           switch (statusText) {
-             case 'new':
-               statusClass = 'status-new';
-               statusText = 'New';
-               break;
-             case 'processing':
-               statusClass = 'status-processing';
-               statusText = 'Processing';
-               break;
-             case 'ready':
-               statusClass = 'status-ready';
-               statusText = 'Ready for pickup';
-               break;
-             case 'completed':
-               statusClass = 'status-completed';
-               statusText = 'Completed';
-               break;
-             case 'cancelled':
-               statusClass = 'status-cancelled';
-               statusText = 'Cancelled';
-               break;
-           }
-
-           const row = document.createElement('tr');
-           row.innerHTML = `
-             <td>${order.id}</td>
-             <td>${order.customerName || 'N/A'}</td>
-             <td>${restaurant.name}</td>
-             <td>${order.totalAmount || 0}₽</td>
-             <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-             <td>${order.createdAt ? formatDateTime(order.createdAt) : 'N/A'}</td>
-             <td class="actions">
-               <button class="admin-btn" data-order-id="${order.id}" data-action="view-order">View</button>
-             </td>
-           `;
-
-           ordersTable.appendChild(row);
-         });
-
-         // Add event handlers
-         document.querySelectorAll('[data-action="view-order"]').forEach(btn => {
-           btn.addEventListener('click', function() {
-             const orderId = this.getAttribute('data-order-id');
-             viewOrder(orderId);
-           });
-         });
-       } catch (error) {
-         console.error('Error loading orders:', error);
-         document.getElementById('ordersTable').innerHTML = `<tr><td colspan="7" style="text-align: center;">Error: ${error.message}</td></tr>`;
-       }
+        console.log('Loading orders');
+        try {
+          const restaurantFilter = document.getElementById('orderFilterRestaurant').value;
+          const statusFilter = document.getElementById('orderFilterStatus').value;
+          
+          let orders = db.orders.getAll();
+          
+          // Apply filters
+          if (restaurantFilter) {
+            orders = orders.filter(order => order.restaurantId === restaurantFilter);
+          }
+          
+          if (statusFilter) {
+            orders = orders.filter(order => order.status === statusFilter);
+          }
+          
+          const ordersTable = document.getElementById('ordersTable');
+          ordersTable.innerHTML = '';
+          
+          if (orders.length === 0) {
+            ordersTable.innerHTML = '<tr><td colspan="7" style="text-align: center;">No orders found</td></tr>';
+            return;
+          }
+          
+          orders.forEach(order => {
+            // Get restaurant
+            const restaurant = db.restaurants.getById(order.restaurantId) || { name: 'Unknown' };
+            
+            // Format status
+            let statusClass = '';
+            let statusText = order.status || 'new';
+            
+            switch (statusText) {
+              case 'new':
+                statusClass = 'status-new';
+                statusText = 'New';
+                break;
+              case 'processing':
+                statusClass = 'status-processing';
+                statusText = 'Processing';
+                break;
+              case 'ready':
+                statusClass = 'status-ready';
+                statusText = 'Ready for pickup';
+                break;
+              case 'completed':
+                statusClass = 'status-completed';
+                statusText = 'Completed';
+                break;
+              case 'cancelled':
+                statusClass = 'status-cancelled';
+                statusText = 'Cancelled';
+                break;
+            }
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${order.id}</td>
+              <td>${order.customerName || 'N/A'}</td>
+              <td>${restaurant.name}</td>
+              <td>${order.totalAmount || 0}₽</td>
+              <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+              <td>${order.createdAt ? formatDateTime(order.createdAt) : 'N/A'}</td>
+              <td class="actions">
+                <button class="admin-btn" data-order-id="${order.id}" data-action="view-order">View</button>
+              </td>
+            `;
+            
+            ordersTable.appendChild(row);
+          });
+          
+          // Add event handlers
+          document.querySelectorAll('[data-action="view-order"]').forEach(btn => {
+            btn.addEventListener('click', function() {
+              const orderId = this.getAttribute('data-order-id');
+              viewOrder(orderId);
+            });
+          });
+        } catch (error) {
+          console.error('Error loading orders:', error);
+          document.getElementById('ordersTable').innerHTML = `<tr><td colspan="7" style="text-align: center;">Error: ${error.message}</td></tr>`;
+        }
       }
-
+      
       // SETTINGS FUNCTIONS
-
+      
       // Initialize settings
       function initSettings() {
-       console.log('Initializing settings');
-
-       // Website settings form
-       const settingsForm = document.getElementById('settingsForm');
-       settingsForm.addEventListener('submit', function(e) {
-         e.preventDefault();
-         console.log('Submitting settings form');
-
-         const settingsData = {
-           siteTitle: document.getElementById('siteTitle').value,
-           contactEmail: document.getElementById('contactEmail').value,
-           contactPhone: document.getElementById('contactPhone').value,
-           telegramBotEnabled: document.getElementById('telegramBotEnabled').checked,
-           telegramBotToken: document.getElementById('telegramBotToken').value,
-           telegramChatId: document.getElementById('telegramChatId').value
-         };
-
-         try {
-           db.settings.update(settingsData);
-           showStatusMessage('settingsStatusMessage', 'Website settings saved successfully', 'success');
-         } catch (error) {
-           console.error('Error saving settings:', error);
-           showStatusMessage('settingsStatusMessage', `Error: ${error.message}`, 'error');
-         }
-       });
-
-       // Admin credentials form
-       const adminForm = document.getElementById('adminForm');
-       adminForm.addEventListener('submit', function(e) {
-         e.preventDefault();
-         console.log('Submitting admin form');
-
-         const username = document.getElementById('adminUsername').value;
-         const password = document.getElementById('adminPassword').value;
-         const passwordConfirm = document.getElementById('adminPasswordConfirm').value;
-
-         if (!username) {
-           showStatusMessage('adminStatusMessage', 'Username cannot be empty', 'error');
-           return;
-         }
-
-         if (password !== passwordConfirm) {
-           showStatusMessage('adminStatusMessage', 'Passwords do not match', 'error');
-           return;
-         }
-
-         try {
-           // If password is empty, keep the current password
-           const credentials = db.auth.getCredentials();
-           const newPassword = password || credentials.password;
-
-           db.auth.updateCredentials(username, newPassword);
-           showStatusMessage('adminStatusMessage', 'Admin credentials updated successfully', 'success');
-
-           // Clear password fields
-           document.getElementById('adminPassword').value = '';
-           document.getElementById('adminPasswordConfirm').value = '';
-         } catch (error) {
-           console.error('Error updating admin credentials:', error);
-           showStatusMessage('adminStatusMessage', `Error: ${error.message}`, 'error');
-         }
-       });
+        console.log('Initializing settings');
+        
+        // Website settings form
+        const settingsForm = document.getElementById('settingsForm');
+        settingsForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          console.log('Submitting settings form');
+          
+          const settingsData = {
+            siteTitle: document.getElementById('siteTitle').value,
+            contactEmail: document.getElementById('contactEmail').value,
+            contactPhone: document.getElementById('contactPhone').value,
+            telegramBotEnabled: document.getElementById('telegramBotEnabled').checked,
+            telegramBotToken: document.getElementById('telegramBotToken').value,
+            telegramChatId: document.getElementById('telegramChatId').value
+          };
+          
+          try {
+            db.settings.update(settingsData);
+            showStatusMessage('settingsStatusMessage', 'Website settings saved successfully', 'success');
+          } catch (error) {
+            console.error('Error saving settings:', error);
+            showStatusMessage('settingsStatusMessage', `Error: ${error.message}`, 'error');
+          }
+        });
+        
+        // Admin credentials form
+        const adminForm = document.getElementById('adminForm');
+        adminForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          console.log('Submitting admin form');
+          
+          const username = document.getElementById('adminUsername').value;
+          const password = document.getElementById('adminPassword').value;
+          const passwordConfirm = document.getElementById('adminPasswordConfirm').value;
+          
+          if (!username) {
+            showStatusMessage('adminStatusMessage', 'Username cannot be empty', 'error');
+            return;
+          }
+          
+          if (password !== passwordConfirm) {
+            showStatusMessage('adminStatusMessage', 'Passwords do not match', 'error');
+            return;
+          }
+          
+          try {
+            // If password is empty, keep the current password
+            const credentials = db.auth.getCredentials();
+            const newPassword = password || credentials.password;
+            
+            db.auth.updateCredentials(username, newPassword);
+            showStatusMessage('adminStatusMessage', 'Admin credentials updated successfully', 'success');
+            
+            // Clear password fields
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('adminPasswordConfirm').value = '';
+          } catch (error) {
+            console.error('Error updating admin credentials:', error);
+            showStatusMessage('adminStatusMessage', `Error: ${error.message}`, 'error');
+          }
+        });
       }
-
+      
       // Load settings
       function loadSettings() {
-       console.log('Loading settings');
-       try {
-         const settings = db.settings.getAll();
-
-         // Fill website settings form
-         document.getElementById('siteTitle').value = settings.siteTitle || 'FOOD MENU';
-         document.getElementById('contactEmail').value = settings.contactEmail || 'info@foodmenu.com';
-         document.getElementById('contactPhone').value = settings.contactPhone || '+7 (123) 456-78-90';
-         document.getElementById('telegramBotEnabled').checked = settings.telegramBotEnabled || false;
-         document.getElementById('telegramBotToken').value = settings.telegramBotToken || '';
-         document.getElementById('telegramChatId').value = settings.telegramChatId || '';
-
-         // Fill admin form
-         const credentials = db.auth.getCredentials();
-         document.getElementById('adminUsername').value = credentials.username || 'admin';
-       } catch (error) {
-         console.error('Error loading settings:', error);
-         showStatusMessage('settingsStatusMessage', `Error: ${error.message}`, 'error');
-       }
+        console.log('Loading settings');
+        try {
+          const settings = db.settings.getAll();
+          
+          // Fill website settings form
+          document.getElementById('siteTitle').value = settings.siteTitle || 'FOOD MENU';
+          document.getElementById('contactEmail').value = settings.contactEmail || 'info@foodmenu.com';
+          document.getElementById('contactPhone').value = settings.contactPhone || '+7 (123) 456-78-90';
+          document.getElementById('telegramBotEnabled').checked = settings.telegramBotEnabled || false;
+          document.getElementById('telegramBotToken').value = settings.telegramBotToken || '';
+          document.getElementById('telegramChatId').value = settings.telegramChatId || '';
+          
+          // Fill admin form
+          const credentials = db.auth.getCredentials();
+          document.getElementById('adminUsername').value = credentials.username || 'admin';
+        } catch (error) {
+          console.error('Error loading settings:', error);
+          showStatusMessage('settingsStatusMessage', `Error: ${error.message}`, 'error');
+        }
       }
-
+      
       // DASHBOARD FUNCTIONS
-
+      
       // Format date and time
       function formatDateTime(dateTimeString) {
-       try {
-         const dateTime = new Date(dateTimeString);
-         return dateTime.toLocaleString('en-US', {
-           year: 'numeric',
-           month: 'short',
-           day: 'numeric',
-           hour: '2-digit',
-           minute: '2-digit'
-         });
-       } catch (error) {
-         console.error('Error formatting date:', error);
-         return dateTimeString || 'N/A';
-       }
+        try {
+          const dateTime = new Date(dateTimeString);
+          return dateTime.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+        } catch (error) {
+          console.error('Error formatting date:', error);
+          return dateTimeString || 'N/A';
+        }
       }
-
+      
       // Load dashboard data
       function loadDashboardData() {
-       console.log('Loading dashboard data');
-       try {
-         // Get statistics
-         const stats = db.statistics.getDashboardStats();
-
-         // Update counters
-         document.getElementById('restaurantCount').textContent = stats.restaurantCount || 0;
-         document.getElementById('productCount').textContent = stats.productCount || 0;
-         document.getElementById('totalOrders').textContent = stats.orderCount || 0;
-         document.getElementById('totalRevenue').textContent = (stats.totalRevenue || 0) + '₽';
-
-         // Update recent orders table
-         const recentOrdersTable = document.getElementById('recentOrdersTable');
-         recentOrdersTable.innerHTML = '';
-
-         if (stats.recentOrders && stats.recentOrders.length > 0) {
-           stats.recentOrders.forEach(order => {
-             // Get restaurant
-             const restaurant = db.restaurants.getById(order.restaurantId) || { name: 'Unknown' };
-
-             // Format status
-             let statusClass = '';
-             let statusText = order.status || 'new';
-
-             switch (statusText) {
-               case 'new':
-                 statusClass = 'status-new';
-                 statusText = 'New';
-                 break;
-               case 'processing':
-                 statusClass = 'status-processing';
-                 statusText = 'Processing';
-                 break;
-               case 'ready':
-                 statusClass = 'status-ready';
-                 statusText = 'Ready for pickup';
-                 break;
-               case 'completed':
-                 statusClass = 'status-completed';
-                 statusText = 'Completed';
-                 break;
-               case 'cancelled':
-                 statusClass = 'status-cancelled';
-                 statusText = 'Cancelled';
-                 break;
-             }
-
-             const row = document.createElement('tr');
-             row.innerHTML = `
-               <td>${order.id}</td>
-               <td>${order.customerName || 'N/A'}</td>
-               <td>${restaurant.name}</td>
-               <td>${order.totalAmount || 0}₽</td>
-               <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-               <td>${order.createdAt ? formatDateTime(order.createdAt) : 'N/A'}</td>
-             `;
-
-             recentOrdersTable.appendChild(row);
-           });
-         } else {
-           recentOrdersTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">No recent orders</td></tr>';
-         }
-       } catch (error) {
-         console.error('Error loading dashboard data:', error);
-         document.getElementById('recentOrdersTable').innerHTML = `<tr><td colspan="6" style="text-align: center;">Error: ${error.message}</td></tr>`;
-       }
+        console.log('Loading dashboard data');
+        try {
+          // Get statistics
+          const stats = db.statistics.getDashboardStats();
+          
+          // Update counters
+          document.getElementById('restaurantCount').textContent = stats.restaurantCount || 0;
+          document.getElementById('productCount').textContent = stats.productCount || 0;
+          document.getElementById('totalOrders').textContent = stats.orderCount || 0;
+          document.getElementById('totalRevenue').textContent = (stats.totalRevenue || 0) + '₽';
+          
+          // Update recent orders table
+          const recentOrdersTable = document.getElementById('recentOrdersTable');
+          recentOrdersTable.innerHTML = '';
+          
+          if (stats.recentOrders && stats.recentOrders.length > 0) {
+            stats.recentOrders.forEach(order => {
+              // Get restaurant
+              const restaurant = db.restaurants.getById(order.restaurantId) || { name: 'Unknown' };
+              
+              // Format status
+              let statusClass = '';
+              let statusText = order.status || 'new';
+              
+              switch (statusText) {
+                case 'new':
+                  statusClass = 'status-new';
+                  statusText = 'New';
+                  break;
+                case 'processing':
+                  statusClass = 'status-processing';
+                  statusText = 'Processing';
+                  break;
+                case 'ready':
+                  statusClass = 'status-ready';
+                  statusText = 'Ready for pickup';
+                  break;
+                case 'completed':
+                  statusClass = 'status-completed';
+                  statusText = 'Completed';
+                  break;
+                case 'cancelled':
+                  statusClass = 'status-cancelled';
+                  statusText = 'Cancelled';
+                  break;
+              }
+              
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${order.id}</td>
+                <td>${order.customerName || 'N/A'}</td>
+                <td>${restaurant.name}</td>
+                <td>${order.totalAmount || 0}₽</td>
+                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                <td>${order.createdAt ? formatDateTime(order.createdAt) : 'N/A'}</td>
+              `;
+              
+              recentOrdersTable.appendChild(row);
+            });
+          } else {
+            recentOrdersTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">No recent orders</td></tr>';
+          }
+        } catch (error) {
+          console.error('Error loading dashboard data:', error);
+          document.getElementById('recentOrdersTable').innerHTML = `<tr><td colspan="6" style="text-align: center;">Error: ${error.message}</td></tr>`;
+        }
       }
-
+      
       // HELPER FUNCTIONS
-
+      
       // Show status message
       function showStatusMessage(elementId, message, type = 'success') {
-       const statusMessage = document.getElementById(elementId);
-       if (!statusMessage) return;
-
-       statusMessage.textContent = message;
-       statusMessage.className = `status-message ${type}`;
-
-       // Auto-hide after 5 seconds
-       setTimeout(() => {
-         statusMessage.className = 'status-message';
-       }, 5000);
+        const statusMessage = document.getElementById(elementId);
+        if (!statusMessage) return;
+        
+        statusMessage.textContent = message;
+        statusMessage.className = `status-message ${type}`;
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+          statusMessage.className = 'status-message';
+        }, 5000);
       }
-
+      
       // Initialize all components
       function init() {
-       console.log('Initializing admin panel');
-
-       // Initialize tabs
-       initTabs();
-
-       // Initialize forms
-       initRestaurantForm();
-       initProductForm();
-       initCategoryForm();
-       initOrderFilters();
-       initSettings();
-
-       // Event listeners for order modal
-       document.getElementById('closeOrderModal').addEventListener('click', function() {
-         document.getElementById('orderModal').classList.remove('active');
-       });
-
-       document.getElementById('closeOrderBtn').addEventListener('click', function() {
-         document.getElementById('orderModal').classList.remove('active');
-       });
-
-       document.getElementById('saveOrderStatusBtn').addEventListener('click', updateOrderStatus);
-
-       // Load dashboard data initially
-       loadDashboardData();
+        console.log('Initializing admin panel');
+        
+        // Initialize tabs
+        initTabs();
+        
+        // Initialize forms
+        initRestaurantForm();
+        initProductForm();
+        initCategoryForm();
+        initOrderFilters();
+        initSettings();
+        
+        // Event listeners for order modal
+        document.getElementById('closeOrderModal').addEventListener('click', function() {
+          document.getElementById('orderModal').classList.remove('active');
+        });
+        
+        document.getElementById('closeOrderBtn').addEventListener('click', function() {
+          document.getElementById('orderModal').classList.remove('active');
+        });
+        
+        document.getElementById('saveOrderStatusBtn').addEventListener('click', updateOrderStatus);
+        
+        // Load dashboard data initially
+        loadDashboardData();
       }
-
+      
       // Call init
       init();
-     });
+    });
   </script>
 </body>
 </html>
+                  statusText = 'Ready for pickup';

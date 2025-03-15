@@ -1150,59 +1150,70 @@
       }
       
       // Load categories
-      function loadCategories() {
-        const categoriesContainer = document.getElementById('categoriesContainer');
-        categoriesContainer.innerHTML = ''; // Clear current categories
-        
-        const categories = db.categories.getActive();
-        
-        // Only add the "All" button once
-        const allCategoryBtn = document.createElement('button');
-        allCategoryBtn.className = `category-btn ${selectedCategory === 'all' ? 'active' : ''}`;
-        allCategoryBtn.dataset.category = 'all';
-        allCategoryBtn.textContent = 'All';
-        
-        // Add click handler
-        allCategoryBtn.addEventListener('click', function() {
-          // Change active category
-          document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-          this.classList.add('active');
-          
-          selectedCategory = this.dataset.category;
-          
-          // Reload menu with new category
-          loadMenuForRestaurant(selectedRestaurantId);
-        });
-        
-        categoriesContainer.appendChild(allCategoryBtn);
-        
-        // Only add categories that have products in this restaurant
-        categories.forEach(category => {
-          // Skip if this restaurant doesn't have any products in this category
-          if (category.id !== 'all' && !availableCategories.has(category.id)) {
-            return;
-          }
-          
-          const categoryBtn = document.createElement('button');
-          categoryBtn.className = `category-btn ${category.id === selectedCategory ? 'active' : ''}`;
-          categoryBtn.dataset.category = category.id;
-          categoryBtn.textContent = category.name;
-          
-          // Add click handler
-          categoryBtn.addEventListener('click', function() {
-            // Change active category
-            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            
-            selectedCategory = this.dataset.category;
-            
-            // Reload menu with new category
-            loadMenuForRestaurant(selectedRestaurantId);
-          });
-          
-          categoriesContainer.appendChild(categoryBtn);
-        });
+      // Load categories
+function loadCategories() {
+  console.log('Loading categories');
+  try {
+    const categoriesContainer = document.getElementById('categoriesContainer');
+    categoriesContainer.innerHTML = ''; // Clear current categories
+    
+    const categories = db.categories.getActive();
+    
+    // Add the "All" button first
+    const allCategoryBtn = document.createElement('button');
+    allCategoryBtn.className = `category-btn ${selectedCategory === 'all' ? 'active' : ''}`;
+    allCategoryBtn.dataset.category = 'all';
+    allCategoryBtn.textContent = 'All';
+    
+    // Add click handler
+    allCategoryBtn.addEventListener('click', function() {
+      // Change active category
+      document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+      this.classList.add('active');
+      
+      selectedCategory = this.dataset.category;
+      
+      // Reload menu with new category
+      loadMenuForRestaurant(selectedRestaurantId);
+    });
+    
+    categoriesContainer.appendChild(allCategoryBtn);
+    
+    // Add other categories (excluding "all" which we already added)
+    categories.forEach(category => {
+      // Skip if this restaurant doesn't have any products in this category
+      if (category.id !== 'all' && !availableCategories.has(category.id)) {
+        return;
       }
+      
+      // Skip the "all" category since we've added it manually already
+      if (category.id === 'all') {
+        return;
+      }
+      
+      const categoryBtn = document.createElement('button');
+      categoryBtn.className = `category-btn ${category.id === selectedCategory ? 'active' : ''}`;
+      categoryBtn.dataset.category = category.id;
+      categoryBtn.textContent = category.name;
+      
+      // Add click handler
+      categoryBtn.addEventListener('click', function() {
+        // Change active category
+        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+        
+        selectedCategory = this.dataset.category;
+        
+        // Reload menu with new category
+        loadMenuForRestaurant(selectedRestaurantId);
+      });
+      
+      categoriesContainer.appendChild(categoryBtn);
+    });
+  } catch (error) {
+    console.error('Error loading categories:', error);
+  }
+}
       
       // Initialize cart
       function initCart() {

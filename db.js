@@ -1,32 +1,32 @@
-// db.js - Единый файл для хранения данных и API-логики ресторанного приложения
+// db.js - Single file for storing data and API logic for restaurant application
 
-// Инициализация локального хранилища, если оно пустое
+// Initialize local storage if it's empty
 if (!localStorage.getItem('restaurants')) {
-  // Стандартные рестораны
+  // Default restaurants
   const defaultRestaurants = [
     {
       id: 'central',
-      name: 'Food Menu Центральный',
-      address: 'ул. Тверская, 15, Москва, 123056',
-      hours: 'Пн-Пт: 10:00 - 22:00, Сб-Вс: 11:00 - 23:00',
+      name: 'Food Menu Central',
+      address: '15 Main Street, Moscow, 123056',
+      hours: 'Mon-Fri: 10:00 - 22:00, Sat-Sun: 11:00 - 23:00',
       phone: '+7 (495) 123-45-67',
       email: 'central@foodmenu.com',
       isActive: true
     },
     {
       id: 'west',
-      name: 'Food Menu Западный',
-      address: 'Кутузовский пр-т, 30, Москва, 121165',
-      hours: 'Пн-Вс: 09:00 - 22:00',
+      name: 'Food Menu West',
+      address: '30 Kutuzovsky Avenue, Moscow, 121165',
+      hours: 'Mon-Sun: 09:00 - 22:00',
       phone: '+7 (495) 987-65-43',
       email: 'west@foodmenu.com',
       isActive: true
     },
     {
       id: 'north',
-      name: 'Food Menu Северный',
-      address: 'Дмитровское ш., 163А, Москва, 127280',
-      hours: 'Пн-Пт: 10:00 - 21:00, Сб-Вс: 11:00 - 22:00',
+      name: 'Food Menu North',
+      address: '163A Dmitrovskoye Highway, Moscow, 127280',
+      hours: 'Mon-Fri: 10:00 - 21:00, Sat-Sun: 11:00 - 22:00',
       phone: '+7 (495) 111-22-33',
       email: 'north@foodmenu.com',
       isActive: true
@@ -36,29 +36,29 @@ if (!localStorage.getItem('restaurants')) {
 }
 
 if (!localStorage.getItem('categories')) {
-  // Стандартные категории
+  // Default categories
   const defaultCategories = [
-    { id: 'all', name: 'Все', slug: 'all', isActive: true },
-    { id: 'burgers', name: 'Бургеры', slug: 'burgers', isActive: true },
-    { id: 'coffee', name: 'Кофе', slug: 'coffee', isActive: true },
-    { id: 'pasta', name: 'Паста', slug: 'pasta', isActive: true },
-    { id: 'soup', name: 'Супы', slug: 'soup', isActive: true },
-    { id: 'pizza', name: 'Пицца', slug: 'pizza', isActive: true },
-    { id: 'dessert', name: 'Десерты', slug: 'dessert', isActive: true }
+    { id: 'all', name: 'All', slug: 'all', isActive: true },
+    { id: 'burgers', name: 'Burgers', slug: 'burgers', isActive: true },
+    { id: 'coffee', name: 'Coffee', slug: 'coffee', isActive: true },
+    { id: 'pasta', name: 'Pasta', slug: 'pasta', isActive: true },
+    { id: 'soup', name: 'Soups', slug: 'soup', isActive: true },
+    { id: 'pizza', name: 'Pizza', slug: 'pizza', isActive: true },
+    { id: 'dessert', name: 'Desserts', slug: 'dessert', isActive: true }
   ];
   localStorage.setItem('categories', JSON.stringify(defaultCategories));
 }
 
 if (!localStorage.getItem('products')) {
-  // Стандартные продукты с привязкой к ресторанам
+  // Default products with restaurant links
   const defaultProducts = [
-    // Центральный ресторан
+    // Central restaurant
     {
       id: 'burger-classic',
       name: 'CLASSIC BURGER',
       category: 'burgers',
       price: 450,
-      description: 'Сочная говяжья котлета, фирменный соус, свежие овощи и хрустящая булочка. Идеальное сочетание ингредиентов для настоящих ценителей бургеров.',
+      description: 'Juicy beef patty, signature sauce, fresh vegetables and crispy bun. Perfect combination of ingredients for true burger lovers.',
       image: 'burger.jpg',
       restaurantIds: ['central']
     },
@@ -67,7 +67,7 @@ if (!localStorage.getItem('products')) {
       name: 'PREMIUM COFFEE',
       category: 'coffee',
       price: 250,
-      description: 'Премиальная арабика, насыщенный вкус, бархатистая текстура и изысканное послевкусие. Идеальный выбор для настоящих кофейных гурманов.',
+      description: 'Premium arabica, rich taste, velvety texture and exquisite aftertaste. Perfect choice for real coffee gourmets.',
       image: 'coffee.jpg',
       restaurantIds: ['central']
     },
@@ -76,7 +76,7 @@ if (!localStorage.getItem('products')) {
       name: 'ITALIAN PASTA',
       category: 'pasta',
       price: 480,
-      description: 'Традиционная паста с ароматным соусом, свежей зеленью и пармезаном. Настоящий вкус Италии в каждой порции нашей фирменной пасты.',
+      description: 'Traditional pasta with aromatic sauce, fresh herbs and parmesan. Real taste of Italy in every portion of our signature pasta.',
       image: 'pasta.jpg',
       restaurantIds: ['central']
     },
@@ -85,18 +85,18 @@ if (!localStorage.getItem('products')) {
       name: 'CHEESECAKE',
       category: 'dessert',
       price: 320,
-      description: 'Нежный сливочный чизкейк с хрустящей основой, свежими ягодами и ванильным соусом.',
+      description: 'Delicate creamy cheesecake with a crispy base, fresh berries and vanilla sauce.',
       image: 'dessert.jpg',
       restaurantIds: ['central', 'west']
     },
     
-    // Западный ресторан
+    // West restaurant
     {
       id: 'burger-deluxe',
       name: 'DELUXE BURGER',
       category: 'burgers',
       price: 520,
-      description: 'Фирменный бургер с мраморной говядиной, карамелизированным луком, жареным беконом и сыром чеддер на булочке бриошь.',
+      description: 'Signature burger with marbled beef, caramelized onions, fried bacon and cheddar cheese on a brioche bun.',
       image: 'burger.jpg',
       restaurantIds: ['west']
     },
@@ -105,7 +105,7 @@ if (!localStorage.getItem('products')) {
       name: 'CAPPUCCINO',
       category: 'coffee',
       price: 220,
-      description: 'Классический итальянский капучино с насыщенным эспрессо и нежной молочной пеной. Подается с корицей по желанию.',
+      description: 'Classic Italian cappuccino with rich espresso and delicate milk foam. Served with cinnamon upon request.',
       image: 'coffee.jpg',
       restaurantIds: ['west']
     },
@@ -114,18 +114,18 @@ if (!localStorage.getItem('products')) {
       name: 'PASTA CARBONARA',
       category: 'pasta',
       price: 520,
-      description: 'Классическая карбонара с гуанчиале, яйцом, сыром пекорино романо и свежемолотым черным перцем.',
+      description: 'Classic carbonara with guanciale, egg, pecorino romano cheese and freshly ground black pepper.',
       image: 'pasta.jpg',
       restaurantIds: ['west']
     },
     
-    // Северный ресторан
+    // North restaurant
     {
       id: 'burger-bbq',
       name: 'BBQ BURGER',
       category: 'burgers',
       price: 480,
-      description: 'Сочный бургер с говяжьей котлетой, фирменным BBQ соусом, луковыми кольцами и сыром чеддер.',
+      description: 'Juicy burger with beef patty, signature BBQ sauce, onion rings and cheddar cheese.',
       image: 'burger.jpg',
       restaurantIds: ['north']
     },
@@ -134,7 +134,7 @@ if (!localStorage.getItem('products')) {
       name: 'CARAMEL LATTE',
       category: 'coffee',
       price: 270,
-      description: 'Нежный латте с добавлением карамельного сиропа, взбитыми сливками и карамельной крошкой.',
+      description: 'Delicate latte with caramel syrup, whipped cream and caramel crumble.',
       image: 'coffee.jpg',
       restaurantIds: ['north']
     },
@@ -143,7 +143,7 @@ if (!localStorage.getItem('products')) {
       name: 'APPLE PIE',
       category: 'dessert',
       price: 280,
-      description: 'Домашний яблочный пирог с корицей и ванильным мороженым. Теплый и уютный десерт для любого времени года.',
+      description: 'Homemade apple pie with cinnamon and vanilla ice cream. Warm and cozy dessert for any time of year.',
       image: 'dessert.jpg',
       restaurantIds: ['north']
     }
@@ -170,14 +170,14 @@ if (!localStorage.getItem('settings')) {
 if (!localStorage.getItem('adminCredentials')) {
   const defaultCredentials = {
     username: 'admin',
-    password: 'admin' // В реальном приложении пароль должен быть захеширован
+    password: 'admin' // In a real application, the password should be hashed
   };
   localStorage.setItem('adminCredentials', JSON.stringify(defaultCredentials));
 }
 
-// Объект базы данных
+// Database object
 const db = {
-  // Методы для работы с ресторанами
+  // Methods for working with restaurants
   restaurants: {
     getAll: function() {
       return JSON.parse(localStorage.getItem('restaurants') || '[]');
@@ -228,7 +228,7 @@ const db = {
     }
   },
   
-  // Методы для работы с категориями
+  // Methods for working with categories
   categories: {
     getAll: function() {
       return JSON.parse(localStorage.getItem('categories') || '[]');
@@ -279,7 +279,7 @@ const db = {
     }
   },
   
-  // Методы для работы с продуктами
+  // Methods for working with products
   products: {
     getAll: function() {
       return JSON.parse(localStorage.getItem('products') || '[]');
@@ -337,7 +337,7 @@ const db = {
     }
   },
   
-  // Методы для работы с заказами
+  // Methods for working with orders
   orders: {
     getAll: function() {
       return JSON.parse(localStorage.getItem('orders') || '[]').sort((a, b) => 
@@ -364,7 +364,7 @@ const db = {
       orders.push(newOrder);
       localStorage.setItem('orders', JSON.stringify(orders));
       
-      // Отправка уведомления в Telegram (симуляция)
+      // Send Telegram notification
       this.sendTelegramNotification(newOrder);
       
       return newOrder;
@@ -395,25 +395,93 @@ const db = {
       return false;
     },
     
-    // Симуляция отправки уведомления в Telegram
+    // Send actual Telegram notification
     sendTelegramNotification: function(order) {
       const settings = JSON.parse(localStorage.getItem('settings') || '{}');
       
       if (settings.telegramBotEnabled && settings.telegramBotToken && settings.telegramChatId) {
-        console.log('Отправка уведомления в Telegram о новом заказе:', order);
+        console.log('Sending Telegram notification for new order:', order);
         
-        // В реальном приложении здесь был бы запрос к API Telegram
-        // Для симуляции просто сохраняем информацию о последнем уведомлении
-        localStorage.setItem('lastTelegramNotification', JSON.stringify({
-          type: 'new_order',
-          orderId: order.id,
-          sentAt: new Date().toISOString()
-        }));
+        // Get restaurant name
+        const restaurant = db.restaurants.getById(order.restaurantId);
+        const restaurantName = restaurant ? restaurant.name : 'Unknown restaurant';
+        
+        // Format order items
+        const orderItems = order.items.map(item => 
+          `${item.name} x${item.quantity} - ${item.price * item.quantity}₽`
+        ).join('\n');
+        
+        // Format message for Telegram
+        const message = `
+🔔 *NEW ORDER #${order.id}*
+
+👤 *Customer*: ${order.customerName}
+📱 *Phone*: ${order.customerPhone}
+🏪 *Restaurant*: ${restaurantName}
+⏱ *Pickup time*: ${order.pickupTime} minutes
+💰 *Total amount*: ${order.totalAmount}₽
+
+📋 *Order items*:
+${orderItems}
+
+📅 *Order time*: ${new Date(order.createdAt).toLocaleString()}
+        `;
+        
+        // Send request to Telegram API
+        const telegramApiUrl = `https://api.telegram.org/bot${settings.telegramBotToken}/sendMessage`;
+        
+        // Create request data
+        const data = {
+          chat_id: settings.telegramChatId,
+          text: message,
+          parse_mode: 'Markdown'
+        };
+        
+        // Send request
+        fetch(telegramApiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+          console.log('Telegram API response:', result);
+          if (result.ok) {
+            console.log('Notification successfully sent to Telegram');
+            localStorage.setItem('lastTelegramNotification', JSON.stringify({
+              type: 'new_order',
+              orderId: order.id,
+              sentAt: new Date().toISOString(),
+              success: true
+            }));
+          } else {
+            console.error('Error sending notification to Telegram:', result.description);
+            localStorage.setItem('lastTelegramNotification', JSON.stringify({
+              type: 'new_order',
+              orderId: order.id,
+              sentAt: new Date().toISOString(),
+              success: false,
+              error: result.description
+            }));
+          }
+        })
+        .catch(error => {
+          console.error('Error sending request to Telegram API:', error);
+          localStorage.setItem('lastTelegramNotification', JSON.stringify({
+            type: 'new_order',
+            orderId: order.id,
+            sentAt: new Date().toISOString(),
+            success: false,
+            error: error.message
+          }));
+        });
       }
     }
   },
   
-  // Методы для работы с настройками
+  // Methods for working with settings
   settings: {
     getAll: function() {
       return JSON.parse(localStorage.getItem('settings') || '{}');
@@ -432,7 +500,7 @@ const db = {
     }
   },
   
-  // Методы для авторизации администратора
+  // Methods for admin authentication
   auth: {
     getCredentials: function() {
       return JSON.parse(localStorage.getItem('adminCredentials') || '{}');
@@ -441,7 +509,7 @@ const db = {
     login: function(username, password) {
       const credentials = this.getCredentials();
       
-      // В реальном приложении пароли должны быть захешированы
+      // In a real application, passwords should be hashed
       if (credentials.username === username && credentials.password === password) {
         const sessionToken = Math.random().toString(36).substring(2);
         sessionStorage.setItem('adminSession', sessionToken);
@@ -466,7 +534,7 @@ const db = {
     }
   },
   
-  // Методы для корзины
+  // Methods for cart
   cart: {
     get: function() {
       return JSON.parse(localStorage.getItem('cart') || '{"items":[], "restaurantId": null}');
@@ -477,14 +545,14 @@ const db = {
       const product = db.products.getById(productId);
       
       if (!product) {
-        return { success: false, error: 'Товар не найден' };
+        return { success: false, error: 'Product not found' };
       }
       
-      // Проверяем, что все товары из одного ресторана
+      // Check that all items are from the same restaurant
       if (cart.restaurantId && product.restaurantIds && !product.restaurantIds.includes(cart.restaurantId)) {
         return { 
           success: false, 
-          error: 'В корзине могут быть товары только из одного ресторана. Сначала очистите корзину.' 
+          error: 'Cart can only contain items from one restaurant. Please clear your cart first.' 
         };
       }
       
@@ -500,7 +568,7 @@ const db = {
           quantity
         });
         
-        // Устанавливаем ресторан, если это первый товар
+        // Set restaurant if this is the first item
         if (!cart.restaurantId && product.restaurantIds && product.restaurantIds.length > 0) {
           cart.restaurantId = product.restaurantIds[0];
         }
@@ -515,7 +583,7 @@ const db = {
       const existingItemIndex = cart.items.findIndex(item => item.productId === productId);
       
       if (existingItemIndex === -1) {
-        return { success: false, error: 'Товар не найден в корзине' };
+        return { success: false, error: 'Product not found in cart' };
       }
       
       if (quantity <= 0) {
@@ -524,7 +592,7 @@ const db = {
         cart.items[existingItemIndex].quantity = quantity;
       }
       
-      // Если корзина стала пустой, сбрасываем ресторан
+      // If cart is empty, reset restaurant
       if (cart.items.length === 0) {
         cart.restaurantId = null;
       }
@@ -556,14 +624,14 @@ const db = {
       const cart = this.get();
       
       if (cart.items.length === 0) {
-        return { success: false, error: 'Корзина пуста' };
+        return { success: false, error: 'Cart is empty' };
       }
       
       if (!cart.restaurantId) {
-        return { success: false, error: 'Не указан ресторан' };
+        return { success: false, error: 'Restaurant not specified' };
       }
       
-      // Создаем заказ
+      // Create order
       const order = {
         customerName: customerInfo.name,
         customerPhone: customerInfo.phone,
@@ -578,32 +646,32 @@ const db = {
       
       const newOrder = db.orders.add(order);
       
-      // Очищаем корзину после успешного оформления заказа
+      // Clear cart after successful checkout
       this.clear();
       
       return { success: true, order: newOrder };
     }
   },
   
-  // Статистика для админ-панели
+  // Statistics for admin panel
   statistics: {
     getDashboardStats: function() {
       const orders = db.orders.getAll();
       const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0);
       
-      // Статистика по статусам заказов
+      // Order status statistics
       const orderStatusStats = {};
       orders.forEach(order => {
         orderStatusStats[order.status] = (orderStatusStats[order.status] || 0) + 1;
       });
       
-      // Статистика по ресторанам
+      // Restaurant statistics
       const restaurantStats = {};
       orders.forEach(order => {
         restaurantStats[order.restaurantId] = (restaurantStats[order.restaurantId] || 0) + 1;
       });
       
-      // Топ-5 популярных товаров
+      // Top 5 popular products
       const productStats = {};
       orders.forEach(order => {
         order.items.forEach(item => {
@@ -616,7 +684,7 @@ const db = {
           const product = db.products.getById(productId);
           return { 
             id: productId, 
-            name: product ? product.name : 'Неизвестный товар', 
+            name: product ? product.name : 'Unknown product', 
             quantity 
           };
         })
@@ -637,5 +705,5 @@ const db = {
   }
 };
 
-// Экспорт объекта базы данных
+// Export database object
 window.db = db;

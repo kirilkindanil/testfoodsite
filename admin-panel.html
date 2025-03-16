@@ -1388,24 +1388,208 @@
             restaurantsContainer.appendChild(checkboxDiv);
           });
         }
+        
+        // Image file change handler
+        if (productImageFile) {
+          productImageFile.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = function(event) {
+                productImagePreview.src = event.target.result;
+                document.getElementById('productImage').value = event.target.result;
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+        }
+        
+        // Open modal for adding product
+        if (addProductBtn) {
+          addProductBtn.addEventListener('click', function() {
+            console.log('Opening product modal');
+            currentProductId = null;
+            document.getElementById('productModalTitle').textContent = 'Add Product';
+            productForm.reset();
+            productImagePreview.src = 'images/default.jpg';
+            document.getElementById('productImage').value = 'default.jpg';
+            
+            loadCategoriesForSelect();
+            loadRestaurantsForCheckboxes();
+            
+            productModal.classList.add('active');
+          });
+        } else {
+          console.error('Add Product button not found');
+        }
+        
+        // Close modal
+        if (closeProductModal) {
+          closeProductModal.addEventListener('click', function() {
+            productModal.classList.remove('active');
+          });
+        }
+        
+        if (cancelProductBtn) {
+          cancelProductBtn.addEventListener('click', function() {
+            productModal.classList.remove('active');
+          });
+        }
+        
+        // Form submission handler for adding/editing product
+        if (productForm) {
+          productForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Submitting product form');
+            
+            // Get selected restaurants
+            const restaurantIds = [];
+            document.querySelectorAll('#productRestaurantsCheckboxes input[type="checkbox"]:checked').forEach(checkbox => {
+              restaurantIds.push(checkbox.value);
+            });
+            
+            if (restaurantIds.length === 0) {
+              alert('Please select at least one restaurant');
+              return;
+            }
+            
+            const productData = {
+              name: document.getElementById('productName').value,
+              category: document.getElementById('productCategory').value,
+              price: parseFloat(document.getElementById('productPrice').value),
+              description: document.getElementById('productDescription').value,
+              image: document.getElementById('productImage').value,
+              restaurantIds: restaurantIds,
+              isActive: document.getElementById('productIsActive').checked
+            };
+            
+            try {
+              if (currentProductId) {
+                // Edit product
+                db.products.update(currentProductId, productData);
+                showStatusMessage('productsStatusMessage', `Product "${productData.name}" successfully updated`, 'success');
+              } else {
+                // Create ID for new product
+                const slug = productData.name.toLowerCase()
+                  .replace(/[^\w\s-]/g, '')
+                  .replace(/\s+/g, '-')
+                  .replace(/-+/g, '-');
+                productData.id = slug + '-' + Date.now().toString().slice(-4);
+                
+                // Add product
+                db.products.add(productData);
+                showStatusMessage('productsStatusMessage', `Product "${productData.name}" successfully added`, 'success');
+              }
+              
+              // Close modal and update product list
+              productModal.classList.remove('active');
+              loadProducts();
+              
+              // Update dashboard statistics
+              loadDashboardData();
+            } catch (error) {
+              console.error('Error saving product:', error);
+              showStatusMessage('productsStatusMessage', `Error: ${error.message}`, 'error');
+            }
+          });
+        } else {
+          console.error('Product form not found');
+        }
       }
+
+      // Edit product
+      function editProduct(productId) {
+        console.log('Editing product:', productId);
+        const product = db.products.getById(productId);
+        if (!product) {
+          console.error('Product not found:', productId);
+          return;
+        }
       
+        currentProductId = productId;
+        document.getElementById('productModalTitle').textContent = 'Edit Product';
+      
+        // Load categories for select
+        const categorySelect = document.getElementById('productCategory');
+        const categories = db.categories.getActive();
+      
+        // Clear existing options except the first one
+        while (categorySelect.options.length > 1) {
+          categorySelect.remove(1);
+        }
+      
+        // Add categories to dropdown
+        categories.forEach(category => {
+          if (category.id !== 'all') { // Skip the "All" category
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.name;
+            categorySelect.appendChild(option);
+          }
+        });
+      
+        // Load restaurants for checkboxes
+        const restaurantsContainer = document.getElementById('productRestaurantsCheckboxes');
+        const restaurants = db.restaurants.getActive();
+      
+        restaurantsContainer.innerHTML = '';
+      
+        restaurants.forEach(restaurant => {
+          const checkboxDiv = document.createElement('div');
+          checkboxDiv.innerHTML = `
+            <label style="display: flex; align-items: center; margin-bottom: 10px;">
+              <input type="checkbox" name="restaurant-${restaurant.id}" value="${restaurant.id}" style="margin-right: 10px;" ${product.restaurantIds && product.restaurantIds.includes(restaurant.id) ? 'checked' : ''}>
+              ${restaurant.name}
+            </label>
+          `;
+          restaurantsContainer.appendChild(checkboxDiv);
+        });
+      
+        // Set form values
+        document.getElementById('productId').value = product.id;
+        document.getElementById('productName').value = product.name;
+        document.getElementById('productCategory').value = product.category;
+        document.getElementById('productPrice').value = product.price;
+        document.getElementById('productDescription').value = product.description;
+        document.getElementById('productIsActive').checked = product.isActive !== false;
+      
+        // Set image preview
+        const imageSrc = product.image && product.image.startsWith('data:image')
+          ? product.image
+          : `images/${product.image || 'default.jpg'}`;
+        document.getElementById('productImagePreview').src = imageSrc;
+        document.getElementById('productImage').value = product.image || 'default.jpg';
+      
+        // Open modal
+        document.getElementById('productModal').classList.add('active');
+      }
       // Delete product
       function deleteProduct(productId) {
         console.log('Deleting product:', productId);
         const product = db.products.getById(productId);
         if (!product) return;
-        
+      
         // Check if there are orders with this product
         const orders = db.orders.getAll();
-        const hasOrders = orders.some(order => 
-          order.items.some(item => item.productId === productId)
+        const hasOrders = orders.some(order =>
+          order.items && order.items.some(item => item.productId === productId)
         );
-        
+      
         if (hasOrders) {
           showStatusMessage('productsStatusMessage', `Cannot delete product "${product.name}": it is used in orders`, 'error');
           return;
         }
+      
+        // Confirm deletion
+        if (confirm(`Are you sure you want to delete product "${product.name}"?`)) {
+          db.products.delete(productId);
+          showStatusMessage('productsStatusMessage', `Product "${product.name}" successfully deleted`, 'success');
+      
+          // Update product list and statistics
+          loadProducts();
+          loadDashboardData();
+        }
+      }
         
         // Confirm deletion
         if (confirm(`Are you sure you want to delete product "${product.name}"?`)) {
@@ -1419,22 +1603,23 @@
       }
       
       // Load products
+      // Load products
       function loadProducts() {
         console.log('Loading products');
         try {
           const products = db.products.getAll();
           const productsTable = document.getElementById('productsTable');
           productsTable.innerHTML = '';
-          
+      
           if (products.length === 0) {
             productsTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">No products found</td></tr>';
             return;
           }
-          
+      
           products.forEach(product => {
             // Get category and restaurant names
             const category = db.categories.getById(product.category) || { name: 'Unknown' };
-            
+      
             let restaurantNames = '';
             if (product.restaurantIds && product.restaurantIds.length > 0) {
               restaurantNames = product.restaurantIds.map(id => {
@@ -1442,7 +1627,7 @@
                 return restaurant ? restaurant.name : 'Unknown';
               }).join(', ');
             }
-            
+      
             const row = document.createElement('tr');
             row.innerHTML = `
               <td>${product.id}</td>
@@ -1455,10 +1640,10 @@
                 <button class="admin-btn danger" data-product-id="${product.id}" data-action="delete-product">Delete</button>
               </td>
             `;
-            
+      
             productsTable.appendChild(row);
           });
-          
+      
           // Add event handlers
           document.querySelectorAll('[data-action="edit-product"]').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -1466,7 +1651,7 @@
               editProduct(productId);
             });
           });
-          
+      
           document.querySelectorAll('[data-action="delete-product"]').forEach(btn => {
             btn.addEventListener('click', function() {
               const productId = this.getAttribute('data-product-id');

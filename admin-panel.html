@@ -1569,12 +1569,6 @@
         const product = db.products.getById(productId);
         if (!product) return;
       
-        // Check if there are orders with this product
-        //const orders = db.orders.getAll();
-        //const hasOrders = orders.some(order =>
-        //  order.items && order.items.some(item => item.productId === productId)
-       // );
-      
         if (hasOrders) {
           showStatusMessage('productsStatusMessage', `Cannot delete product "${product.name}": it is used in orders`, 'error');
           return;

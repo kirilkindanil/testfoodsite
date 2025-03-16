@@ -1335,12 +1335,19 @@ function loadCategories() {
       
       // Open cart
       function openCart() {
-        // Update cart contents
+        console.log('Opening cart');
+        // Обновляем содержимое корзины
         updateCartItems();
         
-        // Show modal
+        // Показываем модальное окно
         const cartModal = document.getElementById('cartModal');
+        if (!cartModal) {
+          console.error('Cart modal not found');
+          return;
+        }
+        
         cartModal.classList.add('active');
+        console.log('Cart modal opened');
       }
       
       // Update cart item count

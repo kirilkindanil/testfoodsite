@@ -662,6 +662,10 @@
         grid-template-columns: 1fr;
       }
       
+      .pickup-options {
+        flex-direction: column;
+      }
+      
       .restaurant-details {
         grid-template-columns: 1fr;
       }
@@ -669,23 +673,29 @@
       .cart-icon {
         position: fixed;
         bottom: 20px;
-        left: 20px;
+        right: 20px;
         top: auto;
-        right: auto;
-        width: 60px;
-        height: 60px;
-        font-size: 24px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        left: auto;
+        width: 65px;
+        height: 65px;
+        font-size: 28px;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
         z-index: 1001;
+        background-color: #9AFF2B;
+      }
+      
+      .cart-count {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+        right: -5px;
+        top: -5px;
       }
       
       .item-title {
         font-size: 14px;
-        padding: 6px 15px;
-      }
-      
-      .price {
-        font-size: 20px;
+        padding: 6px 12px;
       }
       
       .description {
@@ -697,37 +707,19 @@
         font-size: 14px;
       }
       
-      /* Improve mobile cart */
-     .modal-content {
-      width: 100%;
-      max-width: 100%;
-      height: 100vh;
-      max-height: 100vh;
-      border-radius: 0;
-      padding: 15px;
-      margin: 0;
-    }
-      .modal-submit {
-        padding: 12px;
-        margin-bottom: 20px;
-        position: sticky;
-        bottom: 0;
-      }
-      
-      .pickup-options {
-        flex-direction: column;
-      }
-      
-      .cart-item {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 15px 0;
-      }
-      
-      .cart-item-controls {
+      /* Модальное окно корзины */
+      .modal-content {
         width: 100%;
-        justify-content: space-between;
-        margin-top: 10px;
+        max-width: 100%;
+        height: 90vh;
+        max-height: 90vh;
+        border-radius: 15px 15px 0 0;
+        padding: 15px;
+        margin: 0;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
       }
       
       .modal-header {
@@ -736,25 +728,71 @@
         background-color: #1a1a1a;
         z-index: 10;
         padding-top: 15px;
+        border-radius: 15px 15px 0 0;
+        margin-bottom: 20px;
       }
       
       .modal-close-btn {
         font-size: 32px;
         padding: 10px;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        background-color: rgba(0,0,0,0.1);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
+      
       .cart-total {
         position: sticky;
         bottom: 0;
         background-color: #1a1a1a;
         padding: 15px 0;
         margin-bottom: 15px;
+        font-size: 20px;
+        border-top: 1px solid #333;
       }
-  
+      
       .modal-buttons {
         position: sticky;
         bottom: 60px;
         background-color: #1a1a1a;
         padding-bottom: 15px;
+      }
+      
+      /* Стили для формы заказа */
+      .checkout-form {
+        padding-bottom: 40px;
+      }
+      
+      .pickup-options {
+        flex-direction: row;
+        display: flex;
+        gap: 5px;
+      }
+      
+      .pickup-label {
+        font-size: 13px;
+        padding: 8px 5px;
+      }
+      
+      /* Фикс для корзины - делаем её видимой поверх модального окна */
+      .modal.active {
+        display: flex !important;
+        align-items: flex-end;
+      }
+      
+      /* Улучшенные стили для кнопки оформления заказа */
+      .modal-submit {
+        padding: 12px;
+        margin-bottom: 20px;
+        width: 100%;
+        position: sticky;
+        bottom: 0;
       }
     }
     

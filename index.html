@@ -562,10 +562,19 @@
       background-color: #9AFF2B;
       color: black;
       border: none;
-      padding: 10px 30px;
+      padding: 15px 30px;
       border-radius: 4px;
       font-weight: 700;
       cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      margin-top: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .modal-submit:hover {
+      background-color: #8DF529;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     }
     
     /* Restaurant select modal */
@@ -698,6 +707,12 @@
       padding: 15px;
       margin: 0;
     }
+      .modal-submit {
+        padding: 12px;
+        margin-bottom: 20px;
+        position: sticky;
+        bottom: 0;
+      }
       
       .pickup-options {
         flex-direction: column;

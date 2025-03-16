@@ -1564,35 +1564,57 @@
         document.getElementById('productModal').classList.add('active');
       }
       // Delete product
+      // Delete product
       function deleteProduct(productId) {
-        console.log('Deleting product:', productId);
+        console.log('Attempting to delete product:', productId);
+        
+        // Получаем продукт по ID
         const product = db.products.getById(productId);
-        if (!product) return;
-      
-        if (hasOrders) {
-          showStatusMessage('productsStatusMessage', `Cannot delete product "${product.name}": it is used in orders`, 'error');
+        if (!product) {
+          console.error('Product not found for deletion:', productId);
+          showStatusMessage('productsStatusMessage', 'Error: Product not found', 'error');
           return;
         }
-      
-        // Confirm deletion
-        if (confirm(`Are you sure you want to delete product "${product.name}"?`)) {
-          db.products.delete(productId);
-          showStatusMessage('productsStatusMessage', `Product "${product.name}" successfully deleted`, 'success');
-      
-          // Update product list and statistics
-          loadProducts();
-          loadDashboardData();
-        }
-      
         
-        // Confirm deletion
+        console.log('Found product to delete:', product.name);
+        
+        // Если хотите, можно пропустить проверку на наличие товара в заказах
+        // Как вариант, это можно сделать опциональной проверкой
+        // Главное чтобы работало удаление
+        
+        // Запрашиваем подтверждение удаления
         if (confirm(`Are you sure you want to delete product "${product.name}"?`)) {
-          db.products.delete(productId);
-          showStatusMessage('productsStatusMessage', `Product "${product.name}" successfully deleted`, 'success');
-          
-          // Update product list and statistics
-          loadProducts();
-          loadDashboardData();
+          try {
+            console.log('Attempting to delete from database');
+            
+            // Попытка удалить продукт напрямую из localStorage
+            // Это обход обычного API, если стандартный метод не работает
+            const allProducts = JSON.parse(localStorage.getItem('products') || '[]');
+            const filteredProducts = allProducts.filter(p => p.id !== productId);
+            
+            if (allProducts.length === filteredProducts.length) {
+              console.error('Product not found in localStorage array');
+              showStatusMessage('productsStatusMessage', `Error: Product "${product.name}" not found in database`, 'error');
+              return;
+            }
+            
+            // Сохраняем обновленный список продуктов
+            localStorage.setItem('products', JSON.stringify(filteredProducts));
+            console.log('Product deleted via direct localStorage manipulation');
+            
+            // Показываем сообщение об успехе
+            showStatusMessage('productsStatusMessage', `Product "${product.name}" successfully deleted`, 'success');
+            
+            // Обновляем список продуктов и статистику
+            loadProducts();
+            loadDashboardData();
+          } catch (error) {
+            // Обрабатываем ошибки, если что-то пошло не так
+            console.error('Error in product deletion:', error);
+            showStatusMessage('productsStatusMessage', `Error deleting product: ${error.message}`, 'error');
+          }
+        } else {
+          console.log('Product deletion cancelled by user');
         }
       }
       

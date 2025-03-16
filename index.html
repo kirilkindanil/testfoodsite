@@ -1246,69 +1246,91 @@ function loadCategories() {
         const clearCartBtn = document.getElementById('clearCartBtn');
         const checkoutForm = document.getElementById('checkoutForm');
         
-        // Update item count
+        if (!cartIcon || !cartModal || !closeCartBtn) {
+          console.error('Cart elements not found');
+          return;
+        }
+        
+        // Обновляем счетчик товаров
         updateCartCount();
         
-        // Click handler for cart icon
+        // Обработчик клика по иконке корзины
         cartIcon.addEventListener('click', function(e) {
           e.preventDefault();
-          e.stopPropagation();
           console.log('Cart icon clicked');
           openCart();
         });
         
-        // Handler for closing cart
-        closeCartBtn.addEventListener('click', function() {
+        // Обработчик закрытия корзины
+        closeCartBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('Close cart button clicked');
           cartModal.classList.remove('active');
         });
         
-        // Close cart when clicking outside on mobile
+        // Добавляем закрытие при клике вне контента
         cartModal.addEventListener('click', function(e) {
           if (e.target === cartModal) {
+            console.log('Closing cart on background click');
             cartModal.classList.remove('active');
           }
         });
         
-        // Handler for clearing cart
-        clearCartBtn.addEventListener('click', function() {
-          db.cart.clear();
-          updateCartCount();
-          updateCartItems();
-          showNotification('Cart cleared');
+        // Останавливаем всплытие клика внутри контента
+        document.querySelector('.modal-content').addEventListener('click', function(e) {
+          e.stopPropagation();
         });
         
-        // Handler for checkout form
-        checkoutForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          // Get form data
-          const formData = new FormData(this);
-          const customerInfo = {
-            name: formData.get('name'),
-            phone: formData.get('phone'),
-            pickupTime: formData.get('pickup')
-          };
-          
-          // Process order
-          const result = db.cart.checkout(customerInfo);
-          
-          if (result.success) {
-            // Show successful order notification
-            showNotification(`Order successfully placed! It will be ready in ${customerInfo.pickupTime} minutes.`);
-            
-            // Close cart
-            cartModal.classList.remove('active');
-            
-            // Reset form
-            checkoutForm.reset();
-            
-            // Update cart item count
+        // Обработчик очистки корзины
+        if (clearCartBtn) {
+          clearCartBtn.addEventListener('click', function() {
+            db.cart.clear();
             updateCartCount();
-          } else {
-            // If error occurred
-            showNotification(result.error, 'error');
-          }
-        });
+            updateCartItems();
+            showNotification('Cart cleared');
+          });
+        }
+        
+        // Обработчик формы оформления заказа
+        if (checkoutForm) {
+          checkoutForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Получаем данные формы
+            const formData = new FormData(this);
+            const customerInfo = {
+              name: formData.get('name'),
+              phone: formData.get('phone'),
+              pickupTime: formData.get('pickup')
+            };
+            
+            // Валидация формы
+            if (!customerInfo.name || !customerInfo.phone) {
+              showNotification('Please fill in all required fields', 'error');
+              return;
+            }
+            
+            // Оформляем заказ
+            const result = db.cart.checkout(customerInfo);
+            
+            if (result.success) {
+              // Показываем уведомление об успешном оформлении заказа
+              showNotification(`Order successfully placed! It will be ready in ${customerInfo.pickupTime} minutes.`);
+              
+              // Закрываем корзину
+              cartModal.classList.remove('active');
+              
+              // Сбрасываем форму
+              checkoutForm.reset();
+              
+              // Обновляем счетчик товаров
+              updateCartCount();
+            } else {
+              // Если произошла ошибка
+              showNotification(result.error, 'error');
+            }
+          });
+        }
       }
       
       // Open cart

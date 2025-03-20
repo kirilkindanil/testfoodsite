@@ -1014,77 +1014,144 @@
       // Initialize restaurant selection modal
       function initRestaurantSelection() {
         console.log('Initializing restaurant selection');
-        const restaurantModal = document.getElementById('restaurantSelectModal');
-        const selectRestaurantBtn = document.getElementById('selectRestaurantBtn');
         
-        // Всегда показываем модальное окно при загрузке страницы
-        showRestaurantSelectionModal();
-        
-        // Заполняем список ресторанов карточками
-        const restaurantsContainer = document.getElementById('restaurantSelector').parentNode;
-        restaurantsContainer.innerHTML = '<div class="restaurant-cards" id="restaurantCards"></div>';
-        const restaurantCards = document.getElementById('restaurantCards');
-        
-        const restaurants = db.restaurants.getActive();
-        let selectedRestaurantCard = null;
-        
-        restaurants.forEach(restaurant => {
-          const card = document.createElement('div');
-          card.className = 'restaurant-card';
-          card.dataset.id = restaurant.id;
+        try {
+          const restaurantModal = document.getElementById('restaurantSelectModal');
+          const selectRestaurantBtn = document.getElementById('selectRestaurantBtn');
           
-          // Проверяем, есть ли у ресторана иконка, иначе используем placeholder
-          const imgSrc = restaurant.icon ? restaurant.icon : 'images/restaurant-placeholder.png';
-          card.innerHTML = `
-          <img src="${imgSrc}" alt="${restaurant.name}" class="restaurant-card-image">
-          <div class="restaurant-card-name">${restaurant.name}</div>
-          <div class="restaurant-card-info">Delivery time: ${restaurant.deliveryTime || '30'} min</div>
-        `;
-        
-        // Отмечаем выбранный ресторан, если он уже был выбран ранее
-        if (selectedRestaurantId && restaurant.id === selectedRestaurantId) {
-          card.classList.add('active');
-          selectedRestaurantCard = card;
-          selectRestaurantBtn.disabled = false;
-        }
-        
-        // Добавляем обработчик клика
-        card.addEventListener('click', function() {
-          // Удаляем active класс со всех карточек
-          document.querySelectorAll('.restaurant-card').forEach(c => c.classList.remove('active'));
-          // Добавляем active класс выбранной карточке
-          this.classList.add('active');
-          selectedRestaurantCard = this;
-          // Активируем кнопку выбора
-          selectRestaurantBtn.disabled = false;
+          if (!restaurantModal || !selectRestaurantBtn) {
+            console.error('Required elements for restaurant selection not found');
+            return;
+          }
+          
+          // Показываем модальное окно при загрузке страницы
+          restaurantModal.classList.add('active');
+          document.getElementById('mainContent').style.display = 'none';
+          
+          // Получаем контейнер для карточек ресторанов
+          const restaurantSelector = document.getElementById('restaurantSelector');
+          
+          if (!restaurantSelector) {
+            console.error('Restaurant selector not found');
+            return;
+          }
+          
+          const restaurantsContainer = restaurantSelector.parentNode;
+          restaurantsContainer.innerHTML = '<div class="restaurant-cards" id="restaurantCards"></div>';
+          const restaurantCards = document.getElementById('restaurantCards');
+          
+          // Проверяем, есть ли у нас доступ к базе данных
+          if (!window.db || !window.db.restaurants || typeof window.db.restaurants.getActive !== 'function') {
+            console.error('Database not properly initialized');
+            restaurantCards.innerHTML = '<p style="color: red;">Error: Database not available</p>';
+            return;
+          }
+          
+          // Получаем список активных ресторанов
+          const restaurants = window.db.restaurants.getActive();
+          console.log('Loaded restaurants:', restaurants.length);
+          
+          if (restaurants.length === 0) {
+            restaurantCards.innerHTML = '<p style="color: #aaa;">No restaurants found</p>';
+            return;
+          }
+          
+          let selectedRestaurantCard = null;
+          
+          // Создаем карточки для всех ресторанов
+          restaurants.forEach(restaurant => {
+            const card = document.createElement('div');
+            card.className = 'restaurant-card';
+            card.dataset.id = restaurant.id;
+            
+            // Проверяем, есть ли у ресторана иконка, иначе используем placeholder
+            const imgSrc = restaurant.icon ? restaurant.icon : 'images/restaurant-placeholder.png';
+            
+            card.innerHTML = `
+              <img src="${imgSrc}" alt="${restaurant.name}" class="restaurant-card-image">
+              <div class="restaurant-card-name">${restaurant.name}</div>
+              <div class="restaurant-card-info">Delivery time: ${restaurant.deliveryTime || '30'} min</div>
+            `;
+            
+            // Отмечаем выбранный ресторан, если он уже был выбран ранее
+            if (selectedRestaurantId && restaurant.id === selectedRestaurantId) {
+              card.classList.add('active');
+              selectedRestaurantCard = card;
+              selectRestaurantBtn.disabled = false;
+            }
+            
+            // Добавляем обработчик клика
+            card.addEventListener('click', function() {
+              // Удаляем active класс со всех карточек
+              document.querySelectorAll('.restaurant-card').forEach(c => c.classList.remove('active'));
+              // Добавляем active класс выбранной карточке
+              this.classList.add('active');
+              selectedRestaurantCard = this;
+              // Активируем кнопку выбора
+              selectRestaurantBtn.disabled = false;
+            });
+            
+            restaurantCards.appendChild(card);
           });
-          restaurantCards.appendChild(card);
-        });
-
-        selectRestaurantBtn.addEventListener('click', function() {
-          if (selectedRestaurantCard) {
-            const selectedId = selectedRestaurantCard.dataset.id;
-            
-            // Сохраняем выбранный ресторан
-            localStorage.setItem('selectedRestaurant', selectedId);
-            selectedRestaurantId = selectedId;
-            selectedRestaurant = db.restaurants.getById(selectedId);
-            
-            // Загружаем меню ресторана
-            loadRestaurantInfo(selectedRestaurant);
-            loadMenuForRestaurant(selectedId);
-            
-            // Закрываем модальное окно с плавной анимацией
-            restaurantModal.style.opacity = '0';
-            setTimeout(() => {
+          
+          // Добавляем обработчик для кнопки выбора ресторана
+          selectRestaurantBtn.addEventListener('click', function() {
+            if (selectedRestaurantCard) {
+              const selectedId = selectedRestaurantCard.dataset.id;
+              
+              // Сохраняем выбранный ресторан
+              localStorage.setItem('selectedRestaurant', selectedId);
+              selectedRestaurantId = selectedId;
+              selectedRestaurant = window.db.restaurants.getById(selectedId);
+              
+              console.log('Selected restaurant:', selectedRestaurant ? selectedRestaurant.name : 'unknown');
+              
+              // Загружаем меню ресторана (предварительно проверив наличие функций)
+              if (typeof loadMenuForRestaurant === 'function') {
+                loadMenuForRestaurant(selectedId);
+              } else {
+                console.error('loadMenuForRestaurant function not found');
+              }
+              
+              // Закрываем модальное окно с плавной анимацией
               restaurantModal.classList.remove('active');
-              restaurantModal.style.opacity = '1';
               
               // Показываем основной контент
-              document.getElementById('mainContent').style.display = 'block';
-            }, 300);
+              const mainContent = document.getElementById('mainContent');
+              if (mainContent) {
+                mainContent.style.display = 'block';
+                console.log('Main content displayed');
+              } else {
+                console.error('Main content element not found');
+              }
+            }
+          });
+          
+          // Блокируем закрытие модального окна кликом вне его
+          restaurantModal.addEventListener('click', function(e) {
+            if (e.target === restaurantModal) {
+              e.stopPropagation();
+              return false;
+            }
+          });
+          
+          console.log('Restaurant selection initialized successfully');
+        } catch (error) {
+          console.error('Error initializing restaurant selection:', error);
+          
+          // Пытаемся показать сообщение об ошибке на странице
+          const mainContent = document.getElementById('mainContent');
+          if (mainContent) {
+            mainContent.style.display = 'block';
+            mainContent.innerHTML = `
+              <div style="text-align: center; padding: 50px; color: white;">
+                <h1>Error Loading Restaurants</h1>
+                <p>${error.message}</p>
+                <button onclick="location.reload()" style="padding: 10px 20px; background: #9AFF2B; color: black; border: none; border-radius: 4px; margin-top: 20px; cursor: pointer;">Reload Page</button>
+              </div>
+            `;
           }
-        });
+        }
       }
     
         

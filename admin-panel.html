@@ -1157,6 +1157,23 @@
         const closeRestaurantModal = document.getElementById('closeRestaurantModal');
         const cancelRestaurantBtn = document.getElementById('cancelRestaurantBtn');
         const restaurantForm = document.getElementById('restaurantForm');
+
+        const restaurantIconFile = document.getElementById('restaurantIconFile');
+        const restaurantIconPreview = document.getElementById('restaurantIconPreview');
+        
+        if (restaurantIconFile) {
+          restaurantIconFile.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = function(event) {
+                restaurantIconPreview.src = event.target.result;
+                document.getElementById('restaurantIcon').value = event.target.result;
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+        }
         
         // Open modal for adding restaurant
         addRestaurantBtn.addEventListener('click', function() {
@@ -1187,7 +1204,10 @@
             hours: document.getElementById('restaurantHours').value,
             phone: document.getElementById('restaurantPhone').value,
             email: document.getElementById('restaurantEmail').value,
-            isActive: document.getElementById('restaurantIsActive').checked
+            isActive: document.getElementById('restaurantIsActive').checked,
+            // Новые поля
+            icon: document.getElementById('restaurantIcon').value,
+            deliveryTime: document.getElementById('restaurantDeliveryTime').value
           };
           
           try {
@@ -1237,7 +1257,9 @@
         document.getElementById('restaurantPhone').value = restaurant.phone;
         document.getElementById('restaurantEmail').value = restaurant.email;
         document.getElementById('restaurantIsActive').checked = restaurant.isActive !== false;
-        
+        document.getElementById('restaurantIconPreview').src = restaurant.icon || 'images/restaurant-placeholder.png';
+        document.getElementById('restaurantIcon').value = restaurant.icon || '';
+        document.getElementById('restaurantDeliveryTime').value = restaurant.deliveryTime || '30';
         document.getElementById('restaurantModal').classList.add('active');
       }
       

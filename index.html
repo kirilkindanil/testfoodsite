@@ -1335,6 +1335,7 @@ function loadCategories() {
 }
       
       // Initialize cart
+      // Initialize cart
       function initCart() {
         const cartIcon = document.getElementById('cartIcon');
         const cartModal = document.getElementById('cartModal');
@@ -1373,9 +1374,12 @@ function loadCategories() {
         });
         
         // Останавливаем всплытие клика внутри контента
-        document.querySelector('.modal-content').addEventListener('click', function(e) {
-          e.stopPropagation();
-        });
+        const modalContent = cartModal.querySelector('.modal-content');
+        if (modalContent) {
+          modalContent.addEventListener('click', function(e) {
+            e.stopPropagation();
+          });
+        }
         
         // Обработчик очистки корзины
         if (clearCartBtn) {
@@ -1396,13 +1400,13 @@ function loadCategories() {
             const formData = new FormData(this);
             const customerInfo = {
               name: formData.get('name'),
-              phone: formData.get('phone'),
-              pickupTime: formData.get('pickup')
+              // Используем время доставки ресторана по умолчанию
+              deliveryTime: selectedRestaurant && selectedRestaurant.deliveryTime ? selectedRestaurant.deliveryTime : '30'
             };
             
             // Валидация формы
-            if (!customerInfo.name || !customerInfo.phone) {
-              showNotification('Please fill in all required fields', 'error');
+            if (!customerInfo.name) {
+              showNotification('Please enter your name', 'error');
               return;
             }
             
@@ -1411,7 +1415,7 @@ function loadCategories() {
             
             if (result.success) {
               // Показываем уведомление об успешном оформлении заказа
-              showNotification(`Order successfully placed! It will be ready in ${customerInfo.pickupTime} minutes.`);
+              showNotification(`Order successfully placed! It will be delivered in approximately ${customerInfo.deliveryTime} minutes.`);
               
               // Закрываем корзину
               cartModal.classList.remove('active');

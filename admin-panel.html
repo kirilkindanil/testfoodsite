@@ -825,6 +825,22 @@
           <label class="form-label">Email</label>
           <input type="email" id="restaurantEmail" name="email" class="form-input" required>
         </div>
+        <div class="form-group">
+        <label class="form-label">Restaurant Icon</label>
+        <div class="image-upload-container">
+          <input type="file" id="restaurantIconFile" name="iconFile" accept="image/*" class="form-input">
+          <div class="image-preview-container">
+            <img id="restaurantIconPreview" class="image-preview" src="images/restaurant-placeholder.png" alt="Preview">
+          </div>
+        </div>
+        <input type="hidden" id="restaurantIcon" name="icon" value="">
+        <p class="form-hint">Select an image icon for the restaurant. Recommended size: 200x200 pixels.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Delivery Time (minutes)</label>
+        <input type="number" id="restaurantDeliveryTime" name="deliveryTime" class="form-input" value="30" min="1" max="120">
+      </div>
         
         <div class="form-group">
           <label class="form-label">Status</label>

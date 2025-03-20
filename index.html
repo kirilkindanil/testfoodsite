@@ -832,7 +832,7 @@
         
         <div class="cart-total" id="cartTotal">
           <div>Total:</div>
-          <div>0₽</div>
+          <div>0฿</div>
         </div>
         
         <div class="cart-actions">
@@ -1155,7 +1155,7 @@
             <div class="item-title-container">
               <div class="item-title">${product.name}</div>
             </div>
-            <div class="price">${product.price}₽</div>
+            <div class="price">${product.price}฿</div>
             <div class="description">
               ${product.description}
             </div>
@@ -1411,7 +1411,7 @@
           cartItems.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
           cartTotal.innerHTML = `
             <div>Total:</div>
-            <div>0₽</div>
+            <div>0฿</div>
           `;
           return;
         }
@@ -1425,7 +1425,7 @@
             <div class="cart-item-info">
               <div>
                 <div class="cart-item-name">${item.name}</div>
-                <div class="cart-item-price">${item.price}₽</div>
+                <div class="cart-item-price">${item.price}฿</div>
               </div>
             </div>
             <div class="cart-item-controls">
@@ -1486,10 +1486,10 @@
         const totalAmount = db.cart.getTotalPrice();
         cartTotal.innerHTML = `
           <div>Total:</div>
-          <div>${totalAmount}₽</div>
+          <div>${totalAmount}฿</div>
         `;
         
-        debug(`В корзине ${cart.items.length} товаров на сумму ${totalAmount}₽`);
+        debug(`В корзине ${cart.items.length} товаров на сумму ${totalAmount}฿`);
       }
       
       // Показ уведомления

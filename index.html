@@ -858,122 +858,6 @@
   </style>
 </head>
 <body>
-  <script>
-  // Добавьте этот скрипт сразу после тега <body>
-  (function() {
-    // Создаем отладочное окно
-    const debugDiv = document.createElement('div');
-    debugDiv.style.position = 'fixed';
-    debugDiv.style.top = '10px';
-    debugDiv.style.left = '10px';
-    debugDiv.style.backgroundColor = 'rgba(0,0,0,0.8)';
-    debugDiv.style.color = '#0f0';
-    debugDiv.style.padding = '10px';
-    debugDiv.style.borderRadius = '5px';
-    debugDiv.style.zIndex = '10000';
-    debugDiv.style.maxWidth = '80%';
-    debugDiv.style.maxHeight = '80%';
-    debugDiv.style.overflow = 'auto';
-    debugDiv.style.fontFamily = 'monospace';
-    debugDiv.style.fontSize = '12px';
-    debugDiv.style.whiteSpace = 'pre-wrap';
-    
-    const debugContent = document.createElement('div');
-    debugDiv.appendChild(debugContent);
-    document.body.appendChild(debugDiv);
-    
-    // Функция логирования
-    function logDebug(message, type = 'info') {
-      const line = document.createElement('div');
-      const timestamp = new Date().toISOString().substring(11, 19);
-      
-      if (type === 'error') {
-        line.style.color = '#f00';
-      } else if (type === 'warn') {
-        line.style.color = '#ff0';
-      }
-      
-      line.textContent = `[${timestamp}] ${message}`;
-      debugContent.appendChild(line);
-      console.log(`[${timestamp}] ${message}`);
-      
-      // Автоматическая прокрутка
-      debugDiv.scrollTop = debugDiv.scrollHeight;
-    }
-    
-    // Перехват глобальных ошибок
-    window.onerror = function(message, source, lineno, colno, error) {
-      logDebug(`Ошибка: ${message} в ${source}:${lineno}:${colno}`, 'error');
-      return false;
-    };
-    
-    // Перехват методов консоли
-    const originalConsole = {
-      log: console.log,
-      warn: console.warn,
-      error: console.error
-    };
-    
-    console.log = function() {
-      const args = Array.from(arguments).join(' ');
-      logDebug(args, 'info');
-      originalConsole.log.apply(console, arguments);
-    };
-    
-    console.warn = function() {
-      const args = Array.from(arguments).join(' ');
-      logDebug(args, 'warn');
-      originalConsole.warn.apply(console, arguments);
-    };
-    
-    console.error = function() {
-      const args = Array.from(arguments).join(' ');
-      logDebug(args, 'error');
-      originalConsole.error.apply(console, arguments);
-    };
-    
-    // Запускаем проверку базы данных при загрузке страницы
-    window.addEventListener('DOMContentLoaded', function() {
-      logDebug('Страница загружена, проверяем данные...');
-      
-      // Проверяем db.js
-      if (typeof window.db === 'undefined') {
-        logDebug('Объект db не найден! Проверьте, загружен ли файл db.js', 'error');
-      } else {
-        logDebug('db.js успешно загружен');
-        
-        // Проверяем методы db
-        try {
-          const restaurants = window.db.restaurants.getAll();
-          logDebug(`Рестораны: загружено ${restaurants.length}`);
-          
-          // Проверяем синтаксис JSON в ресторанах
-          for (let i = 0; i < restaurants.length; i++) {
-            logDebug(`Ресторан ${i+1}: ${restaurants[i].name}`);
-            
-            // Проверяем наличие и корректность полей
-            if (!restaurants[i].id) logDebug(`Ресторан ${i+1}: отсутствует id`, 'warn');
-            if (!restaurants[i].name) logDebug(`Ресторан ${i+1}: отсутствует name`, 'warn');
-            if (!restaurants[i].isActive && restaurants[i].isActive !== false) 
-              logDebug(`Ресторан ${i+1}: отсутствует isActive`, 'warn');
-          }
-          
-          // Аналогично проверяем категории и продукты
-          const categories = window.db.categories.getAll();
-          logDebug(`Категории: загружено ${categories.length}`);
-          
-          const products = window.db.products.getAll();
-          logDebug(`Продукты: загружено ${products.length}`);
-          
-        } catch (e) {
-          logDebug(`Ошибка при проверке базы данных: ${e.message}`, 'error');
-        }
-      }
-    });
-    
-    logDebug('Отладчик запущен');
-  })();
-</script>
   <div class="overlay">
     <div id="mainContent" style="display: none;">
       <header>
@@ -1268,7 +1152,8 @@
       }
       
       // Load restaurant information
-      
+      function loadRestaurantInfo(restaurant) {
+        if (!restaurant) return;
   
   // Просто устанавливаем заголовок, остальное убрано
         document.getElementById('restaurantTitle').textContent = restaurant.name;

@@ -54,6 +54,8 @@ if (!localStorage.getItem('restaurants')) {
       phone: '+7 (495) 123-45-67',
       email: 'central@foodmenu.com',
       isActive: true
+      icon: 'images/restaurant-icons/central.png',  // URL изображения или данные base64
+      deliveryTime: '25'  // Время доставки в минутах (строка)
     },
     {
       id: 'west',
@@ -63,6 +65,8 @@ if (!localStorage.getItem('restaurants')) {
       phone: '+7 (495) 987-65-43',
       email: 'west@foodmenu.com',
       isActive: true
+      icon: 'images/restaurant-icons/central.png',  // URL изображения или данные base64
+      deliveryTime: '25'  // Время доставки в минутах (строка)
     },
     {
       id: 'north',
@@ -72,6 +76,8 @@ if (!localStorage.getItem('restaurants')) {
       phone: '+7 (495) 111-22-33',
       email: 'north@foodmenu.com',
       isActive: true
+      icon: 'images/restaurant-icons/central.png',  // URL изображения или данные base64
+      deliveryTime: '25'  // Время доставки в минутах (строка)
     }
   ];
   localStorage.setItem('restaurants', JSON.stringify(defaultRestaurants));
@@ -640,12 +646,11 @@ ${orderItems}
         return { success: false, error: 'No restaurant selected' };
       }
       
-      // Create order
+      // Создаем заказ с модифицированной структурой
       const order = {
         customerName: customerInfo.name,
-        customerPhone: customerInfo.phone,
-        customerEmail: customerInfo.email || '',
-        pickupTime: customerInfo.pickupTime || 30,
+        // Удалены телефон и другие ненужные поля
+        deliveryTime: customerInfo.deliveryTime || '30',
         status: 'new',
         totalAmount: this.getTotalPrice(),
         items: cart.items,
@@ -655,12 +660,11 @@ ${orderItems}
       
       const newOrder = db.orders.add(order);
       
-      // Clear cart after successful order
+      // Очищаем корзину после успешного оформления заказа
       this.clear();
       
       return { success: true, order: newOrder };
     }
-  },
   
   // Statistics for admin panel
   statistics: {

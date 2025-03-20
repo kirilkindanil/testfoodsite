@@ -53,9 +53,9 @@ if (!localStorage.getItem('restaurants')) {
       hours: 'Mon-Fri: 10:00 - 22:00, Sat-Sun: 11:00 - 23:00',
       phone: '+7 (495) 123-45-67',
       email: 'central@foodmenu.com',
-      isActive: true
-      icon: 'images/restaurant-icons/central.png',  // URL изображения или данные base64
-      deliveryTime: '25'  // Время доставки в минутах (строка)
+      isActive: true,  // добавлена запятая
+      icon: 'images/restaurant-icons/central.png',
+      deliveryTime: '25'
     },
     {
       id: 'west',
@@ -64,7 +64,7 @@ if (!localStorage.getItem('restaurants')) {
       hours: 'Mon-Sun: 09:00 - 22:00',
       phone: '+7 (495) 987-65-43',
       email: 'west@foodmenu.com',
-      isActive: true
+      isActive: true,
       icon: 'images/restaurant-icons/central.png',  // URL изображения или данные base64
       deliveryTime: '25'  // Время доставки в минутах (строка)
     },
@@ -75,7 +75,7 @@ if (!localStorage.getItem('restaurants')) {
       hours: 'Mon-Fri: 10:00 - 21:00, Sat-Sun: 11:00 - 22:00',
       phone: '+7 (495) 111-22-33',
       email: 'north@foodmenu.com',
-      isActive: true
+      isActive: true,
       icon: 'images/restaurant-icons/central.png',  // URL изображения или данные base64
       deliveryTime: '25'  // Время доставки в минутах (строка)
     }

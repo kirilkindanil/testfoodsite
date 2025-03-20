@@ -184,7 +184,53 @@
       transition: all 0.3s ease;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
+    .restaurant-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
     
+    .restaurant-card {
+      background-color: rgba(34, 34, 34, 0.9);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      text-align: center;
+      padding: 15px;
+    }
+    
+    .restaurant-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+    
+    .restaurant-card.active {
+      border: 2px solid #9AFF2B;
+    }
+    
+    .restaurant-card-image {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      margin: 0 auto 10px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+    }
+    
+    .restaurant-card-name {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 5px;
+      color: #9AFF2B;
+    }
+    
+    .restaurant-card-info {
+      font-size: 12px;
+      color: #aaa;
+    }
     .order-btn:hover {
       transform: scale(1.05);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -652,7 +698,10 @@
       .main-title {
         font-size: 32px;
       }
-      
+      .restaurant-cards {
+        grid-template-columns: 1fr;
+      }
+    }
       .menu-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 15px;
@@ -839,31 +888,7 @@
         </div>
       </div>
       
-      <section class="location-section">
-        <div class="container">
-          <h2 class="section-title" id="restaurantTitle">Our Restaurant</h2>
-          
-          <div class="info-grid">
-            <div class="info-card">
-              <div class="info-icon">📍</div>
-              <h3 class="info-title">Address</h3>
-              <p class="info-text" id="restaurantAddress">Select a restaurant</p>
-            </div>
-            
-            <div class="info-card">
-              <div class="info-icon">🕒</div>
-              <h3 class="info-title">Working Hours</h3>
-              <p class="info-text" id="restaurantHours">Select a restaurant</p>
-            </div>
-            
-            <div class="info-card">
-              <div class="info-icon">📞</div>
-              <h3 class="info-title">Contacts</h3>
-              <p class="info-text" id="restaurantContacts">Select a restaurant</p>
-            </div>
-          </div>
-        </div>
-      </section>
+     
       
       <footer>
         <div class="container">
@@ -904,27 +929,10 @@
             <input type="text" name="name" class="form-input" required>
           </div>
           
+          <!-- Информация о времени доставки -->
           <div class="form-group">
-            <label class="form-label">Phone</label>
-            <input type="tel" name="phone" class="form-input" required>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Pickup Time</label>
-            <div class="pickup-options">
-              <div class="pickup-option">
-                <input type="radio" name="pickup" id="pickup10" value="10" class="pickup-radio" checked>
-                <label for="pickup10" class="pickup-label">10 minutes</label>
-              </div>
-              <div class="pickup-option">
-                <input type="radio" name="pickup" id="pickup15" value="15" class="pickup-radio">
-                <label for="pickup15" class="pickup-label">15 minutes</label>
-              </div>
-              <div class="pickup-option">
-                <input type="radio" name="pickup" id="pickup30" value="30" class="pickup-radio">
-                <label for="pickup30" class="pickup-label">30 minutes</label>
-              </div>
-            </div>
+            <label class="form-label">Delivery Information</label>
+            <p style="color: #aaa; margin-bottom: 15px;">Estimated delivery time: <span id="restaurantDeliveryTime">30</span> minutes</p>
           </div>
           
           <div class="modal-buttons">
@@ -1005,43 +1013,80 @@
       
       // Initialize restaurant selection modal
       function initRestaurantSelection() {
+        console.log('Initializing restaurant selection');
         const restaurantModal = document.getElementById('restaurantSelectModal');
-        const restaurantSelector = document.getElementById('restaurantSelector');
         const selectRestaurantBtn = document.getElementById('selectRestaurantBtn');
-        const restaurantDetails = document.getElementById('restaurantDetails');
-        const restaurantAddress = document.getElementById('restaurant-address');
-        const restaurantHours = document.getElementById('restaurant-hours');
         
-        // Always show the modal when the page loads
+        // Всегда показываем модальное окно при загрузке страницы
         showRestaurantSelectionModal();
         
-        // Fill restaurant list
-        const restaurants = db.restaurants.getActive();
-        restaurants.forEach(restaurant => {
-          const option = document.createElement('option');
-          option.value = restaurant.id;
-          option.textContent = restaurant.name;
-          restaurantSelector.appendChild(option);
-        });
+        // Заполняем список ресторанов карточками
+        const restaurantsContainer = document.getElementById('restaurantSelector').parentNode;
+        restaurantsContainer.innerHTML = '<div class="restaurant-cards" id="restaurantCards"></div>';
+        const restaurantCards = document.getElementById('restaurantCards');
         
-        // If restaurant is already selected, set it in the selector
-        if (selectedRestaurantId) {
-          selectedRestaurant = db.restaurants.getById(selectedRestaurantId);
-          if (selectedRestaurant) {
-            restaurantSelector.value = selectedRestaurantId;
-            
-            // Show restaurant details
-            restaurantDetails.style.display = 'grid';
-            restaurantAddress.textContent = selectedRestaurant.address;
-            restaurantHours.textContent = selectedRestaurant.hours;
-            
-            // Activate select button
-            selectRestaurantBtn.disabled = false;
-          } else {
-            // If selected restaurant is not found, reset the selection
-            localStorage.removeItem('selectedRestaurant');
-          }
+        const restaurants = db.restaurants.getActive();
+        let selectedRestaurantCard = null;
+        
+        restaurants.forEach(restaurant => {
+          const card = document.createElement('div');
+          card.className = 'restaurant-card';
+          card.dataset.id = restaurant.id;
+          
+          // Проверяем, есть ли у ресторана иконка, иначе используем placeholder
+          const imgSrc = restaurant.icon ? restaurant.icon : 'images/restaurant-placeholder.png';
+          card.innerHTML = `
+          <img src="${imgSrc}" alt="${restaurant.name}" class="restaurant-card-image">
+          <div class="restaurant-card-name">${restaurant.name}</div>
+          <div class="restaurant-card-info">Delivery time: ${restaurant.deliveryTime || '30'} min</div>
+        `;
+        
+        // Отмечаем выбранный ресторан, если он уже был выбран ранее
+        if (selectedRestaurantId && restaurant.id === selectedRestaurantId) {
+          card.classList.add('active');
+          selectedRestaurantCard = card;
+          selectRestaurantBtn.disabled = false;
         }
+        
+        // Добавляем обработчик клика
+        card.addEventListener('click', function() {
+          // Удаляем active класс со всех карточек
+          document.querySelectorAll('.restaurant-card').forEach(c => c.classList.remove('active'));
+          // Добавляем active класс выбранной карточке
+          this.classList.add('active');
+          selectedRestaurantCard = this;
+          // Активируем кнопку выбора
+          selectRestaurantBtn.disabled = false;
+          });
+          restaurantCards.appendChild(card);
+        });
+
+        selectRestaurantBtn.addEventListener('click', function() {
+          if (selectedRestaurantCard) {
+            const selectedId = selectedRestaurantCard.dataset.id;
+            
+            // Сохраняем выбранный ресторан
+            localStorage.setItem('selectedRestaurant', selectedId);
+            selectedRestaurantId = selectedId;
+            selectedRestaurant = db.restaurants.getById(selectedId);
+            
+            // Загружаем меню ресторана
+            loadRestaurantInfo(selectedRestaurant);
+            loadMenuForRestaurant(selectedId);
+            
+            // Закрываем модальное окно с плавной анимацией
+            restaurantModal.style.opacity = '0';
+            setTimeout(() => {
+              restaurantModal.classList.remove('active');
+              restaurantModal.style.opacity = '1';
+              
+              // Показываем основной контент
+              document.getElementById('mainContent').style.display = 'block';
+            }, 300);
+          }
+        });
+      }
+    
         
         // Handler for changing selected restaurant
         restaurantSelector.addEventListener('change', function() {
@@ -1109,11 +1154,9 @@
       // Load restaurant information
       function loadRestaurantInfo(restaurant) {
         if (!restaurant) return;
-        
+  
+  // Просто устанавливаем заголовок, остальное убрано
         document.getElementById('restaurantTitle').textContent = restaurant.name;
-        document.getElementById('restaurantAddress').textContent = restaurant.address;
-        document.getElementById('restaurantHours').textContent = restaurant.hours;
-        document.getElementById('restaurantContacts').textContent = `Phone: ${restaurant.phone}\nEmail: ${restaurant.email}`;
       }
       
       // Load menu for selected restaurant
@@ -1399,16 +1442,56 @@ function loadCategories() {
           return;
         }
         
+        // Устанавливаем время доставки ресторана
+        if (selectedRestaurant && selectedRestaurant.deliveryTime) {
+          document.getElementById('restaurantDeliveryTime').textContent = selectedRestaurant.deliveryTime;
+        } else {
+          document.getElementById('restaurantDeliveryTime').textContent = '30';
+        }
+        
         cartModal.classList.add('active');
         console.log('Cart modal opened');
       }
       
-      // Update cart item count
-      function updateCartCount() {
-        const cartCount = document.getElementById('cartCount');
-        const count = db.cart.getTotalItems();
-        cartCount.textContent = count;
-      }
+      // Обработчик формы оформления заказа
+      checkoutForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Получаем данные формы (упрощенная версия)
+        const formData = new FormData(this);
+        const customerInfo = {
+          name: formData.get('name'),
+          // Телефон и время самовывоза больше не нужны
+          // Используем время доставки ресторана по умолчанию
+          deliveryTime: selectedRestaurant && selectedRestaurant.deliveryTime ? selectedRestaurant.deliveryTime : '30'
+        };
+        
+        // Валидация формы
+        if (!customerInfo.name) {
+          showNotification('Please enter your name', 'error');
+          return;
+        }
+        
+        // Оформляем заказ (нужно адаптировать метод checkout в db.js)
+        const result = db.cart.checkout(customerInfo);
+        
+        if (result.success) {
+          // Показываем уведомление об успешном оформлении заказа
+          showNotification(`Order successfully placed! It will be delivered in approximately ${customerInfo.deliveryTime} minutes.`);
+          
+          // Закрываем корзину
+          cartModal.classList.remove('active');
+          
+          // Сбрасываем форму
+          checkoutForm.reset();
+          
+          // Обновляем счетчик товаров
+          updateCartCount();
+        } else {
+          // Если произошла ошибка
+          showNotification(result.error, 'error');
+        }
+      });
       
       // Update cart contents
       function updateCartItems() {

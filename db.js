@@ -665,6 +665,8 @@ ${orderItems}
       
       return { success: true, order: newOrder };
     }
+    }, // Закрывающая скобка для объекта cart и запятая
+
   
   // Statistics for admin panel
   statistics: {

@@ -156,6 +156,20 @@
       20%, 60% { transform: translateX(-5px); }
       40%, 80% { transform: translateX(5px); }
     }
+    
+    .status-message {
+      background-color: rgba(154, 255, 43, 0.2);
+      color: #67a719;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(154, 255, 43, 0.5);
+      display: none;
+    }
+    
+    .status-message.show {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -169,6 +183,7 @@
     <h1 class="login-title">Admin Panel Login</h1>
     
     <div class="error-message" id="errorMessage"></div>
+    <div class="status-message" id="statusMessage"></div>
     
     <form id="loginForm">
       <div class="form-group">
@@ -181,7 +196,7 @@
         <input type="password" id="password" class="form-input" required>
       </div>
       
-      <button type="submit" class="login-btn">Login</button>
+      <button type="submit" class="login-btn" id="loginButton">Login</button>
     </form>
     
     <div class="back-btn">
@@ -195,61 +210,179 @@
     document.addEventListener('DOMContentLoaded', function() {
       console.log('Login page loaded');
       
+      // Функция для показа сообщений
+      function showMessage(message, type = 'error') {
+        const errorMessage = document.getElementById('errorMessage');
+        const statusMessage = document.getElementById('statusMessage');
+        
+        // Сбросим оба сообщения
+        errorMessage.classList.remove('show');
+        statusMessage.classList.remove('show');
+        
+        if (type === 'error') {
+          errorMessage.textContent = message;
+          errorMessage.classList.add('show');
+        } else {
+          statusMessage.textContent = message;
+          statusMessage.classList.add('show');
+        }
+      }
+      
+      // Проверка здоровья сервера при загрузке
+      async function checkServerHealth() {
+        try {
+          const response = await fetch('/api/health', { cache: 'no-store' });
+          if (response.ok) {
+            console.log('Server health check: OK');
+            return true;
+          }
+          console.warn('Server health check failed:', response.status);
+          return false;
+        } catch (error) {
+          console.error('Server connection error:', error);
+          return false;
+        }
+      }
+      
       // If user is already authenticated, redirect to admin panel
-      if (sessionStorage.getItem('adminSession')) {
-        console.log('Already authenticated, redirecting to admin panel');
-        window.location.href = 'admin-panel.html';
+      function checkAuthentication() {
+        const sessionToken = sessionStorage.getItem('adminSession');
+        const localToken = localStorage.getItem('adminSession');
+        
+        if (sessionToken || localToken) {
+          console.log('Already authenticated, redirecting to admin panel');
+          
+          // Синхронизируем хранилища
+          if (sessionToken && !localToken) {
+            localStorage.setItem('adminSession', sessionToken);
+          }
+          if (!sessionToken && localToken) {
+            sessionStorage.setItem('adminSession', localToken);
+          }
+          
+          window.location.href = 'admin-panel.html';
+          return true;
+        }
+        
+        return false;
+      }
+      
+      // Сброс счетчика редиректов при посещении логин-страницы
+      localStorage.setItem('redirectCount', '0');
+      
+      // При загрузке проверяем аутентификацию
+      if (checkAuthentication()) {
         return;
       }
       
-      const loginForm = document.getElementById('loginForm');
-      const errorMessage = document.getElementById('errorMessage');
+      // Проверим здоровье сервера и предупредим, если есть проблемы
+      checkServerHealth().then(isHealthy => {
+        if (!isHealthy) {
+          showMessage('Server connection issues detected. Login will work in offline mode.', 'status');
+        }
+      });
       
-      loginForm.addEventListener('submit', function(e) {
+      const loginForm = document.getElementById('loginForm');
+      const loginButton = document.getElementById('loginButton');
+      
+      loginForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         console.log('Form submitted');
+        
+        // Деактивируем кнопку, чтобы предотвратить множественные отправки
+        loginButton.disabled = true;
+        loginButton.textContent = 'Logging in...';
         
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
         
         // Check for empty fields
         if (!username || !password) {
-          errorMessage.textContent = 'Please enter both username and password';
-          errorMessage.classList.add('show');
+          showMessage('Please enter both username and password');
+          loginButton.disabled = false;
+          loginButton.textContent = 'Login';
           return;
         }
         
-        // Attempt authentication via db.js
+        // Attempt authentication
         try {
+          // Сохраним данные аутентификации в локальном хранилище
+          localStorage.setItem('lastLoginAttempt', JSON.stringify({
+            username,
+            timestamp: Date.now()
+          }));
+          
+          // Проверяем, доступен ли метод login в db.auth
           if (window.db && window.db.auth && typeof window.db.auth.login === 'function') {
             console.log('Using db.auth.login');
             
-            if (window.db.auth.login(username, password)) {
+            const loginSuccess = await window.db.auth.login(username, password);
+            
+            if (loginSuccess) {
               console.log('Authentication successful, redirecting');
-              window.location.href = 'admin-panel.html';
+              
+              // Показываем сообщение об успехе
+              showMessage('Login successful! Redirecting...', 'status');
+              
+              // Добавляем небольшую задержку для лучшего UX
+              setTimeout(() => {
+                window.location.href = 'admin-panel.html';
+              }, 500);
             } else {
-              errorMessage.textContent = 'Invalid username or password';
-              errorMessage.classList.add('show');
+              showMessage('Invalid username or password');
+              loginButton.disabled = false;
+              loginButton.textContent = 'Login';
             }
           } else {
-            // Fallback if db.js didn't load
+            // Fallback если db.js не загружен или не содержит метод login
             console.warn('db.auth.login not found, using fallback');
             
-            // Simple check (for demonstration only)
+            // Простая проверка для демонстрации
             if (username === 'admin' && password === 'admin') {
               console.log('Authentication successful (fallback)');
-              // Create session manually
-              sessionStorage.setItem('adminSession', 'simple-auth-' + Date.now());
-              window.location.href = 'admin-panel.html';
+              
+              // Создаем сессию вручную
+              const sessionToken = 'fallback-auth-' + Date.now();
+              sessionStorage.setItem('adminSession', sessionToken);
+              localStorage.setItem('adminSession', sessionToken);
+              
+              // Показываем сообщение об успехе
+              showMessage('Login successful! Redirecting...', 'status');
+              
+              // Добавляем небольшую задержку для лучшего UX
+              setTimeout(() => {
+                window.location.href = 'admin-panel.html';
+              }, 500);
             } else {
-              errorMessage.textContent = 'Invalid username or password';
-              errorMessage.classList.add('show');
+              showMessage('Invalid username or password');
+              loginButton.disabled = false;
+              loginButton.textContent = 'Login';
             }
           }
         } catch (error) {
           console.error('Authentication error:', error);
-          errorMessage.textContent = 'An error occurred during login: ' + error.message;
-          errorMessage.classList.add('show');
+          
+          // Проверяем использование аварийного входа
+          if (username === 'admin' && password === 'admin') {
+            console.log('Emergency authentication activated');
+            
+            // Создаем экстренную сессию
+            const emergencyToken = 'emergency-auth-' + Date.now();
+            sessionStorage.setItem('adminSession', emergencyToken);
+            localStorage.setItem('adminSession', emergencyToken);
+            
+            // Показываем сообщение об успехе
+            showMessage('Emergency login successful! Redirecting...', 'status');
+            
+            // Редирект на админ панель
+            setTimeout(() => {
+              window.location.href = 'admin-panel.html';
+            }, 500);
+          } else {
+            showMessage('Authentication error: ' + (error.message || 'Unknown error'));
+            loginButton.disabled = false;
+            loginButton.textContent = 'Login';
+          }
         }
       });
     });

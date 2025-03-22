@@ -342,19 +342,18 @@
   }
   
   // Сохранение ссылок на оригинальные методы localStorage
-  const originalGetItem = localStorage.getItem.bind(localStorage);
-  const originalSetItem = localStorage.setItem.bind(localStorage);
-  const originalRemoveItem = localStorage.removeItem.bind(localStorage);
-  const originalClear = localStorage.clear.bind(localStorage);
-  const originalKey = localStorage.key.bind(localStorage);
+const originalGetItem = localStorage.getItem.bind(localStorage);
+const originalSetItem = localStorage.setItem.bind(localStorage);
+const originalRemoveItem = localStorage.removeItem.bind(localStorage);
+const originalClear = localStorage.clear.bind(localStorage);
+const originalKey = localStorage.key.bind(localStorage);
   
   // Переопределение методов localStorage
   
   // Метод getItem
   localStorage.getItem = function(key) {
-    const value = originalGetItem(key);
     console.log(`localStorage.getItem('${key}')`);
-    return value;
+    return originalGetItem(key);
   };
   
   // Метод setItem
@@ -536,8 +535,8 @@
   
   // Метод removeItem
   localStorage.removeItem = function(key) {
-    console.log(`localStorage.removeItem('${key}')`);
-    originalRemoveItem(key);
+  console.log(`localStorage.removeItem('${key}')`);
+  originalRemoveItem(key);
     
     // Удаляем в Firebase
     if (isOffline) {
@@ -571,10 +570,11 @@
   
   // Остальные методы без изменений
   localStorage.key = originalKey;
+  
   Object.defineProperty(localStorage, 'length', {
-    get: function() {
-      return originalLocalStorage.length;
-    }
+    get: function() { 
+      return localStorage.length; // Используем встроенный механизм
+  }
   });
   
   // Сохраняем оригинальный localStorage на случай, если он понадобится

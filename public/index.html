@@ -870,7 +870,7 @@
         
         <div class="cart-total" id="cartTotal">
           <div>Total:</div>
-          <div>0฿</div>
+          <div>0₽</div>
         </div>
         
         <div class="cart-actions">
@@ -955,9 +955,9 @@
     document.addEventListener('DOMContentLoaded', function() {
       debug('DOM загружен, инициализация приложения...');
       
-      // Проверяем, что db.js загружен правильно
+      // Проверка на корректную загрузку db.js
       if (!window.db) {
-        document.body.innerHTML = '<div style="color:white; padding: 30px; text-align: center;"><h1>Error: Database not loaded</h1><p>Please check if db.js is correctly included.</p></div>';
+        document.body.innerHTML = '<div style="color:white; padding: 30px; text-align: center;"><h1>Error: Database not loaded</h1><p>Please check if db.js is correctly included.</p><button onclick="location.reload()" style="padding: 10px 20px; background: #9AFF2B; color: black; border: none; border-radius: 4px; margin-top: 20px; cursor: pointer;">Reload Page</button></div>';
         return;
       }
       
@@ -976,7 +976,7 @@
       function checkAdmin() {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('admin')) {
-          if (db.auth.isAuthenticated()) {
+          if (window.db.auth.isAuthenticated()) {
             window.location.href = 'admin-panel.html';
             return;
           }
@@ -1005,88 +1005,108 @@
           document.getElementById('mainContent').style.display = 'none';
           
           // Получаем список активных ресторанов
-          const restaurants = db.restaurants.getActive();
-          debug(`Загружено ${restaurants.length} ресторанов`);
-          
-          // Очищаем контейнер
-          restaurantCardsContainer.innerHTML = '';
-          
-          if (restaurants.length === 0) {
-            restaurantCardsContainer.innerHTML = '<p style="color: #aaa; text-align: center;">No restaurants found</p>';
-            return;
-          }
-          
-          let selectedRestaurantCard = null;
-          
-          // Создаем карточки для всех ресторанов
-          restaurants.forEach(restaurant => {
-            const card = document.createElement('div');
-            card.className = 'restaurant-card';
-            card.dataset.id = restaurant.id;
-            
-            // Проверяем, есть ли у ресторана иконка
-            const imgSrc = restaurant.icon ? restaurant.icon : 'images/restaurant-placeholder.png';
-            
-            card.innerHTML = `
-              <img src="${imgSrc}" alt="${restaurant.name}" class="restaurant-card-image">
-              <div class="restaurant-card-name">${restaurant.name}</div>
-              <div class="restaurant-card-info">Delivery time: ${restaurant.deliveryTime || '30'} min</div>
-            `;
-            
-            // Активируем ранее выбранный ресторан, если он есть
-            if (selectedRestaurantId && restaurant.id === selectedRestaurantId) {
-              card.classList.add('active');
-              selectedRestaurantCard = card;
-              selectRestaurantBtn.disabled = false;
-            }
-            
-            // Обработчик клика по карточке
-            card.addEventListener('click', function() {
-              // Удаляем активный класс со всех карточек
-              document.querySelectorAll('.restaurant-card').forEach(c => c.classList.remove('active'));
+          window.db.restaurants.getActive()
+            .then(restaurants => {
+              debug(`Загружено ${restaurants.length} ресторанов`);
               
-              // Активируем выбранную карточку
-              this.classList.add('active');
-              selectedRestaurantCard = this;
+              // Проверка, что restaurants - это массив
+              if (!Array.isArray(restaurants)) {
+                console.error('restaurants is not an array:', restaurants);
+                throw new Error('Data format error: restaurants is not an array');
+              }
               
-              // Активируем кнопку выбора
-              selectRestaurantBtn.disabled = false;
+              // Очищаем контейнер
+              restaurantCardsContainer.innerHTML = '';
+              
+              if (restaurants.length === 0) {
+                restaurantCardsContainer.innerHTML = '<p style="color: #aaa; text-align: center;">No restaurants found</p>';
+                return;
+              }
+              
+              let selectedRestaurantCard = null;
+              
+              // Создаем карточки для всех ресторанов
+              restaurants.forEach(restaurant => {
+                const card = document.createElement('div');
+                card.className = 'restaurant-card';
+                card.dataset.id = restaurant.id;
+                
+                // Проверяем, есть ли у ресторана иконка
+                const imgSrc = restaurant.icon ? restaurant.icon : 'images/restaurant-placeholder.png';
+                
+                card.innerHTML = `
+                  <img src="${imgSrc}" alt="${restaurant.name}" class="restaurant-card-image">
+                  <div class="restaurant-card-name">${restaurant.name}</div>
+                  <div class="restaurant-card-info">Delivery time: ${restaurant.deliveryTime || '30'} min</div>
+                `;
+                
+                // Активируем ранее выбранный ресторан, если он есть
+                if (selectedRestaurantId && restaurant.id === selectedRestaurantId) {
+                  card.classList.add('active');
+                  selectedRestaurantCard = card;
+                  selectRestaurantBtn.disabled = false;
+                }
+                
+                // Обработчик клика по карточке
+                card.addEventListener('click', function() {
+                  // Удаляем активный класс со всех карточек
+                  document.querySelectorAll('.restaurant-card').forEach(c => c.classList.remove('active'));
+                  
+                  // Активируем выбранную карточку
+                  this.classList.add('active');
+                  selectedRestaurantCard = this;
+                  
+                  // Активируем кнопку выбора
+                  selectRestaurantBtn.disabled = false;
+                });
+                
+                restaurantCardsContainer.appendChild(card);
+              });
+              
+              // Обработчик нажатия кнопки выбора ресторана
+              selectRestaurantBtn.addEventListener('click', function() {
+                if (!selectedRestaurantCard) return;
+                
+                const selectedId = selectedRestaurantCard.dataset.id;
+                debug(`Выбран ресторан: ${selectedId}`);
+                
+                // Сохраняем выбранный ресторан
+                localStorage.setItem('selectedRestaurant', selectedId);
+                selectedRestaurantId = selectedId;
+                
+                // Находим выбранный ресторан из массива
+                selectedRestaurant = restaurants.find(r => r.id === selectedId);
+                
+                // Загружаем меню ресторана
+                loadMenuForRestaurant(selectedId);
+                
+                // Закрываем модальное окно
+                restaurantModal.classList.remove('active');
+                
+                // Показываем основной контент
+                document.getElementById('mainContent').style.display = 'block';
+                debug('Основной контент отображен');
+              });
+              
+              // Предотвращаем закрытие модального окна при клике вне его
+              restaurantModal.addEventListener('click', function(e) {
+                if (e.target === restaurantModal) {
+                  e.stopPropagation();
+                  return false;
+                }
+              });
+            })
+            .catch(error => {
+              logError('Ошибка при загрузке ресторанов', error);
+              
+              // Показываем сообщение об ошибке
+              restaurantCardsContainer.innerHTML = `
+                <div style="text-align: center; padding: 20px; color: #ff5757;">
+                  <p>Error loading restaurants: ${error.message}</p>
+                  <button onclick="location.reload()" style="padding: 10px 20px; background: #9AFF2B; color: black; border: none; border-radius: 4px; margin-top: 15px; cursor: pointer;">Try Again</button>
+                </div>
+              `;
             });
-            
-            restaurantCardsContainer.appendChild(card);
-          });
-          
-          // Обработчик нажатия кнопки выбора ресторана
-          selectRestaurantBtn.addEventListener('click', function() {
-            if (!selectedRestaurantCard) return;
-            
-            const selectedId = selectedRestaurantCard.dataset.id;
-            debug(`Выбран ресторан: ${selectedId}`);
-            
-            // Сохраняем выбранный ресторан
-            localStorage.setItem('selectedRestaurant', selectedId);
-            selectedRestaurantId = selectedId;
-            selectedRestaurant = db.restaurants.getById(selectedId);
-            
-            // Загружаем меню ресторана
-            loadMenuForRestaurant(selectedId);
-            
-            // Закрываем модальное окно
-            restaurantModal.classList.remove('active');
-            
-            // Показываем основной контент
-            document.getElementById('mainContent').style.display = 'block';
-            debug('Основной контент отображен');
-          });
-          
-          // Предотвращаем закрытие модального окна при клике вне его
-          restaurantModal.addEventListener('click', function(e) {
-            if (e.target === restaurantModal) {
-              e.stopPropagation();
-              return false;
-            }
-          });
-          
         } catch (error) {
           logError('Ошибка при инициализации выбора ресторана', error);
           
@@ -1114,55 +1134,75 @@
         
         try {
           // Получаем продукты для выбранного ресторана
-          const products = db.products.getByRestaurant(restaurantId);
-          debug(`Загружено ${products.length} продуктов`);
-          
-          // Находим доступные категории для этого ресторана
-          availableCategories = new Set(['all']);
-          products.forEach(product => {
-            if (product.category) {
-              availableCategories.add(product.category);
-            }
-          });
-          
-          // Загружаем категории на основе доступных продуктов
-          loadCategories();
-          
-          // Имитируем задержку загрузки для анимации
-          setTimeout(() => {
-            menuGrid.innerHTML = ''; // Очищаем текущее меню
-            
-            if (products.length === 0) {
+          window.db.products.getByRestaurant(restaurantId)
+            .then(products => {
+              debug(`Загружено ${products.length} продуктов`);
+              
+              // Проверка, что products - это массив
+              if (!Array.isArray(products)) {
+                console.error('products is not an array:', products);
+                products = [];
+              }
+              
+              // Находим доступные категории для этого ресторана
+              availableCategories = new Set(['all']);
+              products.forEach(product => {
+                if (product.category) {
+                  availableCategories.add(product.category);
+                }
+              });
+              
+              // Загружаем категории на основе доступных продуктов
+              loadCategories();
+              
+              // Имитируем задержку загрузки для анимации
+              setTimeout(() => {
+                menuGrid.innerHTML = ''; // Очищаем текущее меню
+                
+                if (products.length === 0) {
+                  loadingIndicator.style.display = 'none';
+                  menuGrid.style.display = 'grid';
+                  menuGrid.innerHTML = '<p style="text-align: center; color: #aaa; grid-column: 1/-1;">There are no items in this restaurant\'s menu yet.</p>';
+                  return;
+                }
+                
+                const filteredProducts = products.filter(product => 
+                  selectedCategory === 'all' || product.category === selectedCategory
+                );
+                
+                if (filteredProducts.length === 0) {
+                  loadingIndicator.style.display = 'none';
+                  menuGrid.style.display = 'grid';
+                  menuGrid.innerHTML = '<p style="text-align: center; color: #aaa; grid-column: 1/-1;">No items found in this category.</p>';
+                  return;
+                }
+                
+                // Добавляем продукты в сетку
+                filteredProducts.forEach(product => {
+                  const menuItem = createProductElement(product);
+                  menuGrid.appendChild(menuItem);
+                });
+                
+                // Скрываем индикатор загрузки и показываем меню
+                loadingIndicator.style.display = 'none';
+                menuGrid.style.display = 'grid';
+                
+                debug('Меню загружено и отображено');
+              }, 500); // Время задержки для анимации
+              
+            })
+            .catch(error => {
+              logError('Ошибка при загрузке продуктов', error);
               loadingIndicator.style.display = 'none';
               menuGrid.style.display = 'grid';
-              menuGrid.innerHTML = '<p style="text-align: center; color: #aaa; grid-column: 1/-1;">There are no items in this restaurant\'s menu yet.</p>';
-              return;
-            }
-            
-            const filteredProducts = products.filter(product => 
-              selectedCategory === 'all' || product.category === selectedCategory
-            );
-            
-            if (filteredProducts.length === 0) {
-              loadingIndicator.style.display = 'none';
-              menuGrid.style.display = 'grid';
-              menuGrid.innerHTML = '<p style="text-align: center; color: #aaa; grid-column: 1/-1;">No items found in this category.</p>';
-              return;
-            }
-            
-            // Добавляем продукты в сетку
-            filteredProducts.forEach(product => {
-              const menuItem = createProductElement(product);
-              menuGrid.appendChild(menuItem);
+              menuGrid.innerHTML = `
+                <p style="text-align: center; color: #ff5757; grid-column: 1/-1;">
+                  Error loading menu: ${error.message}
+                  <br><br>
+                  <button onclick="loadMenuForRestaurant('${restaurantId}')" style="padding: 8px 16px; background: #9AFF2B; color: black; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>
+                </p>
+              `;
             });
-            
-            // Скрываем индикатор загрузки и показываем меню
-            loadingIndicator.style.display = 'none';
-            menuGrid.style.display = 'grid';
-            
-            debug('Меню загружено и отображено');
-          }, 500); // Время задержки для анимации
-          
         } catch (error) {
           logError('Ошибка при загрузке меню', error);
           loadingIndicator.style.display = 'none';
@@ -1189,11 +1229,11 @@
         
         menuItem.innerHTML = `
           <div class="menu-content">
-            <img src="${imageSrc}" alt="${product.name}" class="item-image">
+            <img src="${imageSrc}" alt="${product.name}" class="item-image" onerror="this.src='images/default.jpg'">
             <div class="item-title-container">
               <div class="item-title">${product.name}</div>
             </div>
-            <div class="price">${product.price}฿</div>
+            <div class="price">${product.price}₽</div>
             <div class="description">
               ${product.description}
             </div>
@@ -1204,24 +1244,29 @@
         // Добавляем обработчик для добавления в корзину
         const addButton = menuItem.querySelector('.order-btn');
         addButton.addEventListener('click', function() {
-          const result = db.cart.addItem(product.id);
-          
-          if (result.success) {
-            // Анимация добавления в корзину
-            this.textContent = "Added!";
-            setTimeout(() => {
-              this.textContent = "Add to Cart";
-            }, 1000);
-            
-            // Обновляем счетчик товаров в корзине
-            updateCartCount();
-            
-            // Показываем уведомление
-            showNotification(`"${product.name}" has been added to your cart`);
-          } else {
-            // Если произошла ошибка
-            showNotification(result.error, 'error');
-          }
+          window.db.cart.addItem(product.id)
+            .then(result => {
+              if (result.success) {
+                // Анимация добавления в корзину
+                this.textContent = "Added!";
+                setTimeout(() => {
+                  this.textContent = "Add to Cart";
+                }, 1000);
+                
+                // Обновляем счетчик товаров в корзине
+                updateCartCount();
+                
+                // Показываем уведомление
+                showNotification(`"${product.name}" has been added to your cart`);
+              } else {
+                // Если произошла ошибка
+                showNotification(result.error, 'error');
+              }
+            })
+            .catch(error => {
+              logError('Ошибка при добавлении в корзину', error);
+              showNotification('Error adding to cart', 'error');
+            });
         });
         
         return menuItem;
@@ -1235,61 +1280,78 @@
           const categoriesContainer = document.getElementById('categoriesContainer');
           categoriesContainer.innerHTML = ''; // Очищаем текущие категории
           
-          const categories = db.categories.getActive();
-          
-          // Добавляем кнопку "All" первой
-          const allCategoryBtn = document.createElement('button');
-          allCategoryBtn.className = `category-btn ${selectedCategory === 'all' ? 'active' : ''}`;
-          allCategoryBtn.dataset.category = 'all';
-          allCategoryBtn.textContent = 'All';
-          
-          // Добавляем обработчик клика
-          allCategoryBtn.addEventListener('click', function() {
-            // Меняем активную категорию
-            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            
-            selectedCategory = this.dataset.category;
-            
-            // Перезагружаем меню с новой категорией
-            loadMenuForRestaurant(selectedRestaurantId);
-          });
-          
-          categoriesContainer.appendChild(allCategoryBtn);
-          
-          // Добавляем другие категории (исключая "all", которую мы уже добавили)
-          categories.forEach(category => {
-            // Пропускаем, если в этом ресторане нет продуктов в этой категории
-            if (category.id !== 'all' && !availableCategories.has(category.id)) {
-              return;
-            }
-            
-            // Пропускаем категорию "all", так как мы уже добавили её вручную
-            if (category.id === 'all') {
-              return;
-            }
-            
-            const categoryBtn = document.createElement('button');
-            categoryBtn.className = `category-btn ${category.id === selectedCategory ? 'active' : ''}`;
-            categoryBtn.dataset.category = category.id;
-            categoryBtn.textContent = category.name;
-            
-            // Добавляем обработчик клика
-            categoryBtn.addEventListener('click', function() {
-              // Меняем активную категорию
-              document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-              this.classList.add('active');
+          window.db.categories.getActive()
+            .then(categories => {
+              debug(`Загружено ${categories.length} категорий`);
               
-              selectedCategory = this.dataset.category;
+              // Проверка, что categories - это массив
+              if (!Array.isArray(categories)) {
+                console.error('categories is not an array:', categories);
+                categories = [];
+              }
               
-              // Перезагружаем меню с новой категорией
-              loadMenuForRestaurant(selectedRestaurantId);
+              // Добавляем кнопку "All" первой
+              const allCategoryBtn = document.createElement('button');
+              allCategoryBtn.className = `category-btn ${selectedCategory === 'all' ? 'active' : ''}`;
+              allCategoryBtn.dataset.category = 'all';
+              allCategoryBtn.textContent = 'All';
+              
+              // Добавляем обработчик клика
+              allCategoryBtn.addEventListener('click', function() {
+                // Меняем активную категорию
+                document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                selectedCategory = this.dataset.category;
+                
+                // Перезагружаем меню с новой категорией
+                loadMenuForRestaurant(selectedRestaurantId);
+              });
+              
+              categoriesContainer.appendChild(allCategoryBtn);
+              
+              // Добавляем другие категории (исключая "all", которую мы уже добавили)
+              categories.forEach(category => {
+                // Пропускаем, если в этом ресторане нет продуктов в этой категории
+                if (category.id !== 'all' && !availableCategories.has(category.id)) {
+                  return;
+                }
+                
+                // Пропускаем категорию "all", так как мы уже добавили её вручную
+                if (category.id === 'all') {
+                  return;
+                }
+                
+                const categoryBtn = document.createElement('button');
+                categoryBtn.className = `category-btn ${category.id === selectedCategory ? 'active' : ''}`;
+                categoryBtn.dataset.category = category.id;
+                categoryBtn.textContent = category.name;
+                
+                // Добавляем обработчик клика
+                categoryBtn.addEventListener('click', function() {
+                  // Меняем активную категорию
+                  document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                  this.classList.add('active');
+                  
+                  selectedCategory = this.dataset.category;
+                  
+                  // Перезагружаем меню с новой категорией
+                  loadMenuForRestaurant(selectedRestaurantId);
+                });
+                
+                categoriesContainer.appendChild(categoryBtn);
+              });
+            })
+            .catch(error => {
+              logError('Ошибка при загрузке категорий', error);
+              
+              // Добавим хотя бы одну кнопку "All" при ошибке
+              const allCategoryBtn = document.createElement('button');
+              allCategoryBtn.className = 'category-btn active';
+              allCategoryBtn.dataset.category = 'all';
+              allCategoryBtn.textContent = 'All';
+              categoriesContainer.appendChild(allCategoryBtn);
             });
-            
-            categoriesContainer.appendChild(categoryBtn);
-          });
-          
-          debug(`Загружено ${categories.length} категорий`);
         } catch (error) {
           logError('Ошибка при загрузке категорий', error);
         }
@@ -1299,7 +1361,7 @@
       function updateCartCount() {
         const cartCountElement = document.getElementById('cartCount');
         if (cartCountElement) {
-          const count = db.cart.getTotalItems();
+          const count = window.db.cart.getTotalItems();
           cartCountElement.textContent = count;
           debug(`Обновлен счетчик корзины: ${count} товаров`);
         }
@@ -1357,7 +1419,7 @@
         if (clearCartBtn) {
           clearCartBtn.addEventListener('click', function() {
             debug('Очистка корзины');
-            db.cart.clear();
+            window.db.cart.clear();
             updateCartCount();
             updateCartItems();
             showNotification('Cart cleared');
@@ -1384,28 +1446,51 @@
               return;
             }
             
-            // Оформляем заказ
-            const result = db.cart.checkout(customerInfo);
+            // Деактивируем кнопку для предотвращения повторной отправки
+            const submitBtn = document.getElementById('orderSubmitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
             
-            if (result.success) {
-              // Показываем уведомление об успешном оформлении заказа
-              showNotification(`Order successfully placed! It will be delivered in approximately ${customerInfo.deliveryTime} minutes.`);
-              
-              // Закрываем корзину
-              cartModal.classList.remove('active');
-              
-              // Сбрасываем форму
-              checkoutForm.reset();
-              
-              // Обновляем счетчик товаров
-              updateCartCount();
-              
-              debug('Заказ успешно оформлен');
-            } else {
-              // Если произошла ошибка
-              showNotification(result.error, 'error');
-              debug(`Ошибка оформления заказа: ${result.error}`);
-            }
+            // Оформляем заказ
+            window.db.cart.checkout(customerInfo)
+              .then(result => {
+                if (result.success) {
+                  // Показываем уведомление об успешном оформлении заказа
+                  showNotification(`Order successfully placed! It will be delivered in approximately ${customerInfo.deliveryTime} minutes.`);
+                  
+                  // Закрываем корзину
+                  cartModal.classList.remove('active');
+                  
+                  // Сбрасываем форму
+                  checkoutForm.reset();
+                  
+                  // Обновляем счетчик товаров
+                  updateCartCount();
+                  
+                  debug('Заказ успешно оформлен');
+                  
+                  // Если заказ был оформлен в офлайн-режиме
+                  if (result.isOffline) {
+                    showNotification('Order placed in offline mode. It will be synchronized when connection is restored.', 'warning');
+                  }
+                } else {
+                  // Если произошла ошибка
+                  showNotification(result.error, 'error');
+                  debug(`Ошибка оформления заказа: ${result.error}`);
+                }
+                
+                // Восстанавливаем кнопку
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Place Order';
+              })
+              .catch(error => {
+                logError('Ошибка при оформлении заказа', error);
+                showNotification('Error placing order: ' + error.message, 'error');
+                
+                // Восстанавливаем кнопку
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Place Order';
+              });
           });
         }
       }
@@ -1440,7 +1525,7 @@
         
         const cartItems = document.getElementById('cartItems');
         const cartTotal = document.getElementById('cartTotal');
-        const cart = db.cart.get();
+        const cart = window.db.cart.get();
         
         // Очищаем текущее содержимое
         cartItems.innerHTML = '';
@@ -1449,7 +1534,7 @@
           cartItems.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
           cartTotal.innerHTML = `
             <div>Total:</div>
-            <div>0฿</div>
+            <div>0₽</div>
           `;
           return;
         }
@@ -1463,7 +1548,7 @@
             <div class="cart-item-info">
               <div>
                 <div class="cart-item-name">${item.name}</div>
-                <div class="cart-item-price">${item.price}฿</div>
+                <div class="cart-item-price">${item.price}₽</div>
               </div>
             </div>
             <div class="cart-item-controls">
@@ -1490,9 +1575,9 @@
             const currentQuantity = cart.items.find(item => item.productId === id).quantity;
             
             if (currentQuantity > 1) {
-              db.cart.updateQuantity(id, currentQuantity - 1);
+              window.db.cart.updateQuantity(id, currentQuantity - 1);
             } else {
-              db.cart.removeItem(id);
+              window.db.cart.removeItem(id);
             }
             
             updateCartCount();
@@ -1505,7 +1590,7 @@
             const id = btn.dataset.id;
             const currentQuantity = cart.items.find(item => item.productId === id).quantity;
             
-            db.cart.updateQuantity(id, currentQuantity + 1);
+            window.db.cart.updateQuantity(id, currentQuantity + 1);
             updateCartCount();
             updateCartItems();
           });
@@ -1514,20 +1599,20 @@
         removeButtons.forEach(btn => {
           btn.addEventListener('click', () => {
             const id = btn.dataset.id;
-            db.cart.removeItem(id);
+            window.db.cart.removeItem(id);
             updateCartCount();
             updateCartItems();
           });
         });
         
         // Обновляем общую сумму
-        const totalAmount = db.cart.getTotalPrice();
+        const totalAmount = window.db.cart.getTotalPrice();
         cartTotal.innerHTML = `
           <div>Total:</div>
-          <div>${totalAmount}฿</div>
+          <div>${totalAmount}₽</div>
         `;
         
-        debug(`В корзине ${cart.items.length} товаров на сумму ${totalAmount}฿`);
+        debug(`В корзине ${cart.items.length} товаров на сумму ${totalAmount}₽`);
       }
       
       // Показ уведомления
@@ -1545,33 +1630,35 @@
         }, 3000);
       }
       
+      // Инициализация кнопки "Назад"
+      function initBackButton() {
+        const backButton = document.getElementById('backButton');
+        if (backButton) {
+          backButton.addEventListener('click', function() {
+            // Скрываем основной контент
+            document.getElementById('mainContent').style.display = 'none';
+            
+            // Очищаем выбранный ресторан из localStorage, если хотите сбросить выбор
+            localStorage.removeItem('selectedRestaurant');
+            selectedRestaurantId = null;
+            selectedRestaurant = null;
+            
+            // Показываем модальное окно выбора ресторана
+            const restaurantModal = document.getElementById('restaurantSelectModal');
+            restaurantModal.classList.add('active');
+            
+            // Перезагружаем список ресторанов (если нужно обновить)
+            initRestaurantSelection();
+          });
+        }
+      }
+      
       // Инициализация страницы
       initRestaurantSelection();
       initCart();
       initBackButton();
       debug('Инициализация приложения завершена');
     });
-    function initBackButton() {
-      const backButton = document.getElementById('backButton');
-      if (backButton) {
-        backButton.addEventListener('click', function() {
-          // Скрываем основной контент
-          document.getElementById('mainContent').style.display = 'none';
-          
-          // Очищаем выбранный ресторан из localStorage, если хотите сбросить выбор
-          localStorage.removeItem('selectedRestaurant');
-          selectedRestaurantId = null;
-          selectedRestaurant = null;
-          
-          // Показываем модальное окно выбора ресторана
-          const restaurantModal = document.getElementById('restaurantSelectModal');
-          restaurantModal.classList.add('active');
-          
-          // Перезагружаем список ресторанов (если нужно обновить)
-          initRestaurantSelection();
-        });
-      }
-    }
   </script>
 </body>
 </html>

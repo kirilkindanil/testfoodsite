@@ -16,6 +16,41 @@
       box-sizing: border-box;
       font-family: 'Montserrat', sans-serif;
     }
+
+    .back-button {
+      position: fixed;
+      top: 30px;
+      left: 30px;
+      width: 50px;
+      height: 50px;
+      background-color: rgba(34, 34, 34, 0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 90;
+    }
+    
+    .back-button:hover {
+      background-color: #9AFF2B;
+      transform: scale(1.1);
+    }
+    
+    .back-button .arrow {
+      width: 12px;
+      height: 12px;
+      border-left: 3px solid white;
+      border-bottom: 3px solid white;
+      transform: rotate(45deg);
+      margin-left: 5px;
+    }
+    
+    .back-button:hover .arrow {
+      border-color: black;
+    }
     
     body {
       background-color: #121212;
@@ -778,6 +813,9 @@
   <div class="overlay">
     <!-- Основной контент (скрыт изначально) -->
     <div id="mainContent" style="display: none;">
+      <div class="back-button" id="backButton">
+        <div class="arrow"></div>
+      </div>
       <header>
         <div class="logo">
           <img src="images/logo.png" alt="Logo">
@@ -1510,9 +1548,30 @@
       // Инициализация страницы
       initRestaurantSelection();
       initCart();
-      
+      initBackButton();
       debug('Инициализация приложения завершена');
     });
+    function initBackButton() {
+      const backButton = document.getElementById('backButton');
+      if (backButton) {
+        backButton.addEventListener('click', function() {
+          // Скрываем основной контент
+          document.getElementById('mainContent').style.display = 'none';
+          
+          // Очищаем выбранный ресторан из localStorage, если хотите сбросить выбор
+          localStorage.removeItem('selectedRestaurant');
+          selectedRestaurantId = null;
+          selectedRestaurant = null;
+          
+          // Показываем модальное окно выбора ресторана
+          const restaurantModal = document.getElementById('restaurantSelectModal');
+          restaurantModal.classList.add('active');
+          
+          // Перезагружаем список ресторанов (если нужно обновить)
+          initRestaurantSelection();
+        });
+      }
+    }
   </script>
 </body>
 </html>

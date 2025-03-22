@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOOD MENU</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .back-button {
+      position: fixed;
+      top: 30px;
+      left: 30px;
+      width: 50px;
+      height: 50px;
+      background-color: rgba(34, 34, 34, 0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 90;
+    }
+    
+    .back-button:hover {
+      background-color: #9AFF2B;
+      transform: scale(1.1);
+    }
+    
+    .back-button .arrow {
+      width: 12px;
+      height: 12px;
+      border-left: 3px solid white;
+      border-bottom: 3px solid white;
+      transform: rotate(45deg);
+      margin-left: 5px;
+    }
+    
+    .back-button:hover .arrow {
+      border-color: black;
+    }
+    
+    body {
+      background-color: #121212;
+      background-image: url('images/back.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      color: white;
+    }
+    
+    .overlay {
+      background-color: rgba(18, 18, 18, 0.90);
+      min-height: 100vh;
+      width: 100%;
+    }
+    
+    header {
+      padding: 40px 20px;
+      text-align: center;
+    }
+    
+    .logo {
+      margin: 0 auto 15px;
+      text-align: center;
+    }
+    
+    .logo img {
+      max-width: 180px;
+      height: auto;
+      display: inline-block;
+    }
+    
+    .main-title {
+      font-family: 'Impact', sans-serif;
+      font-size: 60px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+      color: #9AFF2B;
+      text-shadow: 0 0 15px rgba(154, 255, 43, 0.5);
+      position: relative;
+      z-index: 2;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    /* Category filters */
+    .categories {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    
+    .category-btn {
+      background-color: #1a1a1a;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .category-btn:hover {
+      background-color: #333;
+    }
+    
+    .category-btn.active {
+      background-color: #9AFF2B;
+      color: black;
+    }
+    
+    /* Menu items */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+      gap: 30px;
+    }
+    
+    .menu-item {
+      background-color: rgba(34, 34, 34, 0.9);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .menu-content {
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .menu-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+    
+    .item-image {
+      width: 80%;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    
+    .item-title-container {
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    
+    .item-title {
+      background-color: #9AFF2B;
+      color: black;
+      font-size: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 8px 30px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    
+    .price {
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 15px 0;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+    
+    .description {
+      font-size: 14px;
+      color: #bbbbbb;
+      text-align: center;
+      line-height: 1.4;
+    }
+    
+    .order-btn {
+      margin-top: 20px;
+      background-color: #9AFF2B;
+      color: black;
+      border: none;
+      padding: 10px 30px;
+      border-radius: 4px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .restaurant-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .restaurant-card {
+      background-color: rgba(34, 34, 34, 0.9);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      text-align: center;
+      padding: 15px;
+    }
+    
+    .restaurant-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+    
+    .restaurant-card.active {
+      border: 2px solid #9AFF2B;
+    }
+    
+    .restaurant-card-image {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      margin: 0 auto 10px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+    }
+    
+    .restaurant-card-name {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 5px;
+      color: #9AFF2B;
+    }
+    
+    .restaurant-card-info {
+      font-size: 12px;
+      color: #aaa;
+    }
+    
+    .order-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      background-color: #8DF529;
+    }
+    
+    /* Cart icon */
+    .cart-icon {
+      position: fixed;
+      top: 30px;
+      right: 40px;
+      background-color: #9AFF2B;
+      color: black;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      cursor: pointer;
+      z-index: 100;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .cart-icon:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .cart-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background-color: white;
+      color: black;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Footer */
+    footer {
+      background-color: rgba(26, 26, 26, 0.7);
+      padding: 40px 0;
+      text-align: center;
+      margin-top: 60px;
+    }
+    
+    .footer-logo {
+      margin: 0 auto 20px;
+      text-align: center;
+    }
+    
+    .footer-logo img {
+      max-width: 120px;
+      height: auto;
+      display: inline-block;
+    }
+    
+    .copyright {
+      color: #666;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    
+    /* Modal windows */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    
+    .modal.active {
+      display: flex;
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal-content {
+      background-color: #1a1a1a;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 600px;
+      width: 90%;
+      transform: translateY(30px);
+      opacity: 0;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .modal.active .modal-content {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 15px;
+      position: sticky;
+      top: 0;
+      background-color: #1a1a1a;
+      z-index: 5;
+    }
+    
+    .modal-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #9AFF2B;
+      margin: 0;
+    }
+    
+    .modal-close-btn {
+      background: none;
+      border: none;
+      color: #aaa;
+      font-size: 28px;
+      cursor: pointer;
+      transition: color 0.3s ease;
+      line-height: 1;
+    }
+    
+    .modal-close-btn:hover {
+      color: white;
+    }
+    
+    /* Cart contents */
+    .cart-items {
+      margin-bottom: 20px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .cart-empty {
+      text-align: center;
+      color: #aaa;
+      padding: 20px;
+    }
+    
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #333;
+    }
+    
+    .cart-item-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex: 1;
+    }
+    
+    .cart-item-name {
+      font-weight: 600;
+    }
+    
+    .cart-item-price {
+      color: #aaa;
+      font-size: 14px;
+    }
+    
+    .cart-item-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .quantity-btn {
+      background-color: #2a2a2a;
+      color: white;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .quantity-btn:hover {
+      background-color: #333;
+    }
+    
+    .quantity-value {
+      font-weight: 600;
+      min-width: 30px;
+      text-align: center;
+    }
+    
+    .remove-item {
+      background-color: transparent;
+      color: #ff5757;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 18px;
+      font-weight: 700;
+      margin: 20px 0;
+      padding-top: 10px;
+      border-top: 1px solid #333;
+      position: sticky;
+      bottom: 0;
+      background-color: #1a1a1a;
+      z-index: 5;
+    }
+    
+    .cart-actions {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .clear-cart {
+      background-color: transparent;
+      border: 1px solid #ff5757;
+      color: #ff5757;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    
+    .clear-cart:hover {
+      background-color: rgba(255, 87, 87, 0.1);
+    }
+    
+    /* Checkout form */
+    .checkout-form {
+      margin-top: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 4px;
+      border: 1px solid #333;
+      background-color: #2a2a2a;
+      color: white;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: #9AFF2B;
+    }
+    
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 30px;
+    }
+    
+    .modal-submit {
+      background-color: #9AFF2B;
+      color: black;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 4px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      margin-top: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .modal-submit:hover {
+      background-color: #8DF529;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Restaurant select modal */
+    .restaurant-select-container {
+      padding: 20px 0;
+    }
+    
+    .restaurant-select-container p {
+      margin-bottom: 20px;
+      text-align: center;
+      color: #aaa;
+    }
+    
+    /* Loading animation */
+    .loading-spinner {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(154, 255, 43, 0.3);
+      border-radius: 50%;
+      border-top-color: #9AFF2B;
+      animation: spin 1s ease-in-out infinite;
+      margin: 0 auto;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .loading-container {
+      text-align: center;
+      padding: 40px;
+    }
+    
+    /* Notifications */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #9AFF2B;
+      color: black;
+      padding: 12px 20px;
+      border-radius: 4px;
+      font-weight: 600;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    
+    .notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .notification.error {
+      background-color: #ff5757;
+      color: white;
+    }
+    
+    #mainContent {
+      display: none;
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      .main-title {
+        font-size: 32px;
+      }
+      
+      .restaurant-cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+      }
+      
+      .cart-icon {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        top: auto;
+        left: auto;
+        width: 65px;
+        height: 65px;
+        font-size: 28px;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        z-index: 1001;
+        background-color: #9AFF2B;
+      }
+      
+      .cart-count {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+        right: -5px;
+        top: -5px;
+      }
+      
+      .item-title {
+        font-size: 14px;
+        padding: 6px 12px;
+      }
+      
+      .description {
+        font-size: 12px;
+      }
+      
+      .order-btn {
+        padding: 8px 15px;
+        font-size: 14px;
+      }
+      
+      /* Модальное окно корзины */
+      .modal-content {
+        width: 100%;
+        max-width: 100%;
+        height: 90vh;
+        max-height: 90vh;
+        border-radius: 15px 15px 0 0;
+        padding: 15px;
+        margin: 0;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+      
+      .modal-header {
+        position: sticky;
+        top: 0;
+        background-color: #1a1a1a;
+        z-index: 10;
+        padding-top: 15px;
+        border-radius: 15px 15px 0 0;
+        margin-bottom: 20px;
+      }
+      
+      .modal-close-btn {
+        font-size: 32px;
+        padding: 10px;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        background-color: rgba(0,0,0,0.1);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .cart-total {
+        position: sticky;
+        bottom: 0;
+        background-color: #1a1a1a;
+        padding: 15px 0;
+        margin-bottom: 15px;
+        font-size: 20px;
+        border-top: 1px solid #333;
+      }
+      
+      .modal-buttons {
+        position: sticky;
+        bottom: 60px;
+        background-color: #1a1a1a;
+        padding-bottom: 15px;
+      }
+      
+      /* Стили для формы заказа */
+      .checkout-form {
+        padding-bottom: 40px;
+      }
+      
+      /* Фикс для корзины - делаем её видимой поверх модального окна */
+      .modal.active {
+        display: flex !important;
+        align-items: flex-end;
+      }
+      
+      /* Улучшенные стили для кнопки оформления заказа */
+      .modal-submit {
+        padding: 12px;
+        margin-bottom: 20px;
+        width: 100%;
+        position: sticky;
+        bottom: 0;
+      }
+    }
+    
+    @media (max-width: 500px) {
+      .menu-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      
+      .item-image {
+        width: 100%;
+      }
+    }
+    
+    /* Отладочные стили */
+    .debug-panel {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #0f0;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      max-width: 300px;
+      z-index: 9999;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Отладочная панель (скрыта по умолчанию) -->
+  <div class="debug-panel" id="debugPanel"></div>
+  
+  <div class="overlay">
+    <!-- Основной контент (скрыт изначально) -->
+    <div id="mainContent" style="display: none;">
+      <div class="back-button" id="backButton">
+        <div class="arrow"></div>
+      </div>
+      <header>
+        <div class="logo">
+          <img src="images/logo.png" alt="Logo">
+        </div>
+        <h1 class="main-title">FOOD MENU</h1>
+      </header>
+      
+      <!-- Иконка корзины -->
+      <div class="cart-icon" id="cartIcon">
+        🛒
+        <div class="cart-count" id="cartCount">0</div>
+      </div>
+      
+      <div class="container">
+        <div class="categories" id="categoriesContainer">
+          <!-- Категории будут добавлены через JavaScript -->
+        </div>
+        
+        <div id="loadingIndicator" class="loading-container">
+          <div class="loading-spinner"></div>
+          <p style="margin-top: 15px; color: #aaa;">Loading menu...</p>
+        </div>
+        
+        <div class="menu-grid" id="menuGrid" style="display: none;">
+          <!-- Товары будут добавлены через JavaScript -->
+        </div>
+      </div>
+      
+      <footer>
+        <div class="container">
+          <div class="footer-logo">
+            <img src="images/logo.png" alt="Logo">
+          </div>
+          
+          <div class="copyright" id="copyrightYear">© 2025 FOOD MENU. All rights reserved.</div>
+        </div>
+      </footer>
+    </div>
+    
+    <!-- Модальное окно корзины -->
+    <div class="modal" id="cartModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Your Order</h2>
+          <button type="button" class="modal-close-btn" id="closeCartBtn">&times;</button>
+        </div>
+        
+        <div class="cart-items" id="cartItems">
+          <!-- Товары в корзине будут добавлены через JavaScript -->
+          <div class="cart-empty">Your cart is empty</div>
+        </div>
+        
+        <div class="cart-total" id="cartTotal">
+          <div>Total:</div>
+          <div>0฿</div>
+        </div>
+        
+        <div class="cart-actions">
+          <button class="clear-cart" id="clearCartBtn">Clear Cart</button>
+        </div>
+        
+        <form id="checkoutForm" class="checkout-form">
+          <div class="form-group">
+            <label class="form-label">Your Name</label>
+            <input type="text" name="name" class="form-input" required>
+          </div>
+          
+          <!-- Информация о времени доставки -->
+          <div class="form-group">
+            <label class="form-label">Delivery Information</label>
+            <p style="color: #aaa; margin-bottom: 15px;">Estimated delivery time: <span id="restaurantDeliveryTime">30</span> minutes</p>
+          </div>
+          
+          <div class="modal-buttons">
+            <button type="submit" class="modal-submit" id="orderSubmitBtn">Place Order</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Модальное окно выбора ресторана -->
+    <div class="modal" id="restaurantSelectModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Select a Restaurant</h2>
+        </div>
+        
+        <div class="restaurant-select-container">
+          <p>Please select the restaurant you want to order from:</p>
+          
+          <div id="restaurantCardsContainer" class="restaurant-cards">
+            <!-- Рестораны будут добавлены через JavaScript -->
+          </div>
+          
+          <div class="modal-buttons">
+            <button type="button" class="modal-submit" id="selectRestaurantBtn" disabled>Select</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Уведомления -->
+    <div class="notification" id="notification"></div>
+  </div>
+  
+  <!-- Скрипты -->
+  <script src="db.js"></script>
+  <script>
+    // Отладочные функции
+    const DEBUG = false; // Установите true для включения отладки
+    
+    function debug(message) {
+      if (!DEBUG) return;
+      
+      const panel = document.getElementById('debugPanel');
+      if (panel) {
+        panel.style.display = 'block';
+        const line = document.createElement('div');
+        line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+        panel.appendChild(line);
+        
+        // Ограничиваем количество сообщений
+        if (panel.children.length > 20) {
+          panel.removeChild(panel.firstChild);
+        }
+        
+        console.log(message);
+      }
+    }
+    
+    function logError(message, error) {
+      debug(`ERROR: ${message} - ${error.message}`);
+      console.error(message, error);
+    }
+    
+    // Основной код приложения
+    document.addEventListener('DOMContentLoaded', function() {
+      debug('DOM загружен, инициализация приложения...');
+      
+      // Проверяем, что db.js загружен правильно
+      if (!window.db) {
+        document.body.innerHTML = '<div style="color:white; padding: 30px; text-align: center;"><h1>Error: Database not loaded</h1><p>Please check if db.js is correctly included.</p></div>';
+        return;
+      }
+      
+      debug('База данных db.js загружена успешно');
+      
+      // Переменные для выбранного ресторана
+      let selectedRestaurantId = localStorage.getItem('selectedRestaurant');
+      let selectedRestaurant = null;
+      let selectedCategory = 'all';
+      let availableCategories = new Set();
+      
+      // Установка текущего года в футере
+      document.getElementById('copyrightYear').textContent = `© ${new Date().getFullYear()} FOOD MENU. All rights reserved.`;
+      
+      // Проверка на запрос админ-панели
+      function checkAdmin() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('admin')) {
+          if (db.auth.isAuthenticated()) {
+            window.location.href = 'admin-panel.html';
+            return;
+          }
+          window.location.href = 'login.html';
+        }
+      }
+      
+      // Вызов проверки админа
+      checkAdmin();
+      
+      // Инициализация модального окна выбора ресторана
+      function initRestaurantSelection() {
+        debug('Инициализация выбора ресторана');
+        
+        try {
+          const restaurantModal = document.getElementById('restaurantSelectModal');
+          const selectRestaurantBtn = document.getElementById('selectRestaurantBtn');
+          const restaurantCardsContainer = document.getElementById('restaurantCardsContainer');
+          
+          if (!restaurantModal || !selectRestaurantBtn || !restaurantCardsContainer) {
+            throw new Error('Не найдены необходимые элементы для выбора ресторана');
+          }
+          
+          // Показываем модальное окно
+          restaurantModal.classList.add('active');
+          document.getElementById('mainContent').style.display = 'none';
+          
+          // Получаем список активных ресторанов
+          const restaurants = db.restaurants.getActive();
+          debug(`Загружено ${restaurants.length} ресторанов`);
+          
+          // Очищаем контейнер
+          restaurantCardsContainer.innerHTML = '';
+          
+          if (restaurants.length === 0) {
+            restaurantCardsContainer.innerHTML = '<p style="color: #aaa; text-align: center;">No restaurants found</p>';
+            return;
+          }
+          
+          let selectedRestaurantCard = null;
+          
+          // Создаем карточки для всех ресторанов
+          restaurants.forEach(restaurant => {
+            const card = document.createElement('div');
+            card.className = 'restaurant-card';
+            card.dataset.id = restaurant.id;
+            
+            // Проверяем, есть ли у ресторана иконка
+            const imgSrc = restaurant.icon ? restaurant.icon : 'images/restaurant-placeholder.png';
+            
+            card.innerHTML = `
+              <img src="${imgSrc}" alt="${restaurant.name}" class="restaurant-card-image">
+              <div class="restaurant-card-name">${restaurant.name}</div>
+              <div class="restaurant-card-info">Delivery time: ${restaurant.deliveryTime || '30'} min</div>
+            `;
+            
+            // Активируем ранее выбранный ресторан, если он есть
+            if (selectedRestaurantId && restaurant.id === selectedRestaurantId) {
+              card.classList.add('active');
+              selectedRestaurantCard = card;
+              selectRestaurantBtn.disabled = false;
+            }
+            
+            // Обработчик клика по карточке
+            card.addEventListener('click', function() {
+              // Удаляем активный класс со всех карточек
+              document.querySelectorAll('.restaurant-card').forEach(c => c.classList.remove('active'));
+              
+              // Активируем выбранную карточку
+              this.classList.add('active');
+              selectedRestaurantCard = this;
+              
+              // Активируем кнопку выбора
+              selectRestaurantBtn.disabled = false;
+            });
+            
+            restaurantCardsContainer.appendChild(card);
+          });
+          
+          // Обработчик нажатия кнопки выбора ресторана
+          selectRestaurantBtn.addEventListener('click', function() {
+            if (!selectedRestaurantCard) return;
+            
+            const selectedId = selectedRestaurantCard.dataset.id;
+            debug(`Выбран ресторан: ${selectedId}`);
+            
+            // Сохраняем выбранный ресторан
+            localStorage.setItem('selectedRestaurant', selectedId);
+            selectedRestaurantId = selectedId;
+            selectedRestaurant = db.restaurants.getById(selectedId);
+            
+            // Загружаем меню ресторана
+            loadMenuForRestaurant(selectedId);
+            
+            // Закрываем модальное окно
+            restaurantModal.classList.remove('active');
+            
+            // Показываем основной контент
+            document.getElementById('mainContent').style.display = 'block';
+            debug('Основной контент отображен');
+          });
+          
+          // Предотвращаем закрытие модального окна при клике вне его
+          restaurantModal.addEventListener('click', function(e) {
+            if (e.target === restaurantModal) {
+              e.stopPropagation();
+              return false;
+            }
+          });
+          
+        } catch (error) {
+          logError('Ошибка при инициализации выбора ресторана', error);
+          
+          // Показываем сообщение об ошибке
+          document.body.innerHTML = `
+            <div style="text-align: center; padding: 50px; color: white;">
+              <h1>Error Loading Restaurants</h1>
+              <p>${error.message}</p>
+              <button onclick="location.reload()" style="padding: 10px 20px; background: #9AFF2B; color: black; border: none; border-radius: 4px; margin-top: 20px; cursor: pointer;">Reload Page</button>
+            </div>
+          `;
+        }
+      }
+      
+      // Загрузка меню для выбранного ресторана
+      function loadMenuForRestaurant(restaurantId) {
+        debug(`Загрузка меню для ресторана: ${restaurantId}`);
+        
+        // Показываем индикатор загрузки
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const menuGrid = document.getElementById('menuGrid');
+        
+        loadingIndicator.style.display = 'block';
+        menuGrid.style.display = 'none';
+        
+        try {
+          // Получаем продукты для выбранного ресторана
+          const products = db.products.getByRestaurant(restaurantId);
+          debug(`Загружено ${products.length} продуктов`);
+          
+          // Находим доступные категории для этого ресторана
+          availableCategories = new Set(['all']);
+          products.forEach(product => {
+            if (product.category) {
+              availableCategories.add(product.category);
+            }
+          });
+          
+          // Загружаем категории на основе доступных продуктов
+          loadCategories();
+          
+          // Имитируем задержку загрузки для анимации
+          setTimeout(() => {
+            menuGrid.innerHTML = ''; // Очищаем текущее меню
+            
+            if (products.length === 0) {
+              loadingIndicator.style.display = 'none';
+              menuGrid.style.display = 'grid';
+              menuGrid.innerHTML = '<p style="text-align: center; color: #aaa; grid-column: 1/-1;">There are no items in this restaurant\'s menu yet.</p>';
+              return;
+            }
+            
+            const filteredProducts = products.filter(product => 
+              selectedCategory === 'all' || product.category === selectedCategory
+            );
+            
+            if (filteredProducts.length === 0) {
+              loadingIndicator.style.display = 'none';
+              menuGrid.style.display = 'grid';
+              menuGrid.innerHTML = '<p style="text-align: center; color: #aaa; grid-column: 1/-1;">No items found in this category.</p>';
+              return;
+            }
+            
+            // Добавляем продукты в сетку
+            filteredProducts.forEach(product => {
+              const menuItem = createProductElement(product);
+              menuGrid.appendChild(menuItem);
+            });
+            
+            // Скрываем индикатор загрузки и показываем меню
+            loadingIndicator.style.display = 'none';
+            menuGrid.style.display = 'grid';
+            
+            debug('Меню загружено и отображено');
+          }, 500); // Время задержки для анимации
+          
+        } catch (error) {
+          logError('Ошибка при загрузке меню', error);
+          loadingIndicator.style.display = 'none';
+          menuGrid.style.display = 'grid';
+          menuGrid.innerHTML = `
+            <p style="text-align: center; color: #ff5757; grid-column: 1/-1;">
+              Error loading menu: ${error.message}
+            </p>
+          `;
+        }
+      }
+      
+      // Создание элемента продукта
+      function createProductElement(product) {
+        const menuItem = document.createElement('div');
+        menuItem.className = 'menu-item';
+        menuItem.dataset.category = product.category;
+        menuItem.dataset.id = product.id;
+        
+        // Проверяем, является ли изображение base64-строкой
+        const imageSrc = product.image && product.image.startsWith('data:image') 
+          ? product.image 
+          : `images/${product.image || 'default.jpg'}`;
+        
+        menuItem.innerHTML = `
+          <div class="menu-content">
+            <img src="${imageSrc}" alt="${product.name}" class="item-image">
+            <div class="item-title-container">
+              <div class="item-title">${product.name}</div>
+            </div>
+            <div class="price">${product.price}฿</div>
+            <div class="description">
+              ${product.description}
+            </div>
+            <button class="order-btn" data-id="${product.id}">Add to Cart</button>
+          </div>
+        `;
+        
+        // Добавляем обработчик для добавления в корзину
+        const addButton = menuItem.querySelector('.order-btn');
+        addButton.addEventListener('click', function() {
+          const result = db.cart.addItem(product.id);
+          
+          if (result.success) {
+            // Анимация добавления в корзину
+            this.textContent = "Added!";
+            setTimeout(() => {
+              this.textContent = "Add to Cart";
+            }, 1000);
+            
+            // Обновляем счетчик товаров в корзине
+            updateCartCount();
+            
+            // Показываем уведомление
+            showNotification(`"${product.name}" has been added to your cart`);
+          } else {
+            // Если произошла ошибка
+            showNotification(result.error, 'error');
+          }
+        });
+        
+        return menuItem;
+      }
+      
+      // Загрузка категорий
+      function loadCategories() {
+        debug('Загрузка категорий');
+        
+        try {
+          const categoriesContainer = document.getElementById('categoriesContainer');
+          categoriesContainer.innerHTML = ''; // Очищаем текущие категории
+          
+          const categories = db.categories.getActive();
+          
+          // Добавляем кнопку "All" первой
+          const allCategoryBtn = document.createElement('button');
+          allCategoryBtn.className = `category-btn ${selectedCategory === 'all' ? 'active' : ''}`;
+          allCategoryBtn.dataset.category = 'all';
+          allCategoryBtn.textContent = 'All';
+          
+          // Добавляем обработчик клика
+          allCategoryBtn.addEventListener('click', function() {
+            // Меняем активную категорию
+            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            selectedCategory = this.dataset.category;
+            
+            // Перезагружаем меню с новой категорией
+            loadMenuForRestaurant(selectedRestaurantId);
+          });
+          
+          categoriesContainer.appendChild(allCategoryBtn);
+          
+          // Добавляем другие категории (исключая "all", которую мы уже добавили)
+          categories.forEach(category => {
+            // Пропускаем, если в этом ресторане нет продуктов в этой категории
+            if (category.id !== 'all' && !availableCategories.has(category.id)) {
+              return;
+            }
+            
+            // Пропускаем категорию "all", так как мы уже добавили её вручную
+            if (category.id === 'all') {
+              return;
+            }
+            
+            const categoryBtn = document.createElement('button');
+            categoryBtn.className = `category-btn ${category.id === selectedCategory ? 'active' : ''}`;
+            categoryBtn.dataset.category = category.id;
+            categoryBtn.textContent = category.name;
+            
+            // Добавляем обработчик клика
+            categoryBtn.addEventListener('click', function() {
+              // Меняем активную категорию
+              document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+              this.classList.add('active');
+              
+              selectedCategory = this.dataset.category;
+              
+              // Перезагружаем меню с новой категорией
+              loadMenuForRestaurant(selectedRestaurantId);
+            });
+            
+            categoriesContainer.appendChild(categoryBtn);
+          });
+          
+          debug(`Загружено ${categories.length} категорий`);
+        } catch (error) {
+          logError('Ошибка при загрузке категорий', error);
+        }
+      }
+      
+      // Функция обновления счетчика товаров в корзине
+      function updateCartCount() {
+        const cartCountElement = document.getElementById('cartCount');
+        if (cartCountElement) {
+          const count = db.cart.getTotalItems();
+          cartCountElement.textContent = count;
+          debug(`Обновлен счетчик корзины: ${count} товаров`);
+        }
+      }
+      
+      // Инициализация корзины
+      function initCart() {
+        debug('Инициализация корзины');
+        
+        const cartIcon = document.getElementById('cartIcon');
+        const cartModal = document.getElementById('cartModal');
+        const closeCartBtn = document.getElementById('closeCartBtn');
+        const clearCartBtn = document.getElementById('clearCartBtn');
+        const checkoutForm = document.getElementById('checkoutForm');
+        
+        if (!cartIcon || !cartModal || !closeCartBtn) {
+          logError('Элементы корзины не найдены', new Error('Missing cart elements'));
+          return;
+        }
+        
+        // Обновляем счетчик товаров
+        updateCartCount();
+        
+        // Обработчик клика по иконке корзины
+        cartIcon.addEventListener('click', function(e) {
+          e.preventDefault();
+          debug('Клик по иконке корзины');
+          openCart();
+        });
+        
+        // Обработчик закрытия корзины
+        closeCartBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          debug('Клик по кнопке закрытия корзины');
+          cartModal.classList.remove('active');
+        });
+        
+        // Добавляем закрытие при клике вне контента
+        cartModal.addEventListener('click', function(e) {
+          if (e.target === cartModal) {
+            debug('Закрытие корзины по клику вне контента');
+            cartModal.classList.remove('active');
+          }
+        });
+        
+        // Останавливаем всплытие клика внутри контента
+        const modalContent = cartModal.querySelector('.modal-content');
+        if (modalContent) {
+          modalContent.addEventListener('click', function(e) {
+            e.stopPropagation();
+          });
+        }
+        
+        // Обработчик очистки корзины
+        if (clearCartBtn) {
+          clearCartBtn.addEventListener('click', function() {
+            debug('Очистка корзины');
+            db.cart.clear();
+            updateCartCount();
+            updateCartItems();
+            showNotification('Cart cleared');
+          });
+        }
+        
+        // Обработчик формы оформления заказа
+        if (checkoutForm) {
+          checkoutForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            debug('Отправка формы заказа');
+            
+            // Получаем данные формы
+            const formData = new FormData(this);
+            const customerInfo = {
+              name: formData.get('name'),
+              // Используем время доставки ресторана по умолчанию
+              deliveryTime: selectedRestaurant && selectedRestaurant.deliveryTime ? selectedRestaurant.deliveryTime : '30'
+            };
+            
+            // Валидация формы
+            if (!customerInfo.name) {
+              showNotification('Please enter your name', 'error');
+              return;
+            }
+            
+            // Оформляем заказ
+            const result = db.cart.checkout(customerInfo);
+            
+            if (result.success) {
+              // Показываем уведомление об успешном оформлении заказа
+              showNotification(`Order successfully placed! It will be delivered in approximately ${customerInfo.deliveryTime} minutes.`);
+              
+              // Закрываем корзину
+              cartModal.classList.remove('active');
+              
+              // Сбрасываем форму
+              checkoutForm.reset();
+              
+              // Обновляем счетчик товаров
+              updateCartCount();
+              
+              debug('Заказ успешно оформлен');
+            } else {
+              // Если произошла ошибка
+              showNotification(result.error, 'error');
+              debug(`Ошибка оформления заказа: ${result.error}`);
+            }
+          });
+        }
+      }
+      
+      // Открытие корзины
+      function openCart() {
+        debug('Открытие корзины');
+        
+        // Обновляем содержимое корзины
+        updateCartItems();
+        
+        // Показываем модальное окно
+        const cartModal = document.getElementById('cartModal');
+        if (!cartModal) {
+          logError('Модальное окно корзины не найдено', new Error('Cart modal not found'));
+          return;
+        }
+        
+        // Устанавливаем время доставки ресторана
+        if (selectedRestaurant && selectedRestaurant.deliveryTime) {
+          document.getElementById('restaurantDeliveryTime').textContent = selectedRestaurant.deliveryTime;
+        } else {
+          document.getElementById('restaurantDeliveryTime').textContent = '30';
+        }
+        
+        cartModal.classList.add('active');
+      }
+      
+      // Обновление содержимого корзины
+      function updateCartItems() {
+        debug('Обновление содержимого корзины');
+        
+        const cartItems = document.getElementById('cartItems');
+        const cartTotal = document.getElementById('cartTotal');
+        const cart = db.cart.get();
+        
+        // Очищаем текущее содержимое
+        cartItems.innerHTML = '';
+        
+        if (cart.items.length === 0) {
+          cartItems.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
+          cartTotal.innerHTML = `
+            <div>Total:</div>
+            <div>0฿</div>
+          `;
+          return;
+        }
+        
+        // Добавляем товары в корзину
+        cart.items.forEach(item => {
+          const cartItem = document.createElement('div');
+          cartItem.className = 'cart-item';
+          
+          cartItem.innerHTML = `
+            <div class="cart-item-info">
+              <div>
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-price">${item.price}฿</div>
+              </div>
+            </div>
+            <div class="cart-item-controls">
+              <div class="quantity-control">
+                <button class="quantity-btn decrease" data-id="${item.productId}">-</button>
+                <span class="quantity-value">${item.quantity}</span>
+                <button class="quantity-btn increase" data-id="${item.productId}">+</button>
+              </div>
+              <button class="remove-item" data-id="${item.productId}">&times;</button>
+            </div>
+          `;
+          
+          cartItems.appendChild(cartItem);
+        });
+        
+        // Добавляем обработчики для кнопок изменения количества
+        const decreaseButtons = cartItems.querySelectorAll('.decrease');
+        const increaseButtons = cartItems.querySelectorAll('.increase');
+        const removeButtons = cartItems.querySelectorAll('.remove-item');
+        
+        decreaseButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            const currentQuantity = cart.items.find(item => item.productId === id).quantity;
+            
+            if (currentQuantity > 1) {
+              db.cart.updateQuantity(id, currentQuantity - 1);
+            } else {
+              db.cart.removeItem(id);
+            }
+            
+            updateCartCount();
+            updateCartItems();
+          });
+        });
+        
+        increaseButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            const currentQuantity = cart.items.find(item => item.productId === id).quantity;
+            
+            db.cart.updateQuantity(id, currentQuantity + 1);
+            updateCartCount();
+            updateCartItems();
+          });
+        });
+        
+        removeButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            db.cart.removeItem(id);
+            updateCartCount();
+            updateCartItems();
+          });
+        });
+        
+        // Обновляем общую сумму
+        const totalAmount = db.cart.getTotalPrice();
+        cartTotal.innerHTML = `
+          <div>Total:</div>
+          <div>${totalAmount}฿</div>
+        `;
+        
+        debug(`В корзине ${cart.items.length} товаров на сумму ${totalAmount}฿`);
+      }
+      
+      // Показ уведомления
+      function showNotification(message, type = '') {
+        debug(`Уведомление: ${message} (тип: ${type || 'default'})`);
+        
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.classList.add('show');
+        
+        // Автоматически скрываем уведомление через 3 секунды
+        setTimeout(() => {
+          notification.classList.remove('show');
+        }, 3000);
+      }
+      
+      // Инициализация страницы
+      initRestaurantSelection();
+      initCart();
+      initBackButton();
+      debug('Инициализация приложения завершена');
+    });
+    function initBackButton() {
+      const backButton = document.getElementById('backButton');
+      if (backButton) {
+        backButton.addEventListener('click', function() {
+          // Скрываем основной контент
+          document.getElementById('mainContent').style.display = 'none';
+          
+          // Очищаем выбранный ресторан из localStorage, если хотите сбросить выбор
+          localStorage.removeItem('selectedRestaurant');
+          selectedRestaurantId = null;
+          selectedRestaurant = null;
+          
+          // Показываем модальное окно выбора ресторана
+          const restaurantModal = document.getElementById('restaurantSelectModal');
+          restaurantModal.classList.add('active');
+          
+          // Перезагружаем список ресторанов (если нужно обновить)
+          initRestaurantSelection();
+        });
+      }
+    }
+  </script>
+</body>
+</html>

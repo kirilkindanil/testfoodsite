@@ -62,8 +62,8 @@ const db = {
   restaurants: {
     async getAll() {
       try {
-        const response = await this.fetchJson('/api/restaurants');
-        console.log('API response:', response);
+        const response = await db.fetchJson('/api/restaurants');
+        console.log('API response restaurants:', response);
         return response;
       } catch (error) {
         console.error('Error fetching restaurants:', error);
@@ -74,9 +74,8 @@ const db = {
     async getActive() {
       try {
         const restaurants = await this.getAll();
-        console.log('Loaded restaurants:', restaurants); // Для отладки
+        console.log('Loaded restaurants:', restaurants);
         
-        // Проверяем, что restaurants - массив
         if (!Array.isArray(restaurants)) {
           console.error('Restaurants is not an array:', restaurants);
           return [];
@@ -87,15 +86,20 @@ const db = {
         console.error('Error in getActive:', error);
         return [];
       }
-  },
+    },
     
     async getById(id) {
-      const restaurants = await this.getAll();
-      return restaurants.find(restaurant => restaurant.id === id);
+      try {
+        const restaurants = await this.getAll();
+        return restaurants.find(restaurant => restaurant.id === id);
+      } catch (error) {
+        console.error('Error getting restaurant by ID:', error);
+        return null;
+      }
     },
     
     async add(restaurant) {
-      return await this.fetchJson('/api/restaurants', {
+      return await db.fetchJson('/api/restaurants', {
         method: 'POST',
         body: JSON.stringify({
           ...restaurant,
@@ -106,14 +110,14 @@ const db = {
     },
     
     async update(id, updatedRestaurant) {
-      return await this.fetchJson(`/api/restaurants/${id}`, {
+      return await db.fetchJson(`/api/restaurants/${id}`, {
         method: 'PUT',
         body: JSON.stringify(updatedRestaurant)
       });
     },
     
     async delete(id) {
-      return await this.fetchJson(`/api/restaurants/${id}`, {
+      return await db.fetchJson(`/api/restaurants/${id}`, {
         method: 'DELETE'
       });
     }
@@ -122,20 +126,45 @@ const db = {
   // Методы работы с категориями
   categories: {
     async getAll() {
-      return await this.fetchJson('/api/categories');
+      try {
+        const response = await db.fetchJson('/api/categories');
+        console.log('API response categories:', response);
+        return response;
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        return [];
+      }
     },
     
     async getActive() {
-      return (await this.getAll()).filter(category => category.isActive);
+      try {
+        const categories = await this.getAll();
+        console.log('Loaded categories:', categories);
+        
+        if (!Array.isArray(categories)) {
+          console.error('Categories is not an array:', categories);
+          return [];
+        }
+        
+        return categories.filter(category => category.isActive);
+      } catch (error) {
+        console.error('Error in getActive:', error);
+        return [];
+      }
     },
     
     async getById(id) {
-      const categories = await this.getAll();
-      return categories.find(category => category.id === id);
+      try {
+        const categories = await this.getAll();
+        return categories.find(category => category.id === id);
+      } catch (error) {
+        console.error('Error getting category by ID:', error);
+        return null;
+      }
     },
     
     async add(category) {
-      return await this.fetchJson('/api/categories', {
+      return await db.fetchJson('/api/categories', {
         method: 'POST',
         body: JSON.stringify({
           ...category,
@@ -146,14 +175,14 @@ const db = {
     },
     
     async update(id, updatedCategory) {
-      return await this.fetchJson(`/api/categories/${id}`, {
+      return await db.fetchJson(`/api/categories/${id}`, {
         method: 'PUT',
         body: JSON.stringify(updatedCategory)
       });
     },
     
     async delete(id) {
-      return await this.fetchJson(`/api/categories/${id}`, {
+      return await db.fetchJson(`/api/categories/${id}`, {
         method: 'DELETE'
       });
     }
@@ -162,24 +191,36 @@ const db = {
   // Методы работы с продуктами
   products: {
     async getAll() {
-      return await this.fetchJson('/api/products');
+      try {
+        const response = await db.fetchJson('/api/products');
+        console.log('API response products:', response);
+        return response;
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        return [];
+      }
     },
     
     async getById(id) {
-      const products = await this.getAll();
-      return products.find(product => product.id === id);
+      try {
+        const products = await this.getAll();
+        return products.find(product => product.id === id);
+      } catch (error) {
+        console.error('Error getting product by ID:', error);
+        return null;
+      }
     },
     
     async getByRestaurant(restaurantId) {
-      return await this.fetchJson(`/api/products?restaurantId=${restaurantId}`);
+      return await db.fetchJson(`/api/products?restaurantId=${restaurantId}`);
     },
     
     async getByCategory(categoryId) {
-      return await this.fetchJson(`/api/products?category=${categoryId}`);
+      return await db.fetchJson(`/api/products?category=${categoryId}`);
     },
     
     async add(product) {
-      return await this.fetchJson('/api/products', {
+      return await db.fetchJson('/api/products', {
         method: 'POST',
         body: JSON.stringify({
           ...product,
@@ -190,14 +231,14 @@ const db = {
     },
     
     async update(id, updatedProduct) {
-      return await this.fetchJson(`/api/products/${id}`, {
+      return await db.fetchJson(`/api/products/${id}`, {
         method: 'PUT',
         body: JSON.stringify(updatedProduct)
       });
     },
     
     async delete(id) {
-      return await this.fetchJson(`/api/products/${id}`, {
+      return await db.fetchJson(`/api/products/${id}`, {
         method: 'DELETE'
       });
     }
@@ -206,22 +247,27 @@ const db = {
   // Методы работы с заказами
   orders: {
     async getAll() {
-      const orders = await this.fetchJson('/api/orders');
-      return orders.sort((a, b) => 
-        new Date(b.createdAt) - new Date(a.createdAt)
-      );
+      try {
+        const orders = await db.fetchJson('/api/orders');
+        return orders.sort((a, b) => 
+          new Date(b.createdAt) - new Date(a.createdAt)
+        );
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+        return [];
+      }
     },
     
     async getById(id) {
-      return await this.fetchJson(`/api/orders/${id}`);
+      return await db.fetchJson(`/api/orders/${id}`);
     },
     
     async getByRestaurant(restaurantId) {
-      return await this.fetchJson(`/api/orders?restaurantId=${restaurantId}`);
+      return await db.fetchJson(`/api/orders?restaurantId=${restaurantId}`);
     },
     
     async add(order) {
-      return await this.fetchJson('/api/orders', {
+      return await db.fetchJson('/api/orders', {
         method: 'POST',
         body: JSON.stringify({
           ...order,
@@ -233,21 +279,21 @@ const db = {
     },
     
     async update(id, updatedOrder) {
-      return await this.fetchJson(`/api/orders/${id}`, {
+      return await db.fetchJson(`/api/orders/${id}`, {
         method: 'PUT',
         body: JSON.stringify(updatedOrder)
       });
     },
     
     async delete(id) {
-      return await this.fetchJson(`/api/orders/${id}`, {
+      return await db.fetchJson(`/api/orders/${id}`, {
         method: 'DELETE'
       });
     },
     
     // Отправка уведомлений в Telegram
     async sendTelegramNotification(order) {
-      return await this.fetchJson('/api/telegram/order-notification', {
+      return await db.fetchJson('/api/telegram/order-notification', {
         method: 'POST',
         body: JSON.stringify(order)
       });
@@ -257,16 +303,28 @@ const db = {
   // Методы работы с настройками
   settings: {
     async getAll() {
-      return await this.fetchJson('/api/settings');
+      try {
+        const settings = await db.fetchJson('/api/settings');
+        console.log('API response settings:', settings);
+        return settings;
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+        return {};
+      }
     },
     
     async get(key, defaultValue) {
-      const settings = await this.getAll();
-      return settings[key] !== undefined ? settings[key] : defaultValue;
+      try {
+        const settings = await this.getAll();
+        return settings[key] !== undefined ? settings[key] : defaultValue;
+      } catch (error) {
+        console.error('Error getting setting:', error);
+        return defaultValue;
+      }
     },
     
     async update(updatedSettings) {
-      return await this.fetchJson('/api/settings', {
+      return await db.fetchJson('/api/settings', {
         method: 'PUT',
         body: JSON.stringify(updatedSettings)
       });
@@ -276,13 +334,19 @@ const db = {
   // Методы авторизации администратора
   auth: {
     async getCredentials() {
-      // В новой версии credentials хранятся на сервере
-      return await this.fetchJson('/api/admin/credentials');
+      try {
+        const credentials = await db.fetchJson('/api/admin/credentials');
+        console.log('Fetched credentials:', credentials);
+        return credentials;
+      } catch (error) {
+        console.error('Error fetching credentials:', error);
+        return {};
+      }
     },
     
     async login(username, password) {
       try {
-        const result = await this.fetchJson('/api/login', {
+        const result = await db.fetchJson('/api/login', {
           method: 'POST',
           body: JSON.stringify({ username, password })
         });
@@ -308,7 +372,7 @@ const db = {
     },
     
     async updateCredentials(username, password) {
-      return await this.fetchJson('/api/admin/credentials', {
+      return await db.fetchJson('/api/admin/credentials', {
         method: 'PUT',
         body: JSON.stringify({ username, password })
       });
@@ -324,7 +388,7 @@ const db = {
     async addItem(productId, quantity = 1) {
       const cart = this.get();
       try {
-        const product = await this.fetchJson(`/api/products/${productId}`);
+        const product = await db.products.getById(productId);
         
         if (!product) {
           return { success: false, error: 'Product not found' };
@@ -426,7 +490,7 @@ const db = {
           createdAt: new Date().toISOString()
         };
         
-        const newOrder = await this.fetchJson('/api/orders', {
+        const newOrder = await db.fetchJson('/api/orders', {
           method: 'POST',
           body: JSON.stringify(order)
         });
@@ -451,10 +515,10 @@ const db = {
           orders, 
           settings
         ] = await Promise.all([
-          this.fetchJson('/api/restaurants'),
-          this.fetchJson('/api/products'),
-          this.fetchJson('/api/orders'),
-          this.fetchJson('/api/settings')
+          db.restaurants.getAll(),
+          db.products.getAll(),
+          db.orders.getAll(),
+          db.settings.getAll()
         ]);
 
         const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0);

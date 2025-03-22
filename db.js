@@ -2,7 +2,10 @@ const db = {
   restaurants: {
     getAll() {
       return firebase.database().ref('restaurants').once('value')
-        .then(snapshot => Object.values(snapshot.val() || {}));
+        .then(snapshot => {
+          const data = snapshot.val();
+          return data ? Object.values(data) : [];
+        });
     },
     
     getActive() {
@@ -20,7 +23,10 @@ const db = {
   categories: {
     getAll() {
       return firebase.database().ref('categories').once('value')
-        .then(snapshot => Object.values(snapshot.val() || {}));
+        .then(snapshot => {
+          const data = snapshot.val();
+          return data ? Object.values(data) : [];
+        });
     },
     
     getActive() {
@@ -33,7 +39,10 @@ const db = {
   products: {
     getAll() {
       return firebase.database().ref('products').once('value')
-        .then(snapshot => Object.values(snapshot.val() || {}));
+        .then(snapshot => {
+          const data = snapshot.val();
+          return data ? Object.values(data) : [];
+        });
     },
     
     getByRestaurant(restaurantId) {

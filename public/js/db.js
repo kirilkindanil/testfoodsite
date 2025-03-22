@@ -64,7 +64,7 @@ const db = {
       try {
         const response = await db.fetchJson('/api/restaurants');
         console.log('API response restaurants:', response);
-        return response;
+        return Array.isArray(response) ? response : [];
       } catch (error) {
         console.error('Error fetching restaurants:', error);
         return [];
@@ -76,15 +76,12 @@ const db = {
         const restaurants = await this.getAll();
         console.log('Loaded restaurants:', restaurants);
         
-        if (!Array.isArray(restaurants)) {
-          console.error('Restaurants is not an array:', restaurants);
-          return [];
-        }
-        
-        return restaurants.filter(restaurant => restaurant.isActive);
-      } catch (error) {
-        console.error('Error in getActive:', error);
-        return [];
+        return restaurants.filter(restaurant => 
+        restaurant && restaurant.isActive === true
+      );
+    } catch (error) {
+      console.error('Error in getActive:', error);
+      return [];
       }
     },
     

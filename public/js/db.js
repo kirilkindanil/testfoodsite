@@ -474,6 +474,19 @@ const db = {
           restaurantCount: restaurants.length,
           productCount: products.length,
           orderCount: orders.length,
+          totalRevenue,
+          recentOrders: orders.slice(0, 5),
+          orderStatusStats,
+          restaurantStats,
+          topProducts,
+          settings
+        };
+      } catch (error) {
+        console.error('Ошибка получения статистики:', error);
+        return {
+          restaurantCount: 0,
+          productCount: 0,
+          orderCount: 0,
           totalRevenue: 0,
           recentOrders: [],
           orderStatusStats: {},

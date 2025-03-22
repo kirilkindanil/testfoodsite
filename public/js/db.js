@@ -61,12 +61,33 @@ const db = {
   // Методы работы с ресторанами
   restaurants: {
     async getAll() {
-      return await this.fetchJson('/api/restaurants');
+      try {
+        const response = await this.fetchJson('/api/restaurants');
+        console.log('API response:', response);
+        return response;
+      } catch (error) {
+        console.error('Error fetching restaurants:', error);
+        return [];
+      }
     },
     
     async getActive() {
-      return (await this.getAll()).filter(restaurant => restaurant.isActive);
-    },
+      try {
+        const restaurants = await this.getAll();
+        console.log('Loaded restaurants:', restaurants); // Для отладки
+        
+        // Проверяем, что restaurants - массив
+        if (!Array.isArray(restaurants)) {
+          console.error('Restaurants is not an array:', restaurants);
+          return [];
+        }
+        
+        return restaurants.filter(restaurant => restaurant.isActive);
+      } catch (error) {
+        console.error('Error in getActive:', error);
+        return [];
+      }
+  },
     
     async getById(id) {
       const restaurants = await this.getAll();

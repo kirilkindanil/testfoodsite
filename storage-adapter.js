@@ -10,14 +10,15 @@
   // Конфигурация Firebase
   // Замените на свои данные из Firebase Console
   const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
-  };
+  apiKey: "AIzaSyCjIxeGed56L1Z8LoKfEgKHwlX3LZMIsMQ",
+  authDomain: "greenbaboosite.firebaseapp.com",
+  databaseURL: "https://greenbaboosite-default-rtdb.firebaseio.com",
+  projectId: "greenbaboosite",
+  storageBucket: "greenbaboosite.firebasestorage.app",
+  messagingSenderId: "432777867771",
+  appId: "1:432777867771:web:f7edeb777e7180145d5b5e",
+  measurementId: "G-QWTNTK6XJD"
+};
 
   // Инициализация Firebase
   firebase.initializeApp(firebaseConfig);

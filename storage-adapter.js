@@ -84,22 +84,33 @@
       database.ref('restaurants').once('value')
         .then(snapshot => {
           const data = snapshot.val() || {};
-          localCache.restaurants = Object.values(data);
-          // Сохраняем в оригинальном localStorage
-          originalSetItem('restaurants', JSON.stringify(localCache.restaurants));
-          console.log('Рестораны загружены из Firebase');
+          
+          if (Object.keys(data).length > 0) {
+            localCache.restaurants = Object.values(data);
+            originalSetItem('restaurants', JSON.stringify(localCache.restaurants));
+            console.log('Рестораны загружены из Firebase');
+          } else {
+            const localData = originalGetItem('restaurants');
+            
+            if (localData) {
+              try {
+                localCache.restaurants = JSON.parse(localData);
+                
+                const restaurantsObj = {};
+                localCache.restaurants.forEach(restaurant => {
+                  restaurantsObj[restaurant.id] = restaurant;
+                });
+                
+                database.ref('restaurants').set(restaurantsObj);
+                console.log('Дефолтные рестораны сохранены в Firebase');
+              } catch (e) {
+                console.error('Ошибка парсинга локальных данных ресторанов:', e);
+              }
+            }
+          }
         })
         .catch(error => {
           console.error('Ошибка при загрузке ресторанов:', error);
-          // Пытаемся использовать локальные данные как резервные
-          const localData = originalGetItem('restaurants');
-          if (localData) {
-            try {
-              localCache.restaurants = JSON.parse(localData);
-            } catch (e) {
-              console.error('Ошибка парсинга локальных данных ресторанов:', e);
-            }
-          }
         })
     );
     
@@ -108,20 +119,33 @@
       database.ref('categories').once('value')
         .then(snapshot => {
           const data = snapshot.val() || {};
-          localCache.categories = Object.values(data);
-          originalSetItem('categories', JSON.stringify(localCache.categories));
-          console.log('Категории загружены из Firebase');
+          
+          if (Object.keys(data).length > 0) {
+            localCache.categories = Object.values(data);
+            originalSetItem('categories', JSON.stringify(localCache.categories));
+            console.log('Категории загружены из Firebase');
+          } else {
+            const localData = originalGetItem('categories');
+            
+            if (localData) {
+              try {
+                localCache.categories = JSON.parse(localData);
+                
+                const categoriesObj = {};
+                localCache.categories.forEach(category => {
+                  categoriesObj[category.id] = category;
+                });
+                
+                database.ref('categories').set(categoriesObj);
+                console.log('Дефолтные категории сохранены в Firebase');
+              } catch (e) {
+                console.error('Ошибка парсинга локальных данных категорий:', e);
+              }
+            }
+          }
         })
         .catch(error => {
           console.error('Ошибка при загрузке категорий:', error);
-          const localData = originalGetItem('categories');
-          if (localData) {
-            try {
-              localCache.categories = JSON.parse(localData);
-            } catch (e) {
-              console.error('Ошибка парсинга локальных данных категорий:', e);
-            }
-          }
         })
     );
     
@@ -130,20 +154,33 @@
       database.ref('products').once('value')
         .then(snapshot => {
           const data = snapshot.val() || {};
-          localCache.products = Object.values(data);
-          originalSetItem('products', JSON.stringify(localCache.products));
-          console.log('Продукты загружены из Firebase');
+          
+          if (Object.keys(data).length > 0) {
+            localCache.products = Object.values(data);
+            originalSetItem('products', JSON.stringify(localCache.products));
+            console.log('Продукты загружены из Firebase');
+          } else {
+            const localData = originalGetItem('products');
+            
+            if (localData) {
+              try {
+                localCache.products = JSON.parse(localData);
+                
+                const productsObj = {};
+                localCache.products.forEach(product => {
+                  productsObj[product.id] = product;
+                });
+                
+                database.ref('products').set(productsObj);
+                console.log('Дефолтные продукты сохранены в Firebase');
+              } catch (e) {
+                console.error('Ошибка парсинга локальных данных продуктов:', e);
+              }
+            }
+          }
         })
         .catch(error => {
           console.error('Ошибка при загрузке продуктов:', error);
-          const localData = originalGetItem('products');
-          if (localData) {
-            try {
-              localCache.products = JSON.parse(localData);
-            } catch (e) {
-              console.error('Ошибка парсинга локальных данных продуктов:', e);
-            }
-          }
         })
     );
     
@@ -152,20 +189,33 @@
       database.ref('orders').once('value')
         .then(snapshot => {
           const data = snapshot.val() || {};
-          localCache.orders = Object.values(data);
-          originalSetItem('orders', JSON.stringify(localCache.orders));
-          console.log('Заказы загружены из Firebase');
+          
+          if (Object.keys(data).length > 0) {
+            localCache.orders = Object.values(data);
+            originalSetItem('orders', JSON.stringify(localCache.orders));
+            console.log('Заказы загружены из Firebase');
+          } else {
+            const localData = originalGetItem('orders');
+            
+            if (localData) {
+              try {
+                localCache.orders = JSON.parse(localData);
+                
+                const ordersObj = {};
+                localCache.orders.forEach(order => {
+                  ordersObj[order.id] = order;
+                });
+                
+                database.ref('orders').set(ordersObj);
+                console.log('Дефолтные заказы сохранены в Firebase');
+              } catch (e) {
+                console.error('Ошибка парсинга локальных данных заказов:', e);
+              }
+            }
+          }
         })
         .catch(error => {
           console.error('Ошибка при загрузке заказов:', error);
-          const localData = originalGetItem('orders');
-          if (localData) {
-            try {
-              localCache.orders = JSON.parse(localData);
-            } catch (e) {
-              console.error('Ошибка парсинга локальных данных заказов:', e);
-            }
-          }
         })
     );
     
@@ -174,42 +224,56 @@
       database.ref('settings').once('value')
         .then(snapshot => {
           const data = snapshot.val() || {};
-          localCache.settings = data;
-          originalSetItem('settings', JSON.stringify(localCache.settings));
-          console.log('Настройки загружены из Firebase');
-        })
-        .catch(error => {
-          console.error('Ошибка при загрузке настроек:', error);
-          const localData = originalGetItem('settings');
-          if (localData) {
-            try {
-              localCache.settings = JSON.parse(localData);
-            } catch (e) {
-              console.error('Ошибка парсинга локальных данных настроек:', e);
+          
+          if (Object.keys(data).length > 0) {
+            localCache.settings = data;
+            originalSetItem('settings', JSON.stringify(localCache.settings));
+            console.log('Настройки загружены из Firebase');
+          } else {
+            const localData = originalGetItem('settings');
+            
+            if (localData) {
+              try {
+                localCache.settings = JSON.parse(localData);
+                database.ref('settings').set(localCache.settings);
+                console.log('Дефолтные настройки сохранены в Firebase');
+              } catch (e) {
+                console.error('Ошибка парсинга локальных данных настроек:', e);
+              }
             }
           }
         })
+        .catch(error => {
+          console.error('Ошибка при загрузке настроек:', error);
+        })
     );
     
-    // Загрузка учетных данных админа
+    // Загрузка учетных данных
     loadPromises.push(
       database.ref('adminCredentials').once('value')
         .then(snapshot => {
           const data = snapshot.val() || {};
-          localCache.adminCredentials = data;
-          originalSetItem('adminCredentials', JSON.stringify(localCache.adminCredentials));
-          console.log('Учетные данные админа загружены из Firebase');
-        })
-        .catch(error => {
-          console.error('Ошибка при загрузке учетных данных админа:', error);
-          const localData = originalGetItem('adminCredentials');
-          if (localData) {
-            try {
-              localCache.adminCredentials = JSON.parse(localData);
-            } catch (e) {
-              console.error('Ошибка парсинга локальных данных учетных данных:', e);
+          
+          if (Object.keys(data).length > 0) {
+            localCache.adminCredentials = data;
+            originalSetItem('adminCredentials', JSON.stringify(localCache.adminCredentials));
+            console.log('Учетные данные загружены из Firebase');
+          } else {
+            const localData = originalGetItem('adminCredentials');
+            
+            if (localData) {
+              try {
+                localCache.adminCredentials = JSON.parse(localData);
+                database.ref('adminCredentials').set(localCache.adminCredentials);
+                console.log('Дефолтные учетные данные сохранены в Firebase');
+              } catch (e) {
+                console.error('Ошибка парсинга локальных данных учетных данных:', e);
+              }
             }
           }
+        })
+        .catch(error => {
+          console.error('Ошибка при загрузке учетных данных:', error);
         })
     );
     

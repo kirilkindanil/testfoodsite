@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;800&display=swap" rel="stylesheet">
   
   <style>
-    /* Base styles */
+    /* Используем те же стили, что и в оригинальной версии */
     * {
       margin: 0;
       padding: 0;
@@ -870,7 +870,7 @@
         
         <div class="cart-total" id="cartTotal">
           <div>Total:</div>
-          <div>0฿</div>
+          <div>0₽</div>
         </div>
         
         <div class="cart-actions">
@@ -881,6 +881,11 @@
           <div class="form-group">
             <label class="form-label">Your Name</label>
             <input type="text" name="name" class="form-input" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" name="phone" class="form-input" required>
           </div>
           
           <!-- Информация о времени доставки -->
@@ -922,7 +927,7 @@
   </div>
   
   <!-- Скрипты -->
-  <script src="db.js"></script>
+  <script src="db-api.js"></script>
   <script>
     // Отладочные функции
     const DEBUG = false; // Установите true для включения отладки
@@ -955,13 +960,13 @@
     document.addEventListener('DOMContentLoaded', function() {
       debug('DOM загружен, инициализация приложения...');
       
-      // Проверяем, что db.js загружен правильно
+      // Проверяем, что db-api.js загружен правильно
       if (!window.db) {
-        document.body.innerHTML = '<div style="color:white; padding: 30px; text-align: center;"><h1>Error: Database not loaded</h1><p>Please check if db.js is correctly included.</p></div>';
+        document.body.innerHTML = '<div style="color:white; padding: 30px; text-align: center;"><h1>Error: Database not loaded</h1><p>Please check if db-api.js is correctly included.</p></div>';
         return;
       }
       
-      debug('База данных db.js загружена успешно');
+      debug('База данных db-api.js загружена успешно');
       
       // Переменные для выбранного ресторана
       let selectedRestaurantId = localStorage.getItem('selectedRestaurant');
@@ -988,7 +993,7 @@
       checkAdmin();
       
       // Инициализация модального окна выбора ресторана
-      function initRestaurantSelection() {
+      async function initRestaurantSelection() {
         debug('Инициализация выбора ресторана');
         
         try {
@@ -1005,7 +1010,7 @@
           document.getElementById('mainContent').style.display = 'none';
           
           // Получаем список активных ресторанов
-          const restaurants = db.restaurants.getActive();
+          const restaurants = await db.restaurants.getActive();
           debug(`Загружено ${restaurants.length} ресторанов`);
           
           // Очищаем контейнер
@@ -1057,7 +1062,7 @@
           });
           
           // Обработчик нажатия кнопки выбора ресторана
-          selectRestaurantBtn.addEventListener('click', function() {
+          selectRestaurantBtn.addEventListener('click', async function() {
             if (!selectedRestaurantCard) return;
             
             const selectedId = selectedRestaurantCard.dataset.id;
@@ -1066,17 +1071,24 @@
             // Сохраняем выбранный ресторан
             localStorage.setItem('selectedRestaurant', selectedId);
             selectedRestaurantId = selectedId;
-            selectedRestaurant = db.restaurants.getById(selectedId);
             
-            // Загружаем меню ресторана
-            loadMenuForRestaurant(selectedId);
-            
-            // Закрываем модальное окно
-            restaurantModal.classList.remove('active');
-            
-            // Показываем основной контент
-            document.getElementById('mainContent').style.display = 'block';
-            debug('Основной контент отображен');
+            try {
+              // Получаем информацию о выбранном ресторане
+              selectedRestaurant = await db.restaurants.getById(selectedId);
+              
+              // Загружаем меню ресторана
+              loadMenuForRestaurant(selectedId);
+              
+              // Закрываем модальное окно
+              restaurantModal.classList.remove('active');
+              
+              // Показываем основной контент
+              document.getElementById('mainContent').style.display = 'block';
+              debug('Основной контент отображен');
+            } catch (error) {
+              logError('Ошибка при загрузке данных о ресторане', error);
+              showNotification('Error loading restaurant data', 'error');
+            }
           });
           
           // Предотвращаем закрытие модального окна при клике вне его
@@ -1102,7 +1114,7 @@
       }
       
       // Загрузка меню для выбранного ресторана
-      function loadMenuForRestaurant(restaurantId) {
+      async function loadMenuForRestaurant(restaurantId) {
         debug(`Загрузка меню для ресторана: ${restaurantId}`);
         
         // Показываем индикатор загрузки
@@ -1114,7 +1126,7 @@
         
         try {
           // Получаем продукты для выбранного ресторана
-          const products = db.products.getByRestaurant(restaurantId);
+          const products = await db.products.getByRestaurant(restaurantId);
           debug(`Загружено ${products.length} продуктов`);
           
           // Находим доступные категории для этого ресторана
@@ -1126,7 +1138,7 @@
           });
           
           // Загружаем категории на основе доступных продуктов
-          loadCategories();
+          await loadCategories();
           
           // Имитируем задержку загрузки для анимации
           setTimeout(() => {
@@ -1193,7 +1205,7 @@
             <div class="item-title-container">
               <div class="item-title">${product.name}</div>
             </div>
-            <div class="price">${product.price}฿</div>
+            <div class="price">${product.price}₽</div>
             <div class="description">
               ${product.description}
             </div>
@@ -1203,24 +1215,29 @@
         
         // Добавляем обработчик для добавления в корзину
         const addButton = menuItem.querySelector('.order-btn');
-        addButton.addEventListener('click', function() {
-          const result = db.cart.addItem(product.id);
-          
-          if (result.success) {
-            // Анимация добавления в корзину
-            this.textContent = "Added!";
-            setTimeout(() => {
-              this.textContent = "Add to Cart";
-            }, 1000);
+        addButton.addEventListener('click', async function() {
+          try {
+            const result = await db.cart.addItem(product.id);
             
-            // Обновляем счетчик товаров в корзине
-            updateCartCount();
-            
-            // Показываем уведомление
-            showNotification(`"${product.name}" has been added to your cart`);
-          } else {
-            // Если произошла ошибка
-            showNotification(result.error, 'error');
+            if (result.success) {
+              // Анимация добавления в корзину
+              this.textContent = "Added!";
+              setTimeout(() => {
+                this.textContent = "Add to Cart";
+              }, 1000);
+              
+              // Обновляем счетчик товаров в корзине
+              updateCartCount();
+              
+              // Показываем уведомление
+              showNotification(`"${product.name}" has been added to your cart`);
+            } else {
+              // Если произошла ошибка
+              showNotification(result.error, 'error');
+            }
+          } catch (error) {
+            logError('Ошибка при добавлении товара в корзину', error);
+            showNotification('Error adding item to cart', 'error');
           }
         });
         
@@ -1228,14 +1245,14 @@
       }
       
       // Загрузка категорий
-      function loadCategories() {
+      async function loadCategories() {
         debug('Загрузка категорий');
         
         try {
           const categoriesContainer = document.getElementById('categoriesContainer');
           categoriesContainer.innerHTML = ''; // Очищаем текущие категории
           
-          const categories = db.categories.getActive();
+          const categories = await db.categories.getActive();
           
           // Добавляем кнопку "All" первой
           const allCategoryBtn = document.createElement('button');
@@ -1366,7 +1383,7 @@
         
         // Обработчик формы оформления заказа
         if (checkoutForm) {
-          checkoutForm.addEventListener('submit', function(e) {
+          checkoutForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             debug('Отправка формы заказа');
             
@@ -1374,6 +1391,7 @@
             const formData = new FormData(this);
             const customerInfo = {
               name: formData.get('name'),
+              phone: formData.get('phone'),
               // Используем время доставки ресторана по умолчанию
               deliveryTime: selectedRestaurant && selectedRestaurant.deliveryTime ? selectedRestaurant.deliveryTime : '30'
             };
@@ -1384,27 +1402,37 @@
               return;
             }
             
-            // Оформляем заказ
-            const result = db.cart.checkout(customerInfo);
+            if (!customerInfo.phone) {
+              showNotification('Please enter your phone number', 'error');
+              return;
+            }
             
-            if (result.success) {
-              // Показываем уведомление об успешном оформлении заказа
-              showNotification(`Order successfully placed! It will be delivered in approximately ${customerInfo.deliveryTime} minutes.`);
+            try {
+              // Оформляем заказ
+              const result = await db.cart.checkout(customerInfo);
               
-              // Закрываем корзину
-              cartModal.classList.remove('active');
-              
-              // Сбрасываем форму
-              checkoutForm.reset();
-              
-              // Обновляем счетчик товаров
-              updateCartCount();
-              
-              debug('Заказ успешно оформлен');
-            } else {
-              // Если произошла ошибка
-              showNotification(result.error, 'error');
-              debug(`Ошибка оформления заказа: ${result.error}`);
+              if (result.success) {
+                // Показываем уведомление об успешном оформлении заказа
+                showNotification(`Order successfully placed! It will be delivered in approximately ${customerInfo.deliveryTime} minutes.`);
+                
+                // Закрываем корзину
+                cartModal.classList.remove('active');
+                
+                // Сбрасываем форму
+                checkoutForm.reset();
+                
+                // Обновляем счетчик товаров
+                updateCartCount();
+                
+                debug('Заказ успешно оформлен');
+              } else {
+                // Если произошла ошибка
+                showNotification(result.error, 'error');
+                debug(`Ошибка оформления заказа: ${result.error}`);
+              }
+            } catch (error) {
+              logError('Ошибка при оформлении заказа', error);
+              showNotification('Error placing order: ' + error.message, 'error');
             }
           });
         }
@@ -1449,7 +1477,7 @@
           cartItems.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
           cartTotal.innerHTML = `
             <div>Total:</div>
-            <div>0฿</div>
+            <div>0₽</div>
           `;
           return;
         }
@@ -1463,7 +1491,7 @@
             <div class="cart-item-info">
               <div>
                 <div class="cart-item-name">${item.name}</div>
-                <div class="cart-item-price">${item.price}฿</div>
+                <div class="cart-item-price">${item.price}₽</div>
               </div>
             </div>
             <div class="cart-item-controls">
@@ -1524,10 +1552,10 @@
         const totalAmount = db.cart.getTotalPrice();
         cartTotal.innerHTML = `
           <div>Total:</div>
-          <div>${totalAmount}฿</div>
+          <div>${totalAmount}₽</div>
         `;
         
-        debug(`В корзине ${cart.items.length} товаров на сумму ${totalAmount}฿`);
+        debug(`В корзине ${cart.items.length} товаров на сумму ${totalAmount}₽`);
       }
       
       // Показ уведомления
@@ -1545,33 +1573,35 @@
         }, 3000);
       }
       
+      // Инициализация кнопки возврата
+      function initBackButton() {
+        const backButton = document.getElementById('backButton');
+        if (backButton) {
+          backButton.addEventListener('click', function() {
+            // Скрываем основной контент
+            document.getElementById('mainContent').style.display = 'none';
+            
+            // Очищаем выбранный ресторан из localStorage, если хотите сбросить выбор
+            localStorage.removeItem('selectedRestaurant');
+            selectedRestaurantId = null;
+            selectedRestaurant = null;
+            
+            // Показываем модальное окно выбора ресторана
+            const restaurantModal = document.getElementById('restaurantSelectModal');
+            restaurantModal.classList.add('active');
+            
+            // Перезагружаем список ресторанов (если нужно обновить)
+            initRestaurantSelection();
+          });
+        }
+      }
+      
       // Инициализация страницы
       initRestaurantSelection();
       initCart();
       initBackButton();
       debug('Инициализация приложения завершена');
     });
-    function initBackButton() {
-      const backButton = document.getElementById('backButton');
-      if (backButton) {
-        backButton.addEventListener('click', function() {
-          // Скрываем основной контент
-          document.getElementById('mainContent').style.display = 'none';
-          
-          // Очищаем выбранный ресторан из localStorage, если хотите сбросить выбор
-          localStorage.removeItem('selectedRestaurant');
-          selectedRestaurantId = null;
-          selectedRestaurant = null;
-          
-          // Показываем модальное окно выбора ресторана
-          const restaurantModal = document.getElementById('restaurantSelectModal');
-          restaurantModal.classList.add('active');
-          
-          // Перезагружаем список ресторанов (если нужно обновить)
-          initRestaurantSelection();
-        });
-      }
-    }
   </script>
 </body>
 </html>
